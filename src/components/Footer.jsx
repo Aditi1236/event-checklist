@@ -1,11 +1,10 @@
 export default function Footer() {
   return (
     <footer
-      className="mt-auto border-t"
+      className="relative z-20 mt-auto border-t"
       style={{
         borderColor: "rgba(255,255,255,0.07)",
-        background: "rgba(10,12,20,0.6)",
-        backdropFilter: "blur(16px)",
+        background: "#0a0c14",
       }}
     >
       {/* Gradient top line */}

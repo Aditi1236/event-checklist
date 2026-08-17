@@ -15,7 +15,7 @@ export default function Header() {
 
   return (
     <header
-      className="sticky top-0 z-30 border-b"
+      className="relative z-30 border-b"
       style={{
         borderColor: "rgba(255,255,255,0.07)",
         background: "rgba(10,12,20,0.75)",

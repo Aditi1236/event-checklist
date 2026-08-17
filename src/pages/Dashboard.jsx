@@ -413,32 +413,32 @@ function StatCard({ label, value, icon, color, glow, accent, pct, gradient }) {
 function EmptyState({ onCreate }) {
   return (
     <div
-      className="flex flex-col items-center gap-4 border border-dashed rounded-2xl px-6 py-20 text-center"
-      style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}
+      className="flex flex-col items-center gap-5 border border-dashed rounded-2xl px-6 py-20 text-center"
+      style={{ borderColor: "rgba(255,255,255,0.18)", background: "#000000" }}
     >
       <div
         className="flex h-16 w-16 items-center justify-center rounded-2xl"
         style={{
-          background: "rgba(225,29,106,0.1)",
-          border: "1px solid rgba(225,29,106,0.2)",
-          boxShadow: "0 0 24px rgba(225,29,106,0.2)",
+          background: "rgba(225,29,106,0.18)",
+          border: "1px solid rgba(225,29,106,0.35)",
+          boxShadow: "0 0 24px rgba(225,29,106,0.3)",
         }}
       >
-        <CalendarRange size={26} style={{ color: "#e11d6a" }} />
+        <CalendarRange size={28} style={{ color: "#fb7aaa" }} />
       </div>
       <div>
         <h3
-          className="text-xl font-bold text-white mb-2"
+          className="text-3xl font-extrabold text-white mb-3"
           style={{ fontFamily: "'Sora', sans-serif" }}
         >
           No events yet
         </h3>
-        <p className="max-w-xs text-sm text-ink-soft">
+        <p className="max-w-sm text-base font-medium leading-relaxed" style={{ color: "#cbd5e1" }}>
           Create your first event to start organizing tasks and tracking progress.
         </p>
       </div>
-      <button className="btn-accent mt-2" onClick={onCreate}>
-        <Plus size={16} />
+      <button className="btn-accent mt-2 text-base !px-6 !py-3" onClick={onCreate}>
+        <Plus size={18} />
         Create your first event
       </button>
     </div>
