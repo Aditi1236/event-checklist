@@ -1,0 +1,25 @@
+[
+  {
+    "id": "evt_mswvxzt8_yuev5o",
+    "name": "Test Event",
+    "date": "2026-09-01",
+    "description": "demo",
+    "location": "Hall",
+    "budget": 1000,
+    "registrations": 50,
+    "teamMembers": "A,B",
+    "tasks": [
+      {
+        "id": "task_mswycm4m_e1a5y9",
+        "title": "hhh",
+        "description": "'''",
+        "category": "before",
+        "dueDate": "2026-08-18",
+        "priority": "medium",
+        "completed": false,
+        "createdAt": 1786954128646
+      }
+    ],
+    "createdAt": 1786950087308
+  }
+]

@@ -1,32 +1,75 @@
-import { Link } from "react-router-dom";
-import { ClipboardCheck, Moon, Sun } from "lucide-react";
-import { useTheme } from "../context/ThemeContext";
+import { Link, NavLink } from "react-router-dom";
+import { ClipboardCheck } from "lucide-react";
+import { useEvents } from "../context/EventsContext";
 
 export default function Header() {
-  const { theme, toggleTheme } = useTheme();
+  const { events } = useEvents();
+  const checklistPath = events.length > 0 ? `/event/${events[0].id}` : "/";
+
+  const navClass = ({ isActive }) =>
+    `relative rounded-full px-4 py-1.5 text-sm font-semibold transition-all duration-200 ${
+      isActive
+        ? "text-white bg-white/10 border border-white/15"
+        : "text-ink-soft hover:text-ink hover:bg-white/6"
+    }`;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-paper-line bg-paper/85 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate text-paper-soft">
-            <ClipboardCheck size={18} />
+    <header
+      className="sticky top-0 z-30 border-b"
+      style={{
+        borderColor: "rgba(255,255,255,0.07)",
+        background: "rgba(10,12,20,0.75)",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+      }}
+    >
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
+        {/* Logo */}
+        <div className="flex items-center gap-6">
+          <Link to="/" className="flex items-center gap-3 group">
+            <span
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-white transition-all duration-300 group-hover:scale-105"
+              style={{
+                background: "linear-gradient(135deg, #e11d6a 0%, #a855f7 100%)",
+                boxShadow: "0 0 20px rgba(225,29,106,0.4), inset 0 1px 0 rgba(255,255,255,0.2)",
+              }}
+            >
+              <ClipboardCheck size={20} />
+            </span>
+            <span
+              className="font-display text-xl font-bold tracking-tight text-white"
+              style={{ fontFamily: "'Sora', sans-serif" }}
+            >
+              Roster
+            </span>
+          </Link>
+
+          <nav className="hidden sm:flex items-center gap-1">
+            <NavLink to="/" end className={navClass}>
+              Events
+            </NavLink>
+            <NavLink to={checklistPath} className={navClass}>
+              Checklist
+            </NavLink>
+          </nav>
+        </div>
+
+        {/* Right side */}
+        <div className="flex items-center gap-3">
+          <span className="hidden h-14 w-auto items-center rounded-lg bg-white p-1.5 sm:flex">
+            <img
+              src="/nexasoul.png"
+              alt="NexaSoul"
+              className="h-12 w-auto"
+            />
           </span>
-          <span className="font-display text-xl font-semibold tracking-tight text-ink">
-            Roster
+          <span className="hidden h-14 w-auto items-center rounded-lg bg-white p-1.5 sm:flex">
+            <img
+              src="/cu-logo.png"
+              alt="Chandigarh University"
+              className="h-12 w-auto"
+            />
           </span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <span className="hidden font-mono text-xs uppercase tracking-[0.14em] text-ink-soft sm:block">
-            Club Event Checklists
-          </span>
-          <button
-            onClick={toggleTheme}
-            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-paper-line text-ink-soft transition-colors hover:text-emerald hover:border-emerald/50"
-          >
-            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
         </div>
       </div>
     </header>

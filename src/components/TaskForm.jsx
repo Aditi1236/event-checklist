@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Modal from "./Modal";
-import { CATEGORIES, PRIORITIES } from "../utils/helpers";
+import { CATEGORIES } from "../utils/helpers";
 
-const empty = { title: "", description: "", category: "before", dueDate: "", priority: "medium" };
+const empty = { title: "", description: "", category: "before", dueDate: "" };
 
 const ACCENT_CLASSES = {
   slate: {
@@ -74,7 +74,7 @@ export default function TaskForm({ initial, onSubmit, onClose }) {
           </label>
           <input
             id="task-duedate"
-            type="datetime-local"
+            type="date"
             className="field-input"
             value={form.dueDate}
             onChange={(e) => update("dueDate", e.target.value)}
@@ -97,29 +97,6 @@ export default function TaskForm({ initial, onSubmit, onClose }) {
                   }`}
                 >
                   {c.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div>
-          <span className="field-label">Priority</span>
-          <div className="flex flex-wrap gap-2">
-            {PRIORITIES.map((p) => {
-              const isActive = form.priority === p.key;
-              return (
-                <button
-                  type="button"
-                  key={p.key}
-                  onClick={() => update("priority", p.key)}
-                  className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-                    isActive
-                      ? "border-ink bg-ink text-paper"
-                      : "border-ink/25 text-ink hover:bg-ink/5"
-                  }`}
-                >
-                  {p.dot} {p.label}
                 </button>
               );
             })}

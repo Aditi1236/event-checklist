@@ -22,6 +22,25 @@
           if (isDark) document.documentElement.classList.add("dark");
         } catch (e) {}
       })();
+
+      function showFatal(msg) {
+        var el = document.getElementById("fatal-error");
+        if (!el) {
+          el = document.createElement("pre");
+          el.id = "fatal-error";
+          el.style.cssText =
+            "position:fixed;inset:0;z-index:99999;margin:0;padding:24px;background:#0b0c10;color:#fb7aaa;font:13px/1.5 monospace;white-space:pre-wrap;overflow:auto;";
+          (document.body || document.documentElement).appendChild(el);
+        }
+        el.textContent += "\n" + msg;
+      }
+      window.addEventListener("error", function (e) {
+        showFatal((e.error && e.error.stack) || e.message || String(e));
+      });
+      window.addEventListener("unhandledrejection", function (e) {
+        var r = e.reason;
+        showFatal("Unhandled promise rejection:\n" + ((r && (r.stack || r.message)) || r));
+      });
     </script>
   </head>
   <body>
