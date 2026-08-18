@@ -9,6 +9,16 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:4000',
         changeOrigin: true,
+        configure: (proxy) => {
+          // Ensure Server-Sent Events (live sync) are streamed, not buffered.
+          proxy.on('proxyRes', (proxyRes) => {
+            const type = proxyRes.headers['content-type'] || '';
+            if (type.includes('text/event-stream')) {
+              proxyRes.headers['cache-control'] = 'no-cache, no-transform';
+              proxyRes.headers['connection'] = 'keep-alive';
+            }
+          });
+        },
       },
     },
   },

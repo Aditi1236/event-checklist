@@ -8,6 +8,20 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST_DIR = path.join(__dirname, "..", "dist");
 const PORT = process.env.PORT || 4000;
 
+/* ── Real-time clients (Server-Sent Events) ──── */
+const sseClients = new Set();
+
+function broadcastChange() {
+  const payload = `data: ${JSON.stringify({ type: "update", ts: Date.now() })}\n\n`;
+  for (const res of sseClients) {
+    try {
+      res.write(payload);
+    } catch {
+      sseClients.delete(res);
+    }
+  }
+}
+
 function genId(prefix) {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -92,6 +106,7 @@ async function handleApi(req, res, url) {
         createdAt: body.createdAt ?? Date.now(),
       };
       await events.insertOne(event);
+      broadcastChange();
       return send(res, 201, event);
     }
   }
@@ -117,6 +132,7 @@ async function handleApi(req, res, url) {
           createdAt: body.createdAt ?? Date.now(),
         };
         await events.updateOne({ id: eventId }, { $push: { tasks: task } });
+        broadcastChange();
         return send(res, 201, task);
       }
     }
@@ -135,10 +151,12 @@ async function handleApi(req, res, url) {
           { id: eventId, "tasks.id": taskId },
           { $set: { "tasks.$": updated } }
         );
+        broadcastChange();
         return send(res, 200, updated);
       }
       if (req.method === "DELETE") {
         await events.updateOne({ id: eventId }, { $pull: { tasks: { id: taskId } } });
+        broadcastChange();
         return send(res, 200, { ok: true });
       }
     }
@@ -152,10 +170,12 @@ async function handleApi(req, res, url) {
         const patch = await readBody(req);
         await events.updateOne({ id: eventId }, { $set: patch });
         const updated = await events.findOne({ id: eventId });
+        broadcastChange();
         return send(res, 200, updated);
       }
       if (req.method === "DELETE") {
         await events.deleteOne({ id: eventId });
+        broadcastChange();
         return send(res, 200, { ok: true });
       }
     }
@@ -169,6 +189,32 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "OPTIONS") return send(res, 204);
   const url = new URL(req.url, `http://${req.headers.host}`);
   if (url.pathname.startsWith("/api")) {
+    // Real-time stream: push a notification to every connected client
+    // whenever any event/task is created, updated, or deleted.
+    if (url.pathname === "/api/events/stream") {
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+        "Access-Control-Allow-Origin": "*",
+      });
+      res.write("retry: 3000\n\n");
+      res.write(": connected\n\n");
+      sseClients.add(res);
+      const ping = setInterval(() => {
+        try {
+          res.write(": ping\n\n");
+        } catch {
+          clearInterval(ping);
+          sseClients.delete(res);
+        }
+      }, 25000);
+      req.on("close", () => {
+        clearInterval(ping);
+        sseClients.delete(res);
+      });
+      return;
+    }
     try {
       return await handleApi(req, res, url);
     } catch (err) {
@@ -184,6 +230,7 @@ connectDB()
     server.listen(PORT, () => {
       console.log(`✅ Backend running at http://localhost:${PORT}`);
       console.log(`   API: http://localhost:${PORT}/api/events`);
+      console.log(`   Live sync: http://localhost:${PORT}/api/events/stream`);
     });
   })
   .catch((err) => {
@@ -192,3 +239,18 @@ connectDB()
     console.error("\nMake sure MongoDB is running and MONGODB_URI is set (see .env).");
     process.exit(1);
   });
+
+// Close open SSE connections on shutdown
+function shutdown() {
+  for (const res of sseClients) {
+    try {
+      res.end();
+    } catch {
+      /* ignore */
+    }
+  }
+  sseClients.clear();
+  process.exit(0);
+}
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);

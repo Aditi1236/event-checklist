@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { genId } from "../utils/helpers";
 import apiClient from "../utils/api";
 
@@ -8,29 +8,60 @@ export function EventsProvider({ children }) {
   const [events, setEvents] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    let active = true;
-    apiClient
-      .listEvents()
-      .then((data) => {
-        if (active) {
-          setEvents(Array.isArray(data) ? data : []);
-          setLoaded(true);
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to load events from backend", err);
-        if (active) setLoaded(true);
-      });
-    return () => {
-      active = false;
-    };
+  // Timestamp of the last local write. Used to avoid a background refresh
+  // clobbering a change the current user just made but that hasn't reached
+  // the server yet.
+  const lastWriteRef = useRef(0);
+
+  // Pull the latest events from the server. `force` ignores the write guard
+  // (used for the initial load and explicit refreshes).
+  const refresh = useCallback(async (force = false) => {
+    if (!force && Date.now() - lastWriteRef.current < 1500) return;
+    try {
+      const data = await apiClient.listEvents();
+      setEvents(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to sync events from backend", err);
+    }
   }, []);
+
+  // Initial load
+  useEffect(() => {
+    refresh(true).finally(() => setLoaded(true));
+  }, [refresh]);
+
+  // Real-time sync: the server pushes a notification whenever any user changes
+  // data, so every connected client re-fetches and stays in sync.
+  useEffect(() => {
+    let es;
+    try {
+      es = new EventSource("/api/events/stream");
+      es.onmessage = () => refresh();
+      es.onerror = () => {
+        /* EventSource auto-reconnects; the polling fallback also covers this */
+      };
+    } catch {
+      /* EventSource unavailable — polling fallback handles it */
+    }
+    return () => es && es.close();
+  }, [refresh]);
+
+  // Polling fallback (every 5s) so changes are visible even if SSE is blocked.
+  useEffect(() => {
+    const id = setInterval(() => refresh(), 5000);
+    return () => clearInterval(id);
+  }, [refresh]);
+
+  const markWrite = () => {
+    lastWriteRef.current = Date.now();
+  };
 
   const api = useMemo(
     () => ({
       events,
       loaded,
+
+      refresh,
 
       getEvent(eventId) {
         return events.find((e) => e.id === eventId) ?? null;
@@ -49,17 +80,20 @@ export function EventsProvider({ children }) {
           tasks: [],
           createdAt: Date.now(),
         };
+        markWrite();
         setEvents((prev) => [newEvent, ...prev]);
         apiClientSafe("createEvent", newEvent);
         return newEvent.id;
       },
 
       updateEvent(eventId, patch) {
+        markWrite();
         setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, ...patch } : e)));
         apiClientSafe("updateEvent", eventId, patch);
       },
 
       deleteEvent(eventId) {
+        markWrite();
         setEvents((prev) => prev.filter((e) => e.id !== eventId));
         apiClientSafe("deleteEvent", eventId);
       },
@@ -75,6 +109,7 @@ export function EventsProvider({ children }) {
           completed: false,
           createdAt: Date.now(),
         };
+        markWrite();
         setEvents((prev) =>
           prev.map((e) =>
             e.id === eventId ? { ...e, tasks: [...e.tasks, newTask] } : e
@@ -85,6 +120,7 @@ export function EventsProvider({ children }) {
       },
 
       updateTask(eventId, taskId, patch) {
+        markWrite();
         setEvents((prev) =>
           prev.map((e) =>
             e.id === eventId
@@ -96,6 +132,7 @@ export function EventsProvider({ children }) {
       },
 
       toggleTask(eventId, taskId) {
+        markWrite();
         setEvents((prev) =>
           prev.map((e) =>
             e.id === eventId
@@ -109,6 +146,7 @@ export function EventsProvider({ children }) {
       },
 
       deleteTask(eventId, taskId) {
+        markWrite();
         setEvents((prev) =>
           prev.map((e) =>
             e.id === eventId ? { ...e, tasks: e.tasks.filter((t) => t.id !== taskId) } : e
@@ -118,7 +156,7 @@ export function EventsProvider({ children }) {
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [events]
+    [events, refresh]
   );
 
   return <EventsContext.Provider value={api}>{children}</EventsContext.Provider>;

@@ -7,7 +7,7 @@ export default function Header() {
   const checklistPath = events.length > 0 ? `/event/${events[0].id}` : "/";
 
   const navClass = ({ isActive }) =>
-    `relative rounded-full px-4 py-1.5 text-sm font-semibold transition-all duration-200 ${
+    `relative rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-200 sm:px-4 sm:text-sm ${
       isActive
         ? "text-white bg-white/10 border border-white/15"
         : "text-ink-soft hover:text-ink hover:bg-white/6"
@@ -44,7 +44,7 @@ export default function Header() {
             </span>
           </Link>
 
-          <nav className="hidden sm:flex items-center gap-1">
+          <nav className="flex items-center gap-1">
             <NavLink to="/" end className={navClass}>
               Events
             </NavLink>
@@ -56,18 +56,18 @@ export default function Header() {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          <span className="hidden h-14 w-auto items-center rounded-lg bg-white p-1.5 sm:flex">
+          <span className="flex h-10 w-auto items-center rounded-lg bg-white p-1 sm:h-14 sm:p-1.5">
             <img
               src="/nexasoul.png"
               alt="NexaSoul"
-              className="h-12 w-auto"
+              className="h-8 w-auto sm:h-12"
             />
           </span>
-          <span className="hidden h-14 w-auto items-center rounded-lg bg-white p-1.5 sm:flex">
+          <span className="flex h-10 w-auto items-center rounded-lg bg-white p-1 sm:h-14 sm:p-1.5">
             <img
               src="/cu-logo.png"
               alt="Chandigarh University"
-              className="h-12 w-auto"
+              className="h-8 w-auto sm:h-12"
             />
           </span>
         </div>
