@@ -225,20 +225,13 @@ const server = http.createServer(async (req, res) => {
   return serveStatic(req, res);
 });
 
-connectDB()
-  .then(() => {
-    server.listen(PORT, () => {
-      console.log(`✅ Backend running at http://localhost:${PORT}`);
-      console.log(`   API: http://localhost:${PORT}/api/events`);
-      console.log(`   Live sync: http://localhost:${PORT}/api/events/stream`);
-    });
-  })
-  .catch((err) => {
-    console.error("❌ Failed to connect to MongoDB:");
-    console.error(err.message);
-    console.error("\nMake sure MongoDB is running and MONGODB_URI is set (see .env).");
-    process.exit(1);
+connectDB().then(() => {
+  server.listen(PORT, () => {
+    console.log(`✅ Backend running at http://localhost:${PORT}`);
+    console.log(`   API: http://localhost:${PORT}/api/events`);
+    console.log(`   Live sync: http://localhost:${PORT}/api/events/stream`);
   });
+});
 
 // Close open SSE connections on shutdown
 function shutdown() {

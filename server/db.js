@@ -28,17 +28,126 @@ const DB_NAME = process.env.DB_NAME || "eventchecklist";
 const client = new MongoClient(URI, { serverSelectionTimeoutMS: 5000 });
 
 let db;
+let usingFileStore = false;
+let fileCollection = null;
+
+/* ── Persistent JSON-file fallback store ───────────
+   Used when MongoDB is unreachable so the app still
+   stores and shares data across all users/devices. */
+const JSON_PATH = path.join(__dirname, "data", "events.json");
+
+function loadFile() {
+  try {
+    const raw = fs.readFileSync(JSON_PATH, "utf-8");
+    const data = JSON.parse(raw);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveFile(arr) {
+  fs.mkdirSync(path.dirname(JSON_PATH), { recursive: true });
+  fs.writeFileSync(JSON_PATH, JSON.stringify(arr, null, 2));
+}
+
+function matches(doc, filter = {}) {
+  return Object.entries(filter).every(([k, v]) => doc[k] === v);
+}
+
+function createFileCollection() {
+  let mem = loadFile();
+  const persist = () => saveFile(mem);
+
+  return {
+    async find(filter = {}) {
+      const arr = mem.filter((e) => matches(e, filter));
+      return {
+        sort(spec = {}) {
+          const [key, dir = -1] = Object.entries(spec)[0] || ["createdAt", -1];
+          const sorted = [...arr].sort((a, b) => {
+            if (a[key] < b[key]) return dir === 1 ? -1 : 1;
+            if (a[key] > b[key]) return dir === 1 ? 1 : -1;
+            return 0;
+          });
+          return { toArray: async () => sorted };
+        },
+        toArray: async () => [...arr],
+      };
+    },
+    async findOne(filter = {}) {
+      return mem.find((e) => matches(e, filter)) || null;
+    },
+    async insertOne(doc) {
+      mem.push(doc);
+      persist();
+      return { insertedId: doc.id };
+    },
+    async insertMany(docs = []) {
+      mem.push(...docs);
+      persist();
+      return { insertedCount: docs.length };
+    },
+    async updateOne(filter, update = {}) {
+      const idx = mem.findIndex((e) => e.id === filter.id);
+      if (idx === -1) return { matchedCount: 0 };
+      const event = mem[idx];
+
+      if (update.$push?.tasks) {
+        event.tasks = [...(event.tasks || []), update.$push.tasks];
+      }
+      if (update.$pull?.tasks) {
+        const taskId = update.$pull.tasks.id;
+        event.tasks = (event.tasks || []).filter((t) => t.id !== taskId);
+      }
+      if (update.$set) {
+        if (update.$set["tasks.$"]) {
+          const taskId = filter["tasks.id"];
+          const task = (event.tasks || []).find((t) => t.id === taskId);
+          if (task) Object.assign(task, update.$set["tasks.$"]);
+        } else {
+          Object.assign(event, update.$set);
+        }
+      }
+      mem[idx] = event;
+      persist();
+      return { matchedCount: 1 };
+    },
+    async deleteOne(filter = {}) {
+      const before = mem.length;
+      mem = mem.filter((e) => !matches(e, filter));
+      persist();
+      return { deletedCount: before - mem.length };
+    },
+    async countDocuments(filter = {}) {
+      return mem.filter((e) => matches(e, filter)).length;
+    },
+    async createIndex() {
+      return null;
+    },
+  };
+}
 
 export async function connectDB() {
-  await client.connect();
-  db = client.db(DB_NAME);
-  await db.collection("events").createIndex({ id: 1 }, { unique: true });
-  await migrateFromJson();
-  console.log(`✅ Connected to MongoDB — db: "${DB_NAME}"`);
-  return db;
+  try {
+    await client.connect();
+    db = client.db(DB_NAME);
+    await db.collection("events").createIndex({ id: 1 }, { unique: true });
+    await migrateFromJson();
+    console.log(`✅ Connected to MongoDB — db: "${DB_NAME}"`);
+    return db;
+  } catch (err) {
+    usingFileStore = true;
+    fileCollection = createFileCollection();
+    console.warn("⚠️  MongoDB unavailable — using local JSON file store instead.");
+    console.warn("    Reason:", err.message);
+    console.warn(`    Data is persisted to: ${JSON_PATH}`);
+    return null;
+  }
 }
 
 export function getEventsCollection() {
+  if (usingFileStore) return fileCollection;
   if (!db) throw new Error("Database not connected");
   return db.collection("events");
 }

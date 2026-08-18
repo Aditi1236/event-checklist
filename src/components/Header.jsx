@@ -23,9 +23,9 @@ export default function Header() {
         WebkitBackdropFilter: "blur(24px)",
       }}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:px-6 sm:flex-nowrap">
         {/* Logo */}
-        <div className="flex items-center gap-6">
+        <div className="flex min-w-0 items-center gap-4 sm:gap-6">
           <Link to="/" className="flex items-center gap-3 group">
             <span
               className="flex h-10 w-10 items-center justify-center rounded-xl text-white transition-all duration-300 group-hover:scale-105"
@@ -55,19 +55,19 @@ export default function Header() {
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-3">
-          <span className="flex h-10 w-auto items-center rounded-lg bg-white p-1 sm:h-14 sm:p-1.5">
+        <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
+          <span className="flex h-11 w-auto items-center rounded-lg border border-slate-200 bg-white p-1.5 shadow-sm sm:h-14 sm:p-2">
             <img
               src="/nexasoul.png"
               alt="NexaSoul"
-              className="h-8 w-auto sm:h-12"
+              className="h-9 w-auto max-w-[110px] object-contain sm:h-12 sm:max-w-[140px]"
             />
           </span>
-          <span className="flex h-10 w-auto items-center rounded-lg bg-white p-1 sm:h-14 sm:p-1.5">
+          <span className="flex h-11 w-auto items-center rounded-lg border border-slate-200 bg-white p-1.5 shadow-sm sm:h-14 sm:p-2">
             <img
               src="/cu-logo.png"
               alt="Chandigarh University"
-              className="h-8 w-auto sm:h-12"
+              className="h-9 w-auto max-w-[110px] object-contain sm:h-12 sm:max-w-[140px]"
             />
           </span>
         </div>
