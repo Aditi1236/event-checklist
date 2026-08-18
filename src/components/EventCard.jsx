@@ -54,8 +54,8 @@ export default function EventCard({ event, onEdit, onDelete }) {
         <div className="flex items-start justify-between gap-3">
           <Link to={`/event/${event.id}`} className="min-w-0 flex-1">
             <h3
-              className="text-3xl font-black leading-snug line-clamp-2 transition-colors duration-200 group-hover:text-rose-800"
-              style={{ fontFamily: "'Sora', sans-serif", color: "#0f172a" }}
+              className="text-2xl font-black leading-snug line-clamp-2 transition-colors duration-200 group-hover:text-rose-800 sm:text-3xl"
+              style={{ fontFamily: "'Sora', sans-serif", color: "#000000" }}
             >
               {event.name}
             </h3>
@@ -69,7 +69,7 @@ export default function EventCard({ event, onEdit, onDelete }) {
             <CalendarDays size={14} style={{ color: "#3b3853" }} />
             <span
               className="text-base font-bold"
-              style={{ color: "#0f172a", fontFamily: "'JetBrains Mono', monospace" }}
+              style={{ color: "#111844", fontFamily: "'JetBrains Mono', monospace" }}
             >
               {formatDateShort(event.date)}
             </span>
@@ -90,14 +90,14 @@ export default function EventCard({ event, onEdit, onDelete }) {
           {event.location && (
             <div className="flex items-center gap-1.5">
               <MapPin size={14} style={{ color: "#3b3853" }} />
-              <span className="text-base font-bold truncate" style={{ color: "#0f172a" }}>{event.location}</span>
+              <span className="text-base font-bold truncate" style={{ color: "#450C3F" }}>{event.location}</span>
             </div>
           )}
         </div>
 
         {/* Description */}
         {event.description && (
-          <p className="mt-3 text-base font-medium line-clamp-2 leading-relaxed" style={{ color: "#3b3853" }}>
+          <p className="mt-3 text-base font-bold line-clamp-2 leading-relaxed" style={{ color: "#0D47A1" }}>
             {event.description}
           </p>
         )}

@@ -166,7 +166,7 @@ export default function EventDetail() {
                 </div>
 
                 {event.description && (
-                  <p className="text-sm max-w-xl leading-relaxed" style={{ color: "#e2e8f0" }}>
+                  <p className="text-base font-bold max-w-xl leading-relaxed" style={{ color: "#0D47A1" }}>
                     {event.description}
                   </p>
                 )}

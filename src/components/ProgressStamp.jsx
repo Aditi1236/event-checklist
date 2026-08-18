@@ -57,7 +57,7 @@ export default function ProgressStamp({ pct, size = "md", complete }) {
       <div
         className={`absolute inset-0 flex items-center justify-center font-extrabold ${font}`}
         style={{
-          color: isComplete ? "#0f9d6b" : "#0f172a",
+          color: isComplete ? "#0f9d6b" : "#063B00",
           fontFamily: "'JetBrains Mono', monospace",
           textShadow: isComplete ? "0 0 8px rgba(16,185,129,0.4)" : "none",
         }}

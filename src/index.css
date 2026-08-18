@@ -127,12 +127,19 @@
 
   /* Search Bar Input */
   .search-input {
-    background-color: #14161f;
-    border: 1px solid #262938;
+    @apply w-full rounded-full py-3 text-sm font-medium outline-none transition-all duration-200;
     color: #f9fafb;
+    background-color: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
   }
   .search-input::placeholder {
-    color: #6b7280;
+    color: #94a3b8;
+  }
+  .search-input:focus {
+    border-color: rgba(225,29,106,0.6);
+    box-shadow: 0 0 0 3px rgba(225,29,106,0.14), 0 0 20px rgba(225,29,106,0.08);
+    background-color: rgba(255,255,255,0.08);
   }
 
   /* Select / textarea inherit */

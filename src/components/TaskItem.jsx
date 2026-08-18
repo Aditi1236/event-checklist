@@ -61,7 +61,7 @@ export default function TaskItem({ task, onToggle, onEdit, onDelete }) {  return
           </p>
         </div>
         {task.description && (
-          <p className="mt-1 text-base font-semibold break-words leading-relaxed" style={{ color: "rgba(29,23,51,0.6)" }}>
+          <p className="mt-1 text-base font-bold break-words leading-relaxed" style={{ color: "#0D47A1" }}>
             {task.description}
           </p>
         )}

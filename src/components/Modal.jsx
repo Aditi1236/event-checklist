@@ -24,7 +24,7 @@ export default function Modal({ title, onClose, children, maxWidth = "max-w-lg" 
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="flex min-h-full items-center justify-center p-4">
+      <div className="flex justify-center p-4">
         <div
           className={`my-8 w-full ${maxWidth} animate-popIn rounded-2xl`}
           role="dialog"
@@ -47,7 +47,7 @@ export default function Modal({ title, onClose, children, maxWidth = "max-w-lg" 
 
         {/* Header */}
         <div
-          className="sticky top-0 flex items-center justify-between rounded-t-2xl px-6 py-4"
+          className="flex items-center justify-between rounded-t-2xl px-6 py-4"
           style={{
             background: "#0b0c16",
             borderBottom: "1px solid rgba(255,255,255,0.08)",

@@ -87,7 +87,7 @@ export default function Dashboard() {
               ✦ Dashboard
             </span>
             <h1
-              className="text-5xl font-extrabold leading-tight text-white sm:text-6xl"
+              className="text-4xl font-extrabold leading-tight text-white sm:text-6xl"
               style={{ fontFamily: "'Sora', sans-serif" }}
             >
               Every event,{" "}
@@ -116,6 +116,7 @@ export default function Dashboard() {
             color="#e11d6a"
             glow="rgba(225,29,106,0.25)"
             gradient="linear-gradient(180deg, #a9caff 0%, #b8cbff 16.667%, #d3cbff 33.333%, #f0c8f9 50%, #ffc5f1 66.667%, #ffc0ec 83.333%, #ffbaec 100%)"
+            ink="#000000"
           />
           <StatCard
             label="Upcoming"
@@ -124,6 +125,7 @@ export default function Dashboard() {
             color="#a855f7"
             glow="rgba(168,85,247,0.25)"
             gradient="linear-gradient(180deg, #a9caff 0%, #b8cbff 16.667%, #d3cbff 33.333%, #f0c8f9 50%, #ffc5f1 66.667%, #ffc0ec 83.333%, #ffbaec 100%)"
+            ink="#111844"
           />
           <StatCard
             label="Total Tasks"
@@ -132,6 +134,7 @@ export default function Dashboard() {
             color="#64748b"
             glow="rgba(100,116,139,0.2)"
             gradient="linear-gradient(180deg, #a9caff 0%, #b8cbff 16.667%, #d3cbff 33.333%, #f0c8f9 50%, #ffc5f1 66.667%, #ffc0ec 83.333%, #ffbaec 100%)"
+            ink="#450C3F"
           />
           <StatCard
             label="Completed"
@@ -142,6 +145,7 @@ export default function Dashboard() {
             gradient="linear-gradient(180deg, #a9caff 0%, #b8cbff 16.667%, #d3cbff 33.333%, #f0c8f9 50%, #ffc5f1 66.667%, #ffc0ec 83.333%, #ffbaec 100%)"
             accent
             pct={overallPct}
+            ink="#063B00"
           />
         </div>
 
@@ -265,19 +269,38 @@ export default function Dashboard() {
             >
               All Events
             </h2>
-            <div className="relative max-w-sm sm:max-w-md w-full">
+            <div className="relative w-full max-w-sm sm:max-w-md">
               <Search
-                size={14}
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
-                style={{ color: "#64748b" }}
+                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
+                style={{ color: "#94a3b8" }}
               />
               <input
                 type="text"
-                placeholder="Search by name or location…"
-                className="search-input pl-9"
+                placeholder="Search events by name or location…"
+                className="search-input pl-11 pr-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  aria-label="Clear search"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full transition-all duration-150"
+                  style={{ color: "#94a3b8", background: "rgba(255,255,255,0.08)" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(225,29,106,0.15)";
+                    e.currentTarget.style.color = "#fb7aaa";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                    e.currentTarget.style.color = "#94a3b8";
+                  }}
+                >
+                  ✕
+                </button>
+              )}
             </div>
           </div>
 
@@ -347,7 +370,7 @@ export default function Dashboard() {
 }
 
 /* ── StatCard ─────────────────────────────────────── */
-function StatCard({ label, value, icon, color, glow, accent, pct, gradient }) {
+function StatCard({ label, value, icon, color, glow, accent, pct, gradient, ink }) {
   return (
     <div
       className="rounded-2xl p-6 relative overflow-hidden"
@@ -372,7 +395,7 @@ function StatCard({ label, value, icon, color, glow, accent, pct, gradient }) {
         <div
           className="flex items-center gap-2 mb-3 text-sm uppercase tracking-widest font-semibold"
           style={{
-            color: gradient ? "rgba(20,18,40,0.75)" : color || "#64748b",
+            color: gradient ? (ink || "rgba(20,18,40,0.75)") : color || "#64748b",
             fontFamily: "'JetBrains Mono', monospace",
           }}
         >
@@ -380,10 +403,10 @@ function StatCard({ label, value, icon, color, glow, accent, pct, gradient }) {
           {label}
         </div>
         <p
-          className="text-4xl font-bold leading-none"
+          className="text-3xl font-bold leading-none sm:text-4xl"
           style={{
             fontFamily: "'Sora', sans-serif",
-            color: gradient ? "#1d1733" : accent ? color : "#f1f5f9",
+            color: gradient ? (ink || "#1d1733") : accent ? color : "#f1f5f9",
             textShadow: gradient ? "none" : accent ? `0 0 20px ${glow}` : "none",
           }}
         >
@@ -414,7 +437,7 @@ function EmptyState({ onCreate }) {
   return (
     <div
       className="flex flex-col items-center gap-5 border border-dashed rounded-2xl px-6 py-20 text-center"
-      style={{ borderColor: "rgba(255,255,255,0.18)", background: "#000000" }}
+      style={{ borderColor: "rgba(255,255,255,0.35)", background: "#3A86FF" }}
     >
       <div
         className="flex h-16 w-16 items-center justify-center rounded-2xl"
