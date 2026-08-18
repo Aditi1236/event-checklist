@@ -2,31 +2,17 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { connectDB, getEventsCollection } from "./db.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_FILE = path.join(__dirname, "data", "events.json");
 const DIST_DIR = path.join(__dirname, "..", "dist");
 const PORT = process.env.PORT || 4000;
-
-/* ── JSON file store ─────────────────────────────── */
-function readData() {
-  try {
-    return JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
-  } catch {
-    return [];
-  }
-}
-
-function writeData(data) {
-  fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-}
 
 function genId(prefix) {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-/* ── Helpers ─────────────────────────────────────── */
+/* ── HTTP helpers ──────────────────────────────── */
 function send(res, status, body) {
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -80,14 +66,17 @@ function serveStatic(req, res) {
   res.end(fs.readFileSync(filePath));
 }
 
-/* ── API ─────────────────────────────────────────── */
+/* ── API (MongoDB-backed) ──────────────────────── */
 async function handleApi(req, res, url) {
   const parts = url.pathname.split("/").filter(Boolean); // ["api", "events", ":id", ...]
-  const events = readData();
+  const events = getEventsCollection();
 
   // /api/events
   if (parts.length === 2 && parts[1] === "events") {
-    if (req.method === "GET") return send(res, 200, events);
+    if (req.method === "GET") {
+      const all = await events.find({}).sort({ createdAt: -1 }).toArray();
+      return send(res, 200, all);
+    }
     if (req.method === "POST") {
       const body = await readBody(req);
       const event = {
@@ -102,8 +91,7 @@ async function handleApi(req, res, url) {
         tasks: Array.isArray(body.tasks) ? body.tasks : [],
         createdAt: body.createdAt ?? Date.now(),
       };
-      events.push(event);
-      writeData(events);
+      await events.insertOne(event);
       return send(res, 201, event);
     }
   }
@@ -111,11 +99,11 @@ async function handleApi(req, res, url) {
   // /api/events/:id  and  /api/events/:id/tasks...
   if (parts.length >= 3 && parts[1] === "events") {
     const eventId = parts[2];
-    const event = events.find((e) => e.id === eventId);
-    if (!event) return send(res, 404, { error: "Event not found" });
 
     // /api/events/:id/tasks
     if (parts.length === 4 && parts[3] === "tasks") {
+      const event = await events.findOne({ id: eventId });
+      if (!event) return send(res, 404, { error: "Event not found" });
       if (req.method === "POST") {
         const body = await readBody(req);
         const task = {
@@ -128,8 +116,7 @@ async function handleApi(req, res, url) {
           completed: Boolean(body.completed),
           createdAt: body.createdAt ?? Date.now(),
         };
-        event.tasks.push(task);
-        writeData(events);
+        await events.updateOne({ id: eventId }, { $push: { tasks: task } });
         return send(res, 201, task);
       }
     }
@@ -137,32 +124,38 @@ async function handleApi(req, res, url) {
     // /api/events/:id/tasks/:taskId
     if (parts.length === 5 && parts[3] === "tasks") {
       const taskId = parts[4];
-      const task = event.tasks.find((t) => t.id === taskId);
+      const event = await events.findOne({ id: eventId });
+      if (!event) return send(res, 404, { error: "Event not found" });
+      const task = event.tasks?.find((t) => t.id === taskId);
       if (!task) return send(res, 404, { error: "Task not found" });
       if (req.method === "PUT") {
         const patch = await readBody(req);
-        Object.assign(task, patch);
-        writeData(events);
-        return send(res, 200, task);
+        const updated = { ...task, ...patch };
+        await events.updateOne(
+          { id: eventId, "tasks.id": taskId },
+          { $set: { "tasks.$": updated } }
+        );
+        return send(res, 200, updated);
       }
       if (req.method === "DELETE") {
-        event.tasks = event.tasks.filter((t) => t.id !== taskId);
-        writeData(events);
+        await events.updateOne({ id: eventId }, { $pull: { tasks: { id: taskId } } });
         return send(res, 200, { ok: true });
       }
     }
 
     // /api/events/:id
     if (parts.length === 3) {
+      const event = await events.findOne({ id: eventId });
+      if (!event) return send(res, 404, { error: "Event not found" });
       if (req.method === "GET") return send(res, 200, event);
       if (req.method === "PUT") {
         const patch = await readBody(req);
-        Object.assign(event, patch);
-        writeData(events);
-        return send(res, 200, event);
+        await events.updateOne({ id: eventId }, { $set: patch });
+        const updated = await events.findOne({ id: eventId });
+        return send(res, 200, updated);
       }
       if (req.method === "DELETE") {
-        writeData(events.filter((e) => e.id !== eventId));
+        await events.deleteOne({ id: eventId });
         return send(res, 200, { ok: true });
       }
     }
@@ -186,7 +179,16 @@ const server = http.createServer(async (req, res) => {
   return serveStatic(req, res);
 });
 
-server.listen(PORT, () => {
-  console.log(`✅ Backend running at http://localhost:${PORT}`);
-  console.log(`   API: http://localhost:${PORT}/api/events`);
-});
+connectDB()
+  .then(() => {
+    server.listen(PORT, () => {
+      console.log(`✅ Backend running at http://localhost:${PORT}`);
+      console.log(`   API: http://localhost:${PORT}/api/events`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ Failed to connect to MongoDB:");
+    console.error(err.message);
+    console.error("\nMake sure MongoDB is running and MONGODB_URI is set (see .env).");
+    process.exit(1);
+  });

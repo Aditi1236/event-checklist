@@ -45,8 +45,8 @@ export default function CategorySection({
     <section
       className="relative p-6 rounded-2xl"
       style={{
-        background: tasks.length === 0 ? "#000000" : "transparent",
-        border: tasks.length === 0 ? "1px solid rgba(255,255,255,0.12)" : "none",
+        background: tasks.length === 0 ? "#FF9E20" : "transparent",
+        border: tasks.length === 0 ? "1px solid rgba(255,255,255,0.3)" : "none",
       }}
     >
       {/* Glowing left rail */}
@@ -101,13 +101,14 @@ export default function CategorySection({
 
       {/* Tasks */}
       {tasks.length === 0 ? (
-        <div
-          className="flex items-center gap-2 rounded-xl border border-dashed px-4 py-5 text-lg font-bold"
-          style={{
-            borderColor: "rgba(255,255,255,0.18)",
-            color: "#e2e8f0",
-          }}
-        >
+          <div
+            className="flex items-center gap-2 rounded-xl border px-4 py-5 text-lg font-bold"
+            style={{
+              borderColor: "rgba(255,255,255,0.45)",
+              background: "transparent",
+              color: "#ffffff",
+            }}
+          >
           <ClipboardList size={18} />
           No tasks in this category yet.
         </div>

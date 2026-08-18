@@ -21,5 +21,28 @@
       }
     ],
     "createdAt": 1786950087308
+  },
+  {
+    "id": "evt_msy43sqx_lwsf2n",
+    "name": "udhav",
+    "date": "2026-08-18",
+    "description": "aa",
+    "location": "a1....",
+    "budget": 100,
+    "registrations": 100,
+    "teamMembers": "aditieee",
+    "tasks": [
+      {
+        "id": "task_msy4qkhk_ivqomb",
+        "title": "book a hall",
+        "description": ",,",
+        "category": "before",
+        "dueDate": "2026-08-19",
+        "priority": "medium",
+        "completed": false,
+        "createdAt": 1787025323576
+      }
+    ],
+    "createdAt": 1787024261193
   }
 ]

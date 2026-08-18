@@ -171,10 +171,10 @@ export default function Dashboard() {
             <div
               className="rounded-2xl overflow-hidden"
               style={{
-                background: "#000000",
-                border: "1px solid rgba(255,255,255,0.09)",
+                background: "#30AFFF",
+                border: "1px solid rgba(255,255,255,0.2)",
                 backdropFilter: "blur(20px)",
-                boxShadow: "0 4px 40px -8px rgba(225,29,106,0.15), 0 1px 3px rgba(0,0,0,0.5)",
+                boxShadow: "0 4px 40px -8px rgba(48,175,255,0.4), 0 1px 3px rgba(0,0,0,0.2)",
               }}
             >
               {/* Rose accent top line */}

@@ -109,11 +109,11 @@ export default function EventDetail() {
         <div
           className="rounded-2xl overflow-hidden mb-8 animate-fadeIn"
           style={{
-            background: "linear-gradient(180deg, #a9caff 0%, #b8cbff 16.667%, #d3cbff 33.333%, #f0c8f9 50%, #ffc5f1 66.667%, #ffc0ec 83.333%, #ffbaec 100%)",
-            border: "1px solid rgba(29,23,51,0.12)",
+            background: "#30AFFF",
+            border: "1px solid rgba(255,255,255,0.2)",
             backdropFilter: "blur(24px)",
             minHeight: 300,
-            boxShadow: "0 4px 40px -8px rgba(29,23,51,0.25), 0 1px 3px rgba(29,23,51,0.2)",
+            boxShadow: "0 4px 40px -8px rgba(48,175,255,0.4), 0 1px 3px rgba(0,0,0,0.2)",
           }}
         >
           {/* Gradient top accent */}
@@ -130,7 +130,7 @@ export default function EventDetail() {
                 {/* Event name */}
                 <h1
                   className="text-5xl font-extrabold sm:text-6xl leading-tight mb-4"
-                  style={{ fontFamily: "'Sora', sans-serif", color: "#0f172a" }}
+                  style={{ fontFamily: "'Sora', sans-serif", color: "#ffffff" }}
                 >
                   {event.name}
                 </h1>
@@ -140,9 +140,9 @@ export default function EventDetail() {
                   <span
                     className="inline-flex items-center gap-1.5 text-base font-bold px-4 py-2 rounded-full"
                     style={{
-                      background: "rgba(245,158,11,0.18)",
-                      border: "1px solid rgba(245,158,11,0.3)",
-                      color: "#b45309",
+                      background: "rgba(255,255,255,0.22)",
+                      border: "1px solid rgba(255,255,255,0.4)",
+                      color: "#ffffff",
                       fontFamily: "'JetBrains Mono', monospace",
                     }}
                   >
@@ -153,9 +153,9 @@ export default function EventDetail() {
                     <span
                       className="inline-flex items-center gap-1.5 text-base font-bold px-4 py-2 rounded-full"
                       style={{
-                        background: "rgba(100,116,139,0.18)",
-                        border: "1px solid rgba(100,116,139,0.3)",
-                        color: "#4b4660",
+                        background: "rgba(255,255,255,0.22)",
+                        border: "1px solid rgba(255,255,255,0.4)",
+                        color: "#ffffff",
                         fontFamily: "'JetBrains Mono', monospace",
                       }}
                     >
@@ -166,7 +166,7 @@ export default function EventDetail() {
                 </div>
 
                 {event.description && (
-                  <p className="text-sm max-w-xl leading-relaxed" style={{ color: "#3b3853" }}>
+                  <p className="text-sm max-w-xl leading-relaxed" style={{ color: "#e2e8f0" }}>
                     {event.description}
                   </p>
                 )}
@@ -180,9 +180,9 @@ export default function EventDetail() {
                   className="!px-4 !py-2 text-sm font-semibold rounded-full transition-all duration-200"
                   onClick={() => setShowEditEvent(true)}
                   style={{
-                    color: "#1d1733",
-                    background: "rgba(29,23,51,0.08)",
-                    border: "1px solid rgba(29,23,51,0.18)",
+                    color: "#ffffff",
+                    background: "rgba(255,255,255,0.18)",
+                    border: "1px solid rgba(255,255,255,0.3)",
                   }}
                 >
                   <Pencil size={14} />
@@ -192,9 +192,9 @@ export default function EventDetail() {
                   className="!px-4 !py-2 text-sm font-semibold rounded-full transition-all duration-200"
                   onClick={() => setDeletingEvent(true)}
                   style={{
-                    color: "#9d174d",
-                    background: "rgba(225,29,106,0.14)",
-                    border: "1px solid rgba(225,29,106,0.32)",
+                    color: "#ffd6e7",
+                    background: "rgba(225,29,106,0.3)",
+                    border: "1px solid rgba(225,29,106,0.5)",
                   }}
                 >
                   <Trash2 size={12} />
