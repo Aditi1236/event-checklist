@@ -1,4 +1,4 @@
 ✅ Connected to MongoDB — db: "eventchecklist"
-✅ Backend running at http://localhost:4559
-   API: http://localhost:4559/api/events
-   Live sync: http://localhost:4559/api/events/stream
+✅ Backend running at http://localhost:4561
+   API: http://localhost:4561/api/events
+   Live sync: http://localhost:4561/api/events/stream

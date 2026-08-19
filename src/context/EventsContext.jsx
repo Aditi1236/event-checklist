@@ -30,9 +30,13 @@ export function EventsProvider({ children }) {
     refresh(true).finally(() => setLoaded(true));
   }, [refresh]);
 
-  // Real-time sync: the server pushes a notification whenever any user changes
-  // data, so every connected client re-fetches and stays in sync.
+  // Real-time sync: on a normal Node server the backend pushes a notification
+  // (SSE) whenever any user changes data, so every client re-fetches instantly.
+  // On Vercel (serverless) SSE is unreliable, so we rely on polling there.
+  const isVercel = import.meta.env.VERCEL;
+
   useEffect(() => {
+    if (isVercel) return;
     let es;
     try {
       es = new EventSource("/api/events/stream");
@@ -44,13 +48,15 @@ export function EventsProvider({ children }) {
       /* EventSource unavailable — polling fallback handles it */
     }
     return () => es && es.close();
-  }, [refresh]);
+  }, [refresh, isVercel]);
 
-  // Polling fallback (every 5s) so changes are visible even if SSE is blocked.
+  // Polling keeps every device in sync. Snappier on Vercel (no SSE), still a
+  // backup elsewhere.
   useEffect(() => {
-    const id = setInterval(() => refresh(), 5000);
+    const interval = isVercel ? 4000 : 5000;
+    const id = setInterval(() => refresh(), interval);
     return () => clearInterval(id);
-  }, [refresh]);
+  }, [refresh, isVercel]);
 
   const markWrite = () => {
     lastWriteRef.current = Date.now();

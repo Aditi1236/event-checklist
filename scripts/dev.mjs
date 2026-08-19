@@ -29,7 +29,7 @@ function start(name, command, args, color) {
 
 const procs = [
   start("server", "node", ["server/index.js"], "35"), // yellow
-  start("vite", "npx", ["vite"], "36"), // magenta
+  start("vite", "npx", ["vite", "--host"], "36"), // magenta
 ];
 
 function shutdown() {
