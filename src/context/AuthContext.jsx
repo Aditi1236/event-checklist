@@ -40,8 +40,11 @@ export function AuthProvider({ children }) {
       throw new Error('Invalid email format');
     }
     
+    // Normalize email to lowercase and trim whitespace
+    const normalizedEmail = email.trim().toLowerCase();
+    
     try {
-      const data = await apiClient.login(email, password);
+      const data = await apiClient.login(normalizedEmail, password);
       if (!data || !data.user) {
         throw new Error('Login failed: Invalid credentials');
       }
