@@ -1,6 +1,7 @@
 import { MongoClient } from "mongodb";
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -34,11 +35,13 @@ let fileCollection = null;
 /* ── Persistent JSON-file fallback store ───────────
    Used when MongoDB is unreachable so the app still
    stores and shares data across all users/devices. */
-const JSON_PATH = path.join(__dirname, "data", "events.json");
+function getJsonPath(collectionName) {
+  return path.join(__dirname, "data", `${collectionName}.json`);
+}
 
-function loadFile() {
+function loadFile(collectionName) {
   try {
-    const raw = fs.readFileSync(JSON_PATH, "utf-8");
+    const raw = fs.readFileSync(getJsonPath(collectionName), "utf-8");
     const data = JSON.parse(raw);
     return Array.isArray(data) ? data : [];
   } catch {
@@ -46,18 +49,19 @@ function loadFile() {
   }
 }
 
-function saveFile(arr) {
-  fs.mkdirSync(path.dirname(JSON_PATH), { recursive: true });
-  fs.writeFileSync(JSON_PATH, JSON.stringify(arr, null, 2));
+function saveFile(collectionName, arr) {
+  const jsonPath = getJsonPath(collectionName);
+  fs.mkdirSync(path.dirname(jsonPath), { recursive: true });
+  fs.writeFileSync(jsonPath, JSON.stringify(arr, null, 2));
 }
 
 function matches(doc, filter = {}) {
   return Object.entries(filter).every(([k, v]) => doc[k] === v);
 }
 
-function createFileCollection() {
-  let mem = loadFile();
-  const persist = () => saveFile(mem);
+function createFileCollection(collectionName) {
+  let mem = loadFile(collectionName);
+  const persist = () => saveFile(collectionName, mem);
 
   return {
     async find(filter = {}) {
@@ -91,25 +95,25 @@ function createFileCollection() {
     async updateOne(filter, update = {}) {
       const idx = mem.findIndex((e) => e.id === filter.id);
       if (idx === -1) return { matchedCount: 0 };
-      const event = mem[idx];
+      const doc = mem[idx];
 
       if (update.$push?.tasks) {
-        event.tasks = [...(event.tasks || []), update.$push.tasks];
+        doc.tasks = [...(doc.tasks || []), update.$push.tasks];
       }
       if (update.$pull?.tasks) {
         const taskId = update.$pull.tasks.id;
-        event.tasks = (event.tasks || []).filter((t) => t.id !== taskId);
+        doc.tasks = (doc.tasks || []).filter((t) => t.id !== taskId);
       }
       if (update.$set) {
         if (update.$set["tasks.$"]) {
           const taskId = filter["tasks.id"];
-          const task = (event.tasks || []).find((t) => t.id === taskId);
+          const task = (doc.tasks || []).find((t) => t.id === taskId);
           if (task) Object.assign(task, update.$set["tasks.$"]);
         } else {
-          Object.assign(event, update.$set);
+          Object.assign(doc, update.$set);
         }
       }
-      mem[idx] = event;
+      mem[idx] = doc;
       persist();
       return { matchedCount: 1 };
     },
@@ -128,28 +132,125 @@ function createFileCollection() {
   };
 }
 
+let eventsFileCollection = null;
+let usersFileCollection = null;
+
 export async function connectDB() {
   try {
     await client.connect();
     db = client.db(DB_NAME);
     await db.collection("events").createIndex({ id: 1 }, { unique: true });
+    await db.collection("users").createIndex({ id: 1 }, { unique: true });
+    await db.collection("users").createIndex({ email: 1 }, { unique: true });
     await migrateFromJson();
     console.log(`✅ Connected to MongoDB — db: "${DB_NAME}"`);
     return db;
   } catch (err) {
     usingFileStore = true;
-    fileCollection = createFileCollection();
+    eventsFileCollection = createFileCollection("events");
+    usersFileCollection = createFileCollection("users");
     console.warn("⚠️  MongoDB unavailable — using local JSON file store instead.");
     console.warn("    Reason:", err.message);
-    console.warn(`    Data is persisted to: ${JSON_PATH}`);
     return null;
   }
 }
 
 export function getEventsCollection() {
-  if (usingFileStore) return fileCollection;
+  if (usingFileStore) return eventsFileCollection;
   if (!db) throw new Error("Database not connected");
   return db.collection("events");
+}
+
+export function getUsersCollection() {
+  if (usingFileStore) return usersFileCollection;
+  if (!db) throw new Error("Database not connected");
+  return db.collection("users");
+}
+
+/* ── Password hashing (pbkdf2, no external deps) ──── */
+export function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.pbkdf2Sync(String(password), salt, 12000, 64, "sha256").toString("hex");
+  return `${salt}:${hash}`;
+}
+
+export function verifyPassword(password, stored = "") {
+  const [salt, hash] = String(stored).split(":");
+  if (!salt || !hash) return false;
+  const calc = crypto.pbkdf2Sync(String(password), salt, 12000, 64, "sha256").toString("hex");
+  try {
+    return crypto.timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(calc, "hex"));
+  } catch {
+    return false;
+  }
+}
+
+/* ── Default accounts ─────────────────────────────────
+   Seeded on first boot (works for MongoDB AND the
+   JSON-file fallback), so both logins always work:
+     • Admin:    admin@nexasoul.com  / admin123
+     • Member:   member@nexasoul.com / member123
+   Members created later by the Admin use their own
+   credentials from the Admin Dashboard → Members tab. */
+export async function ensureDefaultAdmin() {
+  const users = getUsersCollection();
+  let admin = await users.findOne({ email: "admin@nexasoul.com" });
+  if (!admin) {
+    admin = {
+      id: `usr_admin_${Math.random().toString(36).slice(2, 8)}`,
+      name: "NexaSoul Admin",
+      email: "admin@nexasoul.com",
+      passwordHash: hashPassword("admin123"),
+      role: "admin",
+      position: "Administrator",
+      phone: "",
+      status: "active",
+      createdAt: Date.now(),
+    };
+    try {
+      await users.insertOne(admin);
+      console.log(`🔐 Seeded default admin —  admin@nexasoul.com / admin123`);
+    } catch (err) {
+      if (err.code !== 11000) throw err; // ignore duplicate-key (another boot seeded it)
+    }
+  }
+
+  // Demo executive member so the Member portal can be tried instantly.
+  const demoMember = await users.findOne({ email: "member@nexasoul.com" });
+  if (!demoMember) {
+    try {
+      await users.insertOne({
+        id: `usr_member_${Math.random().toString(36).slice(2, 8)}`,
+        name: "Demo Member",
+        email: "member@nexasoul.com",
+        passwordHash: hashPassword("member123"),
+        role: "member",
+        position: "Executive Member",
+        phone: "",
+        status: "active",
+        createdAt: Date.now(),
+      });
+      console.log(`🔐 Seeded demo member —  member@nexasoul.com / member123`);
+    } catch (err) {
+      if (err.code !== 11000) throw err;
+    }
+  }
+
+  return admin;
+}
+
+export function publicUser(user) {
+  if (!user) return null;
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    position: user.position,
+    phone: user.phone,
+    status: user.status,
+    createdAt: user.createdAt,
+  };
 }
 
 // One-time import of the old JSON store into MongoDB (only if empty)

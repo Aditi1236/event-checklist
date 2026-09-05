@@ -1,9 +1,12 @@
-import { Link, NavLink } from "react-router-dom";
-import { ClipboardCheck } from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { ClipboardCheck, ShieldCheck, LogOut, UserCheck } from "lucide-react";
 import { useEvents } from "../context/EventsContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
   const { events } = useEvents();
+  const { user, isAdmin, logout } = useAuth();
+  const navigate = useNavigate();
   const checklistPath = events.length > 0 ? `/event/${events[0].id}` : "/";
 
   const navClass = ({ isActive }) =>
@@ -12,6 +15,11 @@ export default function Header() {
         ? "text-white bg-white/10 border border-white/15"
         : "text-ink-soft hover:text-ink hover:bg-white/6"
     }`;
+
+  function handleLogout() {
+    logout();
+    navigate("/");
+  }
 
   return (
     <header
@@ -51,11 +59,80 @@ export default function Header() {
             <NavLink to={checklistPath} className={navClass}>
               Checklist
             </NavLink>
+            {user && !isAdmin && (
+              <NavLink to="/me" className={navClass}>
+                My Tasks
+              </NavLink>
+            )}
+            {isAdmin && (
+              <NavLink to="/admin" className={navClass}>
+                Admin
+              </NavLink>
+            )}
           </nav>
         </div>
 
         {/* Right side */}
         <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
+          {user ? (
+            <>
+              <div className="flex items-center gap-2 rounded-full border px-3 py-1.5" style={{ borderColor: "rgba(225,29,106,0.3)", background: "rgba(225,29,106,0.08)" }}>
+                {isAdmin ? (
+                  <ShieldCheck size={14} style={{ color: "#fb7aaa" }} />
+                ) : (
+                  <UserCheck size={14} style={{ color: "#34d399" }} />
+                )}
+                <span className="text-xs font-semibold" style={{ color: "#f1f5f9" }}>
+                  {user.name.split(" ")[0]}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                title="Log out"
+                aria-label="Log out"
+                className="flex h-9 w-9 items-center justify-center rounded-full transition-all duration-150"
+                style={{ color: "#64748b", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(225,29,106,0.15)";
+                  e.currentTarget.style.color = "#fb7aaa";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+                  e.currentTarget.style.color = "#64748b";
+                }}
+              >
+                <LogOut size={15} />
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link
+                to="/login"
+                className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-200 sm:px-6 sm:py-3 sm:text-base"
+                style={{
+                  color: "#34d399",
+                  background: "rgba(16,185,129,0.1)",
+                  border: "1px solid rgba(16,185,129,0.3)",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.2)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.1)")}
+              >
+                <UserCheck size={18} />
+                Member Login
+              </Link>
+              <Link
+                to="/admin/login"
+                className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold text-white transition-all duration-200 sm:px-6 sm:py-3 sm:text-base"
+                style={{
+                  background: "linear-gradient(135deg, #e11d6a 0%, #a855f7 100%)",
+                  boxShadow: "0 4px 14px rgba(225,29,106,0.35)",
+                }}
+              >
+                <ShieldCheck size={18} />
+                Admin Login
+              </Link>
+            </div>
+          )}
           <span className="flex h-11 w-auto items-center rounded-lg border border-slate-200 bg-white p-1.5 shadow-sm sm:h-14 sm:p-2">
             <img
               src="/nexasoul.png"

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { CalendarDays, MapPin, Pencil, Trash2, ArrowRight } from "lucide-react";
 import ProgressStamp from "./ProgressStamp";
-import { formatDateShort, progressOf, daysUntil } from "../utils/helpers";
+import { formatDateShort, progressOf, daysUntil, eventTypeMeta } from "../utils/helpers";
 
 function getDayTagStyle(remaining) {
   if (remaining === null) return null;
@@ -11,10 +11,11 @@ function getDayTagStyle(remaining) {
   return { label: "Past", bg: "rgba(100,116,139,0.12)", border: "rgba(100,116,139,0.2)", color: "#64748b" };
 }
 
-export default function EventCard({ event, onEdit, onDelete }) {
+export default function EventCard({ event, onEdit, onDelete, canManage = true }) {
   const { done, total, pct } = progressOf(event);
   const remaining = daysUntil(event.date);
   const dayTag = getDayTagStyle(remaining);
+  const type = eventTypeMeta(event.type || "event");
 
   return (
     <div
@@ -53,6 +54,17 @@ export default function EventCard({ event, onEdit, onDelete }) {
         {/* Top row */}
         <div className="flex items-start justify-between gap-3">
           <Link to={`/event/${event.id}`} className="min-w-0 flex-1">
+            <span
+              className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest mb-2"
+              style={{
+                color: "#ffffff",
+                background: `linear-gradient(135deg, ${type.color}, ${type.color}cc)`,
+                boxShadow: `0 0 12px ${type.color}55`,
+                fontFamily: "'JetBrains Mono', monospace",
+              }}
+            >
+              {type.label}
+            </span>
             <h3
               className="text-2xl font-black leading-snug line-clamp-2 transition-colors duration-200 group-hover:text-rose-800 sm:text-3xl"
               style={{ fontFamily: "'Sora', sans-serif", color: "#000000" }}
@@ -62,8 +74,7 @@ export default function EventCard({ event, onEdit, onDelete }) {
           </Link>
           <ProgressStamp pct={pct} size="sm" />
         </div>
-
-        {/* Meta */}
+{/* Meta */}
         <div className="mt-3 space-y-1.5">
           <div className="flex items-center gap-1.5 flex-wrap">
             <CalendarDays size={14} style={{ color: "#3b3853" }} />
@@ -75,11 +86,11 @@ export default function EventCard({ event, onEdit, onDelete }) {
             </span>
             {dayTag && (
               <span
-                className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                className="rounded-full px-2 py-0.5 text-xs font-bold"
                 style={{
+                  color: dayTag.color,
                   background: dayTag.bg,
                   border: `1px solid ${dayTag.border}`,
-                  color: dayTag.color,
                   fontFamily: "'JetBrains Mono', monospace",
                 }}
               >
@@ -90,12 +101,19 @@ export default function EventCard({ event, onEdit, onDelete }) {
           {event.location && (
             <div className="flex items-center gap-1.5">
               <MapPin size={14} style={{ color: "#3b3853" }} />
-              <span className="text-base font-bold truncate" style={{ color: "#450C3F" }}>{event.location}</span>
+              <span className="text-sm font-semibold" style={{ color: "#06263b", fontFamily: "'JetBrains Mono', monospace" }}>
+                {event.location}
+              </span>
+            </div>
+          )}
+          {event.type === "bootcamp" && (event.mode || event.capacity > 0) && (
+            <div className="flex items-center gap-1.5 flex-wrap text-sm font-semibold" style={{ color: "#4b4660" }}>
+              {event.mode && <span className="uppercase tracking-wider">{event.mode}</span>}
+              {event.capacity > 0 && <span>· seats {event.capacity}</span>}
             </div>
           )}
         </div>
 
-        {/* Description */}
         {event.description && (
           <p className="mt-3 text-base font-bold line-clamp-2 leading-relaxed" style={{ color: "#0D47A1" }}>
             {event.description}
@@ -129,40 +147,42 @@ export default function EventCard({ event, onEdit, onDelete }) {
           >
             {total === 0 ? "No tasks yet" : `${done}/${total} complete`}
           </span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={onEdit}
-              aria-label="Edit event"
-              className="rounded-full p-1.5 transition-all duration-150"
-              style={{ color: "#4b4660" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(29,23,51,0.08)";
-                e.currentTarget.style.color = "#1d1733";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "#4b4660";
-              }}
-            >
-              <Pencil size={13} />
-            </button>
-            <button
-              onClick={onDelete}
-              aria-label="Delete event"
-              className="rounded-full p-1.5 transition-all duration-150"
-              style={{ color: "#4b4660" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(225,29,106,0.14)";
-                e.currentTarget.style.color = "#9d174d";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "#4b4660";
-              }}
-            >
-              <Trash2 size={13} />
-            </button>
-          </div>
+          {canManage && (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={onEdit}
+                aria-label="Edit event"
+                className="rounded-full p-1.5 transition-all duration-150"
+                style={{ color: "#4b4660" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(29,23,51,0.08)";
+                  e.currentTarget.style.color = "#1d1733";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.color = "#4b4660";
+                }}
+              >
+                <Pencil size={13} />
+              </button>
+              <button
+                onClick={onDelete}
+                aria-label="Delete event"
+                className="rounded-full p-1.5 transition-all duration-150"
+                style={{ color: "#4b4660" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(225,29,106,0.14)";
+                  e.currentTarget.style.color = "#9d174d";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.color = "#4b4660";
+                }}
+              >
+                <Trash2 size={13} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

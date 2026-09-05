@@ -30,6 +30,30 @@ export const CATEGORIES = [
   { key: "after", label: "After Event", accent: "plum" },
 ];
 
+export const TASK_STATUSES = [
+  { key: "pending", label: "Pending", color: "#94a3b8", bg: "rgba(148,163,184,0.14)", border: "rgba(148,163,184,0.3)" },
+  { key: "in_progress", label: "In Progress", color: "#fbbf24", bg: "rgba(245,158,11,0.14)", border: "rgba(245,158,11,0.32)" },
+  { key: "completed", label: "Completed", color: "#34d399", bg: "rgba(16,185,129,0.14)", border: "rgba(16,185,129,0.32)" },
+];
+
+export function statusMeta(key) {
+  return TASK_STATUSES.find((s) => s.key === key) ?? TASK_STATUSES[0];
+}
+
+export function taskStatus(task = {}) {
+  if (task.status) return task.status;
+  return task.completed ? "completed" : "pending";
+}
+
+export const EVENT_TYPES = [
+  { key: "event", label: "Event", color: "#e11d6a" },
+  { key: "bootcamp", label: "Bootcamp", color: "#a855f7" },
+];
+
+export function eventTypeMeta(key) {
+  return EVENT_TYPES.find((t) => t.key === key) ?? EVENT_TYPES[0];
+}
+
 export const PRIORITIES = [
   { key: "high", label: "High", dot: "🔴", badge: "bg-red-500 text-white" },
   { key: "medium", label: "Medium", dot: "🟡", badge: "bg-amber-500 text-primary" },

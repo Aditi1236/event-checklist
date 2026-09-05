@@ -1,9 +1,12 @@
 import { Check, Pencil, Trash2 } from "lucide-react";
+import { statusMeta, taskStatus } from "../utils/helpers";
 
-export default function TaskItem({ task, onToggle, onEdit, onDelete }) {  return (
+export default function TaskItem({ task, onToggle, onEdit, onDelete, memberName }) {
+  const status = statusMeta(taskStatus(task));
+  return (
     <li
       className={`group flex items-start gap-3 rounded-xl p-5 transition-all duration-200 ${
-        task.completed ? "opacity-60" : ""
+        status.key === "completed" ? "opacity-60" : ""
       }`}
       style={{
         background: task.completed
@@ -35,35 +38,76 @@ export default function TaskItem({ task, onToggle, onEdit, onDelete }) {  return
               }
         }
         onMouseEnter={(e) => {
-          if (!task.completed) {
+          if (status.key !== "completed") {
             e.currentTarget.style.borderColor = "rgba(16,185,129,0.7)";
             e.currentTarget.style.boxShadow = "0 0 8px rgba(16,185,129,0.3)";
           }
         }}
         onMouseLeave={(e) => {
-          if (!task.completed) {
+          if (status.key !== "completed") {
             e.currentTarget.style.borderColor = "rgba(29,23,51,0.3)";
             e.currentTarget.style.boxShadow = "none";
           }
         }}
       >
-        {task.completed && <Check size={12} strokeWidth={3} />}
+        {status.key === "completed" && <Check size={12} strokeWidth={3} />}
       </button>
 
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <p
-            className={`text-lg font-bold break-words ${task.completed ? "line-through" : ""}`}
-            style={{ color: task.completed ? "rgba(29,23,51,0.5)" : "#0f172a" }}
+            className={`text-lg font-bold break-words ${status.key === "completed" ? "line-through" : ""}`}
+            style={{ color: status.key === "completed" ? "rgba(29,23,51,0.5)" : "#0f172a" }}
           >
             {task.title}
           </p>
+          <span
+            className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+            style={{
+              color: status.color,
+              background: status.bg,
+              border: `1px solid ${status.border}`,
+              fontFamily: "'JetBrains Mono', monospace",
+            }}
+          >
+            {status.label}
+          </span>
         </div>
         {task.description && (
           <p className="mt-1 text-base font-bold break-words leading-relaxed" style={{ color: "#0D47A1" }}>
             {task.description}
           </p>
+        )}
+        {(memberName || task.dueDate) && (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {memberName && (
+              <span
+                className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+                style={{
+                  color: "#7c3aed",
+                  background: "rgba(168,85,247,0.12)",
+                  border: "1px solid rgba(168,85,247,0.25)",
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                👤 {memberName}
+              </span>
+            )}
+            {task.dueDate && (
+              <span
+                className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+                style={{
+                  color: "#0f766e",
+                  background: "rgba(20,184,166,0.1)",
+                  border: "1px solid rgba(20,184,166,0.22)",
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                📅 {new Date(`${task.dueDate}T00:00:00`).toLocaleDateString([], { month: "short", day: "numeric" })}
+              </span>
+            )}
+          </div>
         )}
       </div>
 

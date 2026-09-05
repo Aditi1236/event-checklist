@@ -3,6 +3,11 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Dashboard from "./pages/Dashboard";
 import EventDetail from "./pages/EventDetail";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminLogin from "./pages/AdminLogin";
+import MemberLogin from "./pages/MemberLogin";
+import MyTasks from "./pages/MyTasks";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   return (
@@ -12,6 +17,24 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/event/:eventId" element={<EventDetail />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/login" element={<MemberLogin />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/me"
+            element={
+              <ProtectedRoute adminOnly={false}>
+                <MyTasks />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="*"
             element={

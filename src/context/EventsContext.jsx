@@ -73,13 +73,18 @@ export function EventsProvider({ children }) {
         return events.find((e) => e.id === eventId) ?? null;
       },
 
-      createEvent({ name, date, description, location, budget = 0, registrations = 0, teamMembers = "" }) {
+      createEvent({ name, date, description, location, budget = 0, registrations = 0, teamMembers = "", type = "event", endDate = "", mode = "", capacity = 0, techStack = "" }) {
         const newEvent = {
           id: genId("evt"),
           name: name.trim(),
+          type,
           date,
+          endDate,
           description: description.trim(),
           location: location.trim(),
+          mode,
+          capacity: Number(capacity) || 0,
+          techStack: String(techStack || "").trim(),
           budget: Number(budget) || 0,
           registrations: Number(registrations) || 0,
           teamMembers: teamMembers,
@@ -104,7 +109,7 @@ export function EventsProvider({ children }) {
         apiClientSafe("deleteEvent", eventId);
       },
 
-      addTask(eventId, { title, description, category, dueDate, priority = "medium" }) {
+      addTask(eventId, { title, description, category, dueDate, priority = "medium", assigneeId = null, status: st = "pending" }) {
         const newTask = {
           id: genId("task"),
           title: title.trim(),
@@ -112,7 +117,9 @@ export function EventsProvider({ children }) {
           category,
           dueDate,
           priority,
-          completed: false,
+          status: st,
+          completed: st === "completed",
+          assigneeId: assigneeId || null,
           createdAt: Date.now(),
         };
         markWrite();
@@ -127,28 +134,32 @@ export function EventsProvider({ children }) {
 
       updateTask(eventId, taskId, patch) {
         markWrite();
+        let appliedPatch = { ...patch };
+        if (patch.status !== undefined) {
+          appliedPatch.completed = patch.status === "completed";
+        } else if (patch.completed !== undefined) {
+          const evt = events.find((e) => e.id === eventId);
+          const t = evt?.tasks.find((x) => x.id === taskId);
+          const cur = t?.status ?? (t?.completed ? "completed" : "pending");
+          appliedPatch.status = patch.completed ? "completed" : cur === "completed" ? "pending" : cur;
+        }
         setEvents((prev) =>
           prev.map((e) =>
             e.id === eventId
-              ? { ...e, tasks: e.tasks.map((t) => (t.id === taskId ? { ...t, ...patch } : t)) }
+              ? { ...e, tasks: e.tasks.map((t) => (t.id === taskId ? { ...t, ...appliedPatch } : t)) }
               : e
           )
         );
-        apiClientSafe("updateTask", eventId, taskId, patch);
+        apiClientSafe("updateTask", eventId, taskId, appliedPatch);
       },
 
       toggleTask(eventId, taskId) {
-        markWrite();
-        setEvents((prev) =>
-          prev.map((e) =>
-            e.id === eventId
-              ? { ...e, tasks: e.tasks.map((t) => (t.id === taskId ? { ...t, completed: !t.completed } : t)) }
-              : e
-          )
-        );
         const event = events.find((e) => e.id === eventId);
         const task = event?.tasks.find((t) => t.id === taskId);
-        if (task) apiClientSafe("updateTask", eventId, taskId, { completed: !task.completed });
+        if (!task) return;
+        const completed = !task.completed;
+        const status = completed ? "completed" : task.status === "in_progress" ? "in_progress" : "pending";
+        this.updateTask(eventId, taskId, { completed, status });
       },
 
       deleteTask(eventId, taskId) {
