@@ -11,7 +11,7 @@ function getDayTagStyle(remaining) {
   return { label: "Past", bg: "rgba(100,116,139,0.12)", border: "rgba(100,116,139,0.2)", color: "#64748b" };
 }
 
-export default function EventCard({ event, onEdit, onDelete, canManage = true }) {
+export default function EventCard({ event, onEdit, onDelete, onSelect, canManage = true }) {
   const { done, total, pct } = progressOf(event);
   const remaining = daysUntil(event.date);
   const dayTag = getDayTagStyle(remaining);
@@ -51,27 +51,60 @@ export default function EventCard({ event, onEdit, onDelete, canManage = true })
 
       {/* Card body */}
       <div className="p-6 flex-1 flex flex-col">
-        {/* Top row */}
+{/* Top row */}
         <div className="flex items-start justify-between gap-3">
-          <Link to={`/event/${event.id}`} className="min-w-0 flex-1">
-            <span
-              className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest mb-2"
-              style={{
-                color: "#ffffff",
-                background: `linear-gradient(135deg, ${type.color}, ${type.color}cc)`,
-                boxShadow: `0 0 12px ${type.color}55`,
-                fontFamily: "'JetBrains Mono', monospace",
+          {onSelect ? (
+            <div 
+              onClick={() => onSelect(event)}
+              className="min-w-0 flex-1 cursor-pointer"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "#000000";
+                e.currentTarget.style.textDecoration = "underline";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "#000000";
+                e.currentTarget.style.textDecoration = "none";
               }}
             >
-              {type.label}
-            </span>
-            <h3
-              className="text-2xl font-black leading-snug line-clamp-2 transition-colors duration-200 group-hover:text-rose-800 sm:text-3xl"
-              style={{ fontFamily: "'Sora', sans-serif", color: "#000000" }}
-            >
-              {event.name}
-            </h3>
-          </Link>
+              <span
+                className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest mb-2"
+                style={{
+                  color: "#ffffff",
+                  background: `linear-gradient(135deg, ${type.color}, ${type.color}cc)`,
+                  boxShadow: `0 0 12px ${type.color}55`,
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                {type.label}
+              </span>
+              <h3
+                className="text-2xl font-black leading-snug line-clamp-2 transition-colors duration-200 group-hover:text-rose-800 sm:text-3xl"
+                style={{ fontFamily: "'Sora', sans-serif", color: "#000000" }}
+              >
+                {event.name}
+              </h3>
+            </div>
+          ) : (
+            <Link to={`/event/${event.id}`} className="min-w-0 flex-1">
+              <span
+                className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest mb-2"
+                style={{
+                  color: "#ffffff",
+                  background: `linear-gradient(135deg, ${type.color}, ${type.color}cc)`,
+                  boxShadow: `0 0 12px ${type.color}55`,
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                {type.label}
+              </span>
+              <h3
+                className="text-2xl font-black leading-snug line-clamp-2 transition-colors duration-200 group-hover:text-rose-800 sm:text-3xl"
+                style={{ fontFamily: "'Sora', sans-serif", color: "#000000" }}
+              >
+                {event.name}
+              </h3>
+            </Link>
+          )}
           <ProgressStamp pct={pct} size="sm" />
         </div>
 {/* Meta */}
@@ -186,27 +219,51 @@ export default function EventCard({ event, onEdit, onDelete, canManage = true })
         </div>
       </div>
 
-      {/* CTA */}
-      <Link
-        to={`/event/${event.id}`}
-        className="flex items-center justify-center gap-2 py-3 text-base font-bold transition-all duration-200"
-        style={{
-          borderTop: "1px solid rgba(29,23,51,0.12)",
-          background: "rgba(29,23,51,0.04)",
-          color: "#0f172a",
-          fontFamily: "'Inter', sans-serif",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "linear-gradient(135deg, rgba(225,29,106,0.18), rgba(168,85,247,0.12))";
-          e.currentTarget.style.color = "#9d174d";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(29,23,51,0.04)";
-          e.currentTarget.style.color = "#0f172a";
-        }}
-      >
-        Open checklist <ArrowRight size={14} />
-      </Link>
+{/* CTA */}
+        {onSelect ? (
+          <div 
+            onClick={() => onSelect(event)}
+            className="flex items-center justify-center gap-2 py-3 text-base font-bold transition-all duration-200"
+            style={{
+              borderTop: "1px solid rgba(29,23,51,0.12)",
+              background: "rgba(29,23,51,0.04)",
+              color: "#0f172a",
+              fontFamily: "'Inter', sans-serif",
+              cursor: "pointer"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "linear-gradient(135deg, rgba(225,29,106,0.18), rgba(168,85,247,0.12))";
+              e.currentTarget.style.color = "#9d174d";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(29,23,51,0.04)";
+              e.currentTarget.style.color = "#0f172a";
+            }}
+          >
+            Open checklist <ArrowRight size={14} />
+          </div>
+        ) : (
+          <Link
+            to={`/event/${event.id}`}
+            className="flex items-center justify-center gap-2 py-3 text-base font-bold transition-all duration-200"
+            style={{
+              borderTop: "1px solid rgba(29,23,51,0.12)",
+              background: "rgba(29,23,51,0.04)",
+              color: "#0f172a",
+              fontFamily: "'Inter', sans-serif",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "linear-gradient(135deg, rgba(225,29,106,0.18), rgba(168,85,247,0.12))";
+              e.currentTarget.style.color = "#9d174d";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(29,23,51,0.04)";
+              e.currentTarget.style.color = "#0f172a";
+            }}
+          >
+            Open checklist <ArrowRight size={14} />
+          </Link>
+        )}
     </div>
   );
 }
