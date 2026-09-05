@@ -1,0 +1,27 @@
+﻿Γ£à Connected to MongoDB ΓÇö db: "eventchecklist"
+member exists: true
+member.id: usr_member_dn00w8
+member.role: member
+member.status: active
+member.passwordHash present: true
+member.passwordHash sample: 584e5be4fa0554762af5fe52835de22d:33612d2
+verify member123: true
+verify member123 trimmed: true
+verify Member123: false
+verify admin123 on member: false
+admin exists: true
+verify admin123: true
+AFTER RESET verify member123: true
+HTTP http://127.0.0.1:4000 -> 200 {"token":"eyJzdWIiOiJ1c3JfbWVtYmVyX2RuMDB3OCIsInJvbGUiOiJtZW1iZXIiLCJpYXQiOjE3ODg2MjQyODQ1OTcsImV4cCI6MTc4OTIyOTA4NDU5N3
+HTTP http://127.0.0.1:5173 -> 200 {"token":"eyJzdWIiOiJ1c3JfbWVtYmVyX2RuMDB3OCIsInJvbGUiOiJtZW1iZXIiLCJpYXQiOjE3ODg2MjQyODQ2MTUsImV4cCI6MTc4OTIyOTA4NDYxNX
+node : Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), 
+file src\win\async.c, line 94
+At line:51 char:76
++ ... hecklist22\event-checklist'; node scripts/_fix_login.mjs 
+2>&1 | Out-F ...
++                                  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Assertion faile...sy 
+   nc.c, line 94:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

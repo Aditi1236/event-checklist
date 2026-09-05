@@ -35,10 +35,23 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function login(email, password) {
-    const data = await apiClient.login(email, password);
-    setToken(data.token);
-    setUser(data.user);
-    return data.user;
+    // Basic email validation
+    if (!email || !email.includes('@')) {
+      throw new Error('Invalid email format');
+    }
+    
+    try {
+      const data = await apiClient.login(email, password);
+      if (!data || !data.user) {
+        throw new Error('Login failed: Invalid credentials');
+      }
+      setToken(data.token);
+      setUser(data.user);
+      return data.user;
+    } catch (err) {
+      // Re-throw with more context
+      throw new Error(`Authentication failed: ${err.message || 'Unknown error'}`);
+    }
   }
 
   async function logout() {
