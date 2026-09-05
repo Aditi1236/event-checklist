@@ -1,20 +1,26 @@
 import { useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ShieldCheck, Lock, Mail, ArrowLeft, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import Dashboard from "./Dashboard";
 
 export default function AdminLogin() {
-  const { login, user } = useAuth();
+  const { login, logout, user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [email, setEmail] = useState("admin@nexasoul.com");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   if (user) {
-    navigate(user.role === "admin" ? "/admin" : "/", { replace: true });
-    return null;
+    if (user.role === "admin") {
+      // Render dashboard for admins instead of redirecting
+      return <Dashboard />;
+    } else {
+      // Bounce members to the member portal
+      navigate("/", { replace: true });
+      return null;
+    }
   }
 
   async function handleSubmit(e) {
@@ -29,8 +35,8 @@ export default function AdminLogin() {
         setError("This portal is for Admins only. Please use the Member Login.");
         return;
       }
-      const dest = location.state?.from || "/admin";
-      navigate(dest, { replace: true });
+      // For admins, we render dashboard directly (handled above)
+      // No need to redirect; the component will re-render with user set.
     } catch (err) {
       setError(err.message || "Login failed");
     } finally {
@@ -94,7 +100,7 @@ export default function AdminLogin() {
                 Manage events, tasks, members and progress for NexaSoul.
               </p>
             </div>
-<form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               <div>
                 <label className="field-label" htmlFor="admin-email">
                   Email
