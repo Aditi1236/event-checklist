@@ -63,15 +63,15 @@ export default function AdminLogin() {
           Back to events
         </Link>
 
-        <div
-          className="rounded-3xl overflow-hidden"
-          style={{
-            background: "rgba(15,17,30,0.9)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            backdropFilter: "blur(24px)",
-            boxShadow: "0 32px 80px -16px rgba(0,0,0,0.8), 0 0 80px -20px rgba(225,29,106,0.2)",
-          }}
-        >
+<div
+           className="rounded-3xl overflow-hidden"
+           style={{
+             background: "#622569",
+             border: "1px solid rgba(255,255,255,0.1)",
+             backdropFilter: "blur(24px)",
+             boxShadow: "0 32px 80px -16px rgba(0,0,0,0.8), 0 0 80px -20px rgba(225,29,106,0.2)",
+           }}
+         >
           <div
             className="h-px w-full"
             style={{

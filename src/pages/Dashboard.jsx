@@ -379,59 +379,10 @@ return (
                 )}
               </div>
 
-              {/* ── Modals ─────────────────────────────────── */}
-              {showCreate && (
-                <EventForm
-                  onClose={() => setShowCreate(false)}
-                  onSubmit={(data) => {
-                    createEvent(data);
-                    setShowCreate(false);
-                  }}
-                />
-              )}
-              {editingEvent && (
-                <EventForm
-                  initial={editingEvent}
-                  onClose={() => setEditingEvent(null)}
-                  onSubmit={(data) => {
-                    updateEvent(editingEvent.id, data);
-                    setEditingEvent(null);
-                  }}
-                />
-              )}
-              {deletingEvent && (
-                <ConfirmDialog
-                  title="Delete event?"
-                  message={`This removes "${deletingEvent.name}" and all ${deletingEvent.tasks.length} of its tasks. This can't be undone.`}
-                  onCancel={() => setDeletingEvent(null)}
-                  onConfirm={() => {
-                    deleteEvent(deletingEvent.id);
-                    setDeletingEvent(null);
-                  }}
-                />
-              )}
             </>
           )}
-        </div>
-      ) : (
-                <EmptyState onCreate={() => setShowCreate(true)} />
-              )
-            ) : (
-<div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                 {sortedEvents.map((event) => (
-                   <EventCard
-                     key={event.id}
-                     event={event>
-                     onEdit={() => setEditingEvent(event)}
-                     onDelete={() => setDeletingEvent(event)}
-                     onSelect={() => setSelectedEvent(event)}
-                   />
-                 ))}
-               </div>
-            )}
-          </div>
 
-          {/* ── Modals ─────────────────────────────────── */}
+        {/* ── Modals ─────────────────────────────────── */}
           {showCreate && (
             <EventForm
               onClose={() => setShowCreate(false)}
@@ -462,7 +413,7 @@ return (
               }}
             />
           )}
-        </div>
+      </div>
       ) : (
         // Simplified view for non-admins (members and guests)
         <div className="relative z-10 mx-auto max-w-6xl px-4 pb-24 pt-10 sm:px-6 text-center">
