@@ -57,6 +57,25 @@ export function AuthProvider({ children }) {
     }
   }
 
+  async function signup(name, email, password, role) {
+    if (!email || !email.includes('@')) {
+      throw new Error('Invalid email format');
+    }
+    const normalizedEmail = email.trim().toLowerCase();
+    
+    try {
+      const data = await apiClient.signup(name, normalizedEmail, password, role);
+      if (!data || !data.user) {
+        throw new Error('Signup failed');
+      }
+      setToken(data.token);
+      setUser(data.user);
+      return data.user;
+    } catch (err) {
+      throw new Error(`Signup failed: ${err.message || 'Unknown error'}`);
+    }
+  }
+
   async function logout() {
     try {
       await apiClient.logout();
@@ -74,6 +93,7 @@ export function AuthProvider({ children }) {
       loaded,
       isAdmin: user?.role === "admin",
       login,
+      signup,
       logout,
       members,
       refreshMembers,

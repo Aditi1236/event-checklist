@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { UserCheck, Lock, Mail, ArrowLeft, Sparkles } from "lucide-react";
+import { UserCheck, Lock, Mail, ArrowLeft, Sparkles, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function MemberLogin() {
-  const { login, logout, user } = useAuth();
+  const { login, signup, logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,17 +24,23 @@ export default function MemberLogin() {
     setError("");
     setBusy(true);
     try {
-      const u = await login(email.trim(), password);
-      // This portal is for executive members only — bounce admins out.
-      if (u.role === "admin") {
-        await logout();
-        setError("This portal is for Executive Members only. Please use the Admin Login.");
-        return;
+      if (isSignUp) {
+        await signup(name.trim(), email.trim(), password, "member");
+        const dest = location.state?.from || "/me";
+        navigate(dest, { replace: true });
+      } else {
+        const u = await login(email.trim(), password);
+        // This portal is for executive members only — bounce admins out.
+        if (u.role === "admin") {
+          await logout();
+          setError("This portal is for Executive Members only. Please use the Admin Login.");
+          return;
+        }
+        const dest = location.state?.from || "/me";
+        navigate(dest, { replace: true });
       }
-      const dest = location.state?.from || "/me";
-      navigate(dest, { replace: true });
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError(err.message || (isSignUp ? "Sign up failed" : "Login failed"));
     } finally {
       setBusy(false);
     }
@@ -57,7 +65,7 @@ export default function MemberLogin() {
           Back to events
         </Link>
 
-<div
+        <div
            className="rounded-3xl overflow-hidden"
            style={{
              background: "#622569",
@@ -88,14 +96,38 @@ export default function MemberLogin() {
                 className="text-3xl font-extrabold text-white"
                 style={{ fontFamily: "'Sora', sans-serif" }}
               >
-                Member Login
+                {isSignUp ? "Member Sign Up" : "Member Login"}
               </h1>
               <p className="mt-2 text-sm font-medium" style={{ color: "#94a3b8" }}>
-                Executive portal — view and update your assigned tasks.
+                {isSignUp ? "Create your executive portal account." : "Executive portal — view and update your assigned tasks."}
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              {isSignUp && (
+                <div>
+                  <label className="field-label" htmlFor="member-name">
+                    Name
+                  </label>
+                  <div className="relative">
+                    <User
+                      size={16}
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
+                      style={{ color: "#64748b" }}
+                    />
+                    <input
+                      id="member-name"
+                      type="text"
+                      className="field-input pl-11"
+                      placeholder="Jane Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      autoFocus
+                      required
+                    />
+                  </div>
+                </div>
+              )}
               <div>
                 <label className="field-label" htmlFor="member-email">
                   Email
@@ -113,7 +145,7 @@ export default function MemberLogin() {
                     placeholder="you@nexasoul.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    autoFocus
+                    autoFocus={!isSignUp}
                     required
                   />
                 </div>
@@ -155,48 +187,23 @@ export default function MemberLogin() {
               )}
 
               <button type="submit" className="btn-accent w-full !py-3" disabled={busy}>
-                {busy ? "Signing in…" : "Sign in as Member"}
+                {busy ? (isSignUp ? "Signing up…" : "Signing in…") : (isSignUp ? "Sign Up as Member" : "Sign in as Member")}
               </button>
             </form>
 
-            <div
-              className="mt-6 rounded-xl px-4 py-3"
-              style={{
-                background: "rgba(16,185,129,0.06)",
-                border: "1px solid rgba(16,185,129,0.18)",
-              }}
-            >
-              <div
-                className="flex items-center justify-center gap-2 text-[11px] font-semibold"
-                style={{
-                  color: "#94a8b8",
-                  fontFamily: "'JetBrains Mono', monospace",
-                }}
-              >
-                <Sparkles size={13} style={{ color: "#34d399" }} />
-                <span>Demo member: member@nexasoul.com · member123</span>
-              </div>
+            <div className="mt-6 text-center text-sm font-medium" style={{ color: "#94a3b8" }}>
+              {isSignUp ? "Already have a member account? " : "Don't have a member account? "}
               <button
                 type="button"
                 onClick={() => {
-                  setEmail("member@nexasoul.com");
-                  setPassword("member123");
+                  setIsSignUp(!isSignUp);
                   setError("");
                 }}
-                className="mt-2 w-full rounded-lg px-3 py-2 text-xs font-bold transition-all duration-150"
-                style={{
-                  color: "#34d399",
-                  background: "rgba(16,185,129,0.12)",
-                  border: "1px solid rgba(16,185,129,0.3)",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.22)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.12)")}
+                className="font-bold transition-colors"
+                style={{ color: "#34d399" }}
               >
-                Fill demo credentials
+                {isSignUp ? "Sign In" : "Sign Up"}
               </button>
-              <p className="mt-2 text-center text-[11px] font-medium" style={{ color: "#64748b" }}>
-                Other member accounts are created by the Admin.
-              </p>
             </div>
 
             <p className="mt-4 text-center text-xs font-medium" style={{ color: "#64748b" }}>

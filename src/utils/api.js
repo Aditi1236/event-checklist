@@ -42,6 +42,7 @@ export const apiClient = {
 
   /* auth */
   login: (email, password) => request("POST", "/auth/login", { email, password }, { auth: false }),
+  signup: (name, email, password, role) => request("POST", "/auth/signup", { name, email, password, role }, { auth: false }),
   me: () => request("GET", "/auth/me"),
   logout: () => request("POST", "/auth/logout", null),
   listMyTasks: () => request("GET", "/my/tasks"),

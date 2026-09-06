@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ShieldCheck, Lock, Mail, ArrowLeft, Sparkles } from "lucide-react";
+import { ShieldCheck, Lock, Mail, ArrowLeft, Sparkles, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import Dashboard from "./Dashboard";
 
 export default function AdminLogin() {
-  const { login, logout, user } = useAuth();
+  const { login, signup, logout, user } = useAuth();
   const navigate = useNavigate();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("admin@nexasoul.com");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,17 +30,19 @@ export default function AdminLogin() {
     setError("");
     setBusy(true);
     try {
-      const u = await login(email.trim(), password);
-      // This portal is for admins only — bounce members to the member portal.
-      if (u.role !== "admin") {
-        await logout();
-        setError("This portal is for Admins only. Please use the Member Login.");
-        return;
+      if (isSignUp) {
+        await signup(name.trim(), email.trim(), password, "admin");
+      } else {
+        const u = await login(email.trim(), password);
+        // This portal is for admins only — bounce members to the member portal.
+        if (u.role !== "admin") {
+          await logout();
+          setError("This portal is for Admins only. Please use the Member Login.");
+          return;
+        }
       }
-      // For admins, we render dashboard directly (handled above)
-      // No need to redirect; the component will re-render with user set.
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError(err.message || (isSignUp ? "Sign up failed" : "Login failed"));
     } finally {
       setBusy(false);
     }
@@ -94,13 +98,37 @@ export default function AdminLogin() {
                 className="text-3xl font-extrabold text-white"
                 style={{ fontFamily: "'Sora', sans-serif" }}
               >
-                Admin Login
+                {isSignUp ? "Admin Sign Up" : "Admin Login"}
               </h1>
               <p className="mt-2 text-sm font-medium" style={{ color: "#94a3b8" }}>
-                Manage events, tasks, members and progress for NexaSoul.
+                {isSignUp ? "Create an admin account for NexaSoul." : "Manage events, tasks, members and progress for NexaSoul."}
               </p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              {isSignUp && (
+                <div>
+                  <label className="field-label" htmlFor="admin-name">
+                    Name
+                  </label>
+                  <div className="relative">
+                    <User
+                      size={16}
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
+                      style={{ color: "#64748b" }}
+                    />
+                    <input
+                      id="admin-name"
+                      type="text"
+                      className="field-input pl-11"
+                      placeholder="Jane Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      autoFocus
+                      required
+                    />
+                  </div>
+                </div>
+              )}
               <div>
                 <label className="field-label" htmlFor="admin-email">
                   Email
@@ -160,21 +188,23 @@ export default function AdminLogin() {
               )}
 
               <button type="submit" className="btn-accent w-full !py-3" disabled={busy}>
-                {busy ? "Signing in…" : "Sign in as Admin"}
+                {busy ? (isSignUp ? "Signing up…" : "Signing in…") : (isSignUp ? "Sign Up as Admin" : "Sign in as Admin")}
               </button>
             </form>
 
-            <div
-              className="mt-6 flex items-center gap-2 rounded-xl px-4 py-3 text-[11px] font-semibold"
-              style={{
-                color: "#94a8b8",
-                background: "rgba(168,85,247,0.06)",
-                border: "1px solid rgba(168,85,247,0.18)",
-                fontFamily: "'JetBrains Mono', monospace",
-              }}
-            >
-              <Sparkles size={13} style={{ color: "#a855f7" }} />
-              Default: admin@nexasoul.com · admin123
+            <div className="mt-6 text-center text-sm font-medium" style={{ color: "#94a3b8" }}>
+              {isSignUp ? "Already have an admin account? " : "Don't have an admin account? "}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSignUp(!isSignUp);
+                  setError("");
+                }}
+                className="font-bold transition-colors"
+                style={{ color: "#a855f7" }}
+              >
+                {isSignUp ? "Sign In" : "Sign Up"}
+              </button>
             </div>
 
             <p className="mt-4 text-center text-xs font-medium" style={{ color: "#64748b" }}>

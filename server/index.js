@@ -297,6 +297,35 @@ async function handleApi(req, res, url) {
       return send(res, 200, { token: signToken(user), user: publicUser(user) });
     }
 
+    if (parts[2] === "signup" && req.method === "POST") {
+      const body = await readBody(req);
+      const email = String(body.email || "").trim().toLowerCase();
+      const password = String(body.password ?? "").trim();
+      const name = String(body.name || "").trim();
+      const role = USER_ROLES.includes(body.role) ? body.role : "member";
+      
+      if (!name || !email || !password) return send(res, 400, { error: "Name, email, and password are required" });
+      if (password.length < 6) return send(res, 400, { error: "Password must be at least 6 characters" });
+      
+      const dup = await users.findOne({ email });
+      if (dup) return send(res, 409, { error: "An account with this email already exists" });
+      
+      const newUser = {
+        id: genId("usr"),
+        name,
+        email,
+        passwordHash: hashPassword(password),
+        role,
+        position: "",
+        phone: "",
+        status: "active",
+        createdAt: Date.now(),
+      };
+      await users.insertOne(newUser);
+      broadcastChange();
+      return send(res, 201, { token: signToken(newUser), user: publicUser(newUser) });
+    }
+
     if (parts[2] === "me") {
       if (req.method !== "GET") return send(res, 405, { error: "Method not allowed" });
       const user = await requireAuth(req, res);
