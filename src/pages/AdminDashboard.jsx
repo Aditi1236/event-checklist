@@ -434,27 +434,27 @@ function EventsTab({ events, createEvent, updateEvent, deleteEvent }) {
     return new Date(a.date) - new Date(b.date);
   });
 
-  return (
-    <div className="animate-fadeIn">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
-          All Events & Bootcamps <span className="ml-1 text-sm font-mono" style={{ color: "#94a3b8" }}>({sorted.length})</span>
-        </h2>
-        <button className="btn-accent" onClick={() => setShowCreate(true)}>
-          <Plus size={16} /> New Event / Bootcamp
-        </button>
-      </div>
+return (
+     <div className="animate-fadeIn">
+       <div className="mb-6 flex items-center justify-between">
+         <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
+           All Events & Bootcamps <span className="ml-1 text-sm font-mono" style={{ color: "#94a3b8" }}>({sorted.length})</span>
+         </h2>
+         <button className="btn-accent" onClick={() => setShowCreate(true)}>
+           <Plus size={16} /> New Event / Bootcamp
+         </button>
+       </div>
 
-      <div className="space-y-3">
-        {sorted.map((evt) => {
-          const { done, total, pct } = progressOf(evt);
-          const type = eventTypeMeta(evt.type || "event");
-          return (
-            <div
-              key={evt.id}
-              className="flex flex-col gap-3 rounded-xl px-5 py-4 sm:flex-row sm:items-center"
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-            >
+       <div className="space-y-3">
+         {sorted.map((evt) => {
+           const { done, total, pct } = progressOf(evt);
+           const type = eventTypeMeta(evt.type || "event");
+           return (
+             <div
+               key={evt.id}
+               className="flex flex-col gap-3 rounded-xl px-5 py-4 sm:flex-row sm:items-center"
+               style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)" }}
+             >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="text-sm font-bold text-white">{evt.name}</p>
@@ -623,22 +623,22 @@ function TasksTab({ tasks, events, members, memberById, addTask, updateTask, del
         </select>
       </div>
 
-      {/* Task list */}
-      <div className="space-y-2">
-        {filtered.map((t) => {
-          const st = statusMeta(taskStatus(t));
-          const assignee = memberById[t.assigneeId];
-          const evt = events.find((e) => e.id === t.eventId);
-          return (
-            <div
-              key={`${t.eventId}-${t.id}`}
-              className="flex flex-col gap-2 rounded-xl px-5 py-4 sm:flex-row sm:items-center"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                opacity: st.key === "completed" ? 0.7 : 1,
-              }}
-            >
+{/* Task list */}
+       <div className="space-y-2">
+         {filtered.map((t) => {
+           const st = statusMeta(taskStatus(t));
+           const assignee = memberById[t.assigneeId];
+           const evt = events.find((e) => e.id === t.eventId);
+           return (
+             <div
+               key={`${t.eventId}-${t.id}`}
+               className="flex flex-col gap-2 rounded-xl px-5 py-4 sm:flex-row sm:items-center"
+               style={{
+                 background: "#622569",
+                 border: "1px solid rgba(255,255,255,0.08)",
+                 opacity: st.key === "completed" ? 0.7 : 1,
+               }}
+             >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className={`text-sm font-bold text-white ${st.key === "completed" ? "line-through" : ""}`}>{t.title}</p>

@@ -141,11 +141,11 @@ export default function MyTasks() {
           <StatCard label="Completed" value={stats.completed} icon={<CheckCircle2 size={20} />} color="#34d399" progress={stats.pct} />
         </div>
 
-        {/* Status tabs */}
-        <div className="mb-6 flex flex-wrap gap-1 rounded-full p-1 border" style={{
-          borderColor: "rgba(255,255,255,0.12)",
-          background: "rgba(255,255,255,0.04)",
-        }}>
+{/* Status tabs */}
+         <div className="mb-6 flex flex-wrap gap-1 rounded-full p-1 border" style={{
+           borderColor: "rgba(255,255,255,0.12)",
+           background: "#0247FE",
+         }}>
           {STATUS_TABS.map((t) => {
             const isActive = tab === t.key;
             const count = t.key === "all" ? stats.total : myTasks.filter((x) => taskStatus(x) === t.key).length;
@@ -175,23 +175,23 @@ export default function MyTasks() {
         </div>
 
         {/* Task list */}
-        {sortedFiltered.length === 0 ? (
-          <div
-            className="rounded-2xl border border-dashed px-8 py-16 text-center"
-            style={{
-              borderColor: "rgba(255,255,255,0.15)",
-              background: "rgba(255,255,255,0.02)",
-            }}
-          >
-            <CheckSquare size={48} style={{ color: "#4b5563", margin: "0 auto 4px" }} />
-            <h3 className="text-xl font-bold text-white mb-2">Nothing here yet</h3>
-            <p style={{ color: "#64748b" }}>
-              {tab === "all"
-                ? "No tasks have been assigned to you yet."
-                : `You have no ${tab.replace("_", " ")} tasks.`}
-            </p>
-          </div>
-        ) : (
+{sortedFiltered.length === 0 ? (
+           <div
+             className="rounded-2xl border border-dashed px-8 py-16 text-center"
+             style={{
+               borderColor: "rgba(255,255,255,0.15)",
+               background: "#0247FE",
+             }}
+           >
+             <CheckSquare size={48} style={{ color: "#4b5563", margin: "0 auto 4px" }} />
+             <h3 className="text-xl font-bold text-white mb-2">Nothing here yet</h3>
+             <p style={{ color: "#64748b" }}>
+               {tab === "all"
+                 ? "No tasks have been assigned to you yet."
+                 : `You have no ${tab.replace("_", " ")} tasks.`}
+             </p>
+           </div>
+         ) : (
           <div className="space-y-3">
             {sortedFiltered.map((task) => (
               <TaskRow
@@ -210,15 +210,15 @@ export default function MyTasks() {
 
 /* ── StatCard ───────────────────────────────────────── */
 function StatCard({ label, value, icon, color, progress }) {
-  return (
-    <div
-      className="rounded-2xl p-4 relative overflow-hidden"
-      style={{
-        background: "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        backdropFilter: "blur(16px)",
-      }}
-    >
+   return (
+     <div
+       className="rounded-2xl p-4 relative overflow-hidden"
+       style={{
+         background: "#0247FE",
+         border: "1px solid rgba(255,255,255,0.08)",
+         backdropFilter: "blur(16px)",
+       }}
+     >
       <div className="flex items-center gap-3 mb-2">
         <span style={{ color, flexShrink: 0 }}>{icon}</span>
         <span
@@ -264,15 +264,15 @@ function TaskRow({ task, onToggle, onStatus }) {
           ? { label: `In ${remaining}d`, color: "#34d399" }
           : { label: "Past", color: "#64748b" };
 
-  return (
-    <div
-      className="group flex items-start gap-4 rounded-xl p-4 transition-all duration-200"
-      style={{
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        backdropFilter: "blur(8px)",
-      }}
-    >
+return (
+     <div
+       className="group flex items-start gap-4 rounded-xl p-4 transition-all duration-200"
+       style={{
+         background: "#0247FE",
+         border: "1px solid rgba(255,255,255,0.08)",
+         backdropFilter: "blur(8px)",
+       }}
+     >
       <button
         onClick={onToggle}
         aria-pressed={task.completed}
