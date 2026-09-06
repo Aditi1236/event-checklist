@@ -203,44 +203,44 @@ function OverviewTab({ summary, onManageEvents, onManageTasks, onManageMembers }
     <div className="space-y-8 animate-fadeIn">
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {stats.map((s) => (
-          <button
-            key={s.label}
-            onClick={s.onClick}
-            className="rounded-2xl p-6 text-left relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              backdropFilter: "blur(16px)",
-              boxShadow: `0 4px 24px -4px ${s.glow}, inset 0 1px 0 rgba(255,255,255,0.06)`,
-            }}
-          >
-            <div
-              className="absolute -top-6 -right-6 w-20 h-20 rounded-full pointer-events-none"
-              style={{ background: `radial-gradient(circle, ${s.glow} 0%, transparent 70%)` }}
-            />
-            <div
-              className="flex items-center gap-2 mb-3 text-xs uppercase tracking-widest font-semibold"
-              style={{ color: s.color, fontFamily: "'JetBrains Mono', monospace" }}
-            >
-              {s.icon} {s.label}
-            </div>
-            <p className="text-3xl font-bold" style={{ color: "#f1f5f9", fontFamily: "'Sora', sans-serif" }}>
-              {s.value}
-            </p>
-          </button>
-        ))}
+{stats.map((s) => (
+           <button
+             key={s.label}
+             onClick={s.onClick}
+             className="rounded-2xl p-6 text-left relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5"
+             style={{
+               background: "#622569",
+               border: "1px solid rgba(255,255,255,0.08)",
+               backdropFilter: "blur(16px)",
+               boxShadow: `0 4px 24px -4px ${s.glow}, inset 0 1px 0 rgba(255,255,255,0.06)`,
+             }}
+           >
+             <div
+               className="absolute -top-6 -right-6 w-20 h-20 rounded-full pointer-events-none"
+               style={{ background: `radial-gradient(circle, ${s.glow} 0%, transparent 70%)` }}
+             />
+             <div
+               className="flex items-center gap-2 mb-3 text-xs uppercase tracking-widest font-semibold"
+               style={{ color: s.color, fontFamily: "'JetBrains Mono', monospace" }}
+             >
+               {s.icon} {s.label}
+             </div>
+             <p className="text-3xl font-bold" style={{ color: "#f1f5f9", fontFamily: "'Sora', sans-serif" }}>
+               {s.value}
+             </p>
+           </button>
+         ))}
       </div>
 
-      {/* Overall progress */}
-      <div
-        className="rounded-2xl p-8"
-        style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          backdropFilter: "blur(16px)",
-        }}
-      >
+{/* Overall progress */}
+       <div
+         className="rounded-2xl p-8"
+         style={{
+           background: "#622569",
+           border: "1px solid rgba(255,255,255,0.08)",
+           backdropFilter: "blur(16px)",
+         }}
+       >
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
             Overall Task Progress
@@ -256,166 +256,168 @@ function OverviewTab({ summary, onManageEvents, onManageTasks, onManageMembers }
           </span>
         </div>
         <ProgressBar done={summary.tasks.completed} total={totalTasks} size="lg" />
-        <div className="mt-6 grid grid-cols-3 gap-3">
-          {[
-            { label: "Pending", value: summary.tasks.pending, color: "#94a3b8" },
-            { label: "In Progress", value: summary.tasks.inProgress, color: "#fbbf24" },
-            { label: "Completed", value: summary.tasks.completed, color: "#34d399" },
-          ].map((x) => (
-            <div
-              key={x.label}
-              className="rounded-xl px-4 py-3 text-center"
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-            >
-              <p className="text-2xl font-extrabold" style={{ color: x.color, fontFamily: "'Sora', sans-serif" }}>
-                {x.value}
-              </p>
-              <p className="mt-1 text-[10px] uppercase tracking-widest font-semibold" style={{ color: "#94a3b8" }}>
-                {x.label}
-              </p>
-            </div>
-          ))}
-        </div>
+<div className="mt-6 grid grid-cols-3 gap-3">
+           {[
+             { label: "Pending", value: summary.tasks.pending, color: "#94a3b8" },
+             { label: "In Progress", value: summary.tasks.inProgress, color: "#fbbf24" },
+             { label: "Completed", value: summary.tasks.completed, color: "#34d399" },
+           ].map((x) => (
+             <div
+               key={x.label}
+               className="rounded-xl px-4 py-3 text-center"
+               style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)" }}
+             >
+               <p className="text-2xl font-extrabold" style={{ color: x.color, fontFamily: "'Sora', sans-serif" }}>
+                 {x.value}
+               </p>
+               <p className="mt-1 text-[10px] uppercase tracking-widest font-semibold" style={{ color: "#94a3b8" }}>
+                 {x.label}
+               </p>
+             </div>
+           ))}
+         </div>
       </div>
 {/* Event progress */}
-      <div>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
-            Event Progress
-          </h2>
-          <button className="btn-ghost !py-1.5 !px-3 text-xs" onClick={onManageEvents}>
-            Manage events
-          </button>
-        </div>
-        <div className="space-y-3">
-          {(summary.eventProgress || []).map((ep) => {
-            const type = eventTypeMeta(ep.type || "event");
-            return (
-              <div
-                key={ep.id}
-                className="flex flex-col gap-2 rounded-xl px-5 py-4 sm:flex-row sm:items-center"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="truncate text-sm font-bold text-white">{ep.name}</p>
-                    <span
-                      className="shrink-0 rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest"
-                      style={{ color: "#ffffff", background: type.color, fontFamily: "'JetBrains Mono', monospace" }}
-                    >
-                      {type.label}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-xs" style={{ color: "#94a3b8" }}>
-                    {ep.date ? formatDate(ep.date) : "No date"} {ep.location ? ` · ${ep.location}` : ""}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 sm:w-64">
-                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        width: `${ep.pct}%`,
-                        background: "linear-gradient(90deg, #e11d6a, #a855f7, #10b981)",
-                        boxShadow: "0 0 8px rgba(225,29,106,0.4)",
-                      }}
-                    />
-                  </div>
-                  <span className="w-10 text-right text-xs font-bold" style={{ color: "#f1f5f9", fontFamily: "'JetBrains Mono', monospace" }}>
-                    {ep.pct}%
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-          {(summary.eventProgress || []).length === 0 && (
-            <p className="rounded-xl border border-dashed px-6 py-10 text-center text-sm" style={{ color: "#64748b", borderColor: "rgba(255,255,255,0.15)" }}>
-              No events yet. Create one to get started.
-            </p>
-          )}
-        </div>
-      </div>
+       <div>
+         <div className="mb-4 flex items-center justify-between">
+           <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
+             Event Progress
+           </h2>
+           <button className="btn-ghost !py-1.5 !px-3 text-xs" onClick={onManageEvents}>
+             Manage events
+           </button>
+         </div>
+         <div className="space-y-3">
+           {(summary.eventProgress || []).map((ep) => {
+             const type = eventTypeMeta(ep.type || "event");
+             return (
+               <div
+                 key={ep.id}
+                 className="flex flex-col gap-2 rounded-xl px-5 py-4 sm:flex-row sm:items-center"
+                 style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)" }}
+               >
+                 <div className="min-w-0 flex-1">
+                   <div className="flex items-center gap-2">
+                     <p className="truncate text-sm font-bold text-white">{ep.name}</p>
+                     <span
+                       className="shrink-0 rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest"
+                       style={{ color: "#ffffff", background: type.color, fontFamily: "'JetBrains Mono', monospace" }}
+                     >
+                       {type.label}
+                     </span>
+                   </div>
+                   <p className="mt-0.5 text-xs" style={{ color: "#94a3b8" }}>
+                     {ep.date ? formatDate(ep.date) : "No date"} {ep.location ? ` · ${ep.location}` : ""}
+                   </p>
+                 </div>
+                 <div className="flex items-center gap-3 sm:w-64">
+                   <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+                     <div
+                       className="h-full rounded-full transition-all duration-500"
+                       style={{
+                         width: `${ep.pct}%`,
+                         background: "linear-gradient(90deg, #e11d6a, #a855f7, #10b981)",
+                         boxShadow: "0 0 8px rgba(225,29,106,0.4)",
+                       }}
+                     />
+                   </div>
+                   <span className="w-10 text-right text-xs font-bold" style={{ color: "#f1f5f9", fontFamily: "'JetBrains Mono', monospace" }}>
+                     {ep.pct}%
+                   </span>
+                 </div>
+               </div>
+             );
+           })}
+           {(summary.eventProgress || []).length === 0 && (
+             <p className="rounded-xl border border-dashed px-6 py-10 text-center text-sm" style={{ color: "#64748b", borderColor: "rgba(255,255,255,0.15)" }}>
+               No events yet. Create one to get started.
+             </p>
+           )}
+         </div>
+       </div>
 {/* Member workload */}
-      <div>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
-            Member Workload
-          </h2>
-          <button className="btn-ghost !py-1.5 !px-3 text-xs" onClick={onManageMembers}>
-            Manage members
-          </button>
-        </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {(summary.memberLoad || []).filter((m) => m.role !== "admin").map((m) => (
-            <div
-              key={m.userId}
-              className="rounded-xl px-5 py-4"
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-bold text-white">{m.name}</p>
-                <span
-                  className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                  style={{
-                    color: m.total === 0 ? "#94a3b8" : "#fb7aaa",
-                    background: "rgba(225,29,106,0.1)",
-                    border: "1px solid rgba(225,29,106,0.2)",
-                    fontFamily: "'JetBrains Mono', monospace",
-                  }}
-                >
-                  {m.completed}/{m.total} done
-                </span>
-              </div>
-              <p className="mt-0.5 text-xs" style={{ color: "#94a3b8" }}>
-                {m.position || "Member"}
-              </p>
-              <div className="mt-2 flex gap-3 text-[10px] font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                <span style={{ color: "#94a3b8" }}>⏳ {m.pending} pending</span>
-                <span style={{ color: "#fbbf24" }}>◇ {m.inProgress} in progress</span>
-              </div>
-            </div>
-          ))}
-          {(summary.memberLoad || []).filter((m) => m.role !== "admin").length === 0 && (
-            <p className="rounded-xl border border-dashed px-6 py-10 text-center text-sm sm:col-span-2" style={{ color: "#64748b", borderColor: "rgba(255,255,255,0.15)" }}>
-              No members yet. Create member accounts to start assigning tasks.
-            </p>
-          )}
-        </div>
-      </div>
+       <div>
+         <div className="mb-4 flex items-center justify-between">
+           <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
+             Member Workload
+           </h2>
+           <button className="btn-ghost !py-1.5 !px-3 text-xs" onClick={onManageMembers}>
+             Manage members
+           </button>
+         </div>
+         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+           {(summary.memberLoad || []).filter((m) => m.role !== "admin").map((m) => (
+             <div
+               key={m.userId}
+               className="rounded-xl px-5 py-4"
+               style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)" }}
+             >
+               <div className="flex items-center justify-between gap-2">
+                 <p className="text-sm font-bold text-white">{m.name}</p>
+                 <span
+                   className="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                   style={{
+                     color: m.total === 0 ? "#94a3b8" : "#fb7aaa",
+                     background: "rgba(225,29,106,0.1)",
+                     border: "1px solid rgba(225,29,106,0.2)",
+                     fontFamily: "'JetBrains Mono', monospace",
+                   }}
+                 >
+                   {m.completed}/{m.total} done
+                 </span>
+               </div>
+               <p className="mt-0.5 text-xs" style={{ color: "#94a3b8" }}>
+                 {m.position || "Member"}
+               </p>
+               <div className="mt-2 flex gap-3 text-[10px] font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                 <span style={{ color: "#94a3b8" }}>⏳ {m.pending} pending</span>
+                 <span style={{ color: "#fbbf24" }}>◇ {m.inProgress} in progress</span>
+               </div>
+             </div>
+           ))}
+           {(summary.memberLoad || []).filter((m) => m.role !== "admin").length === 0 && (
+             <p className="rounded-xl border border-dashed px-6 py-10 text-center text-sm sm:col-span-2" style={{ color: "#64748b", borderColor: "rgba(255,255,255,0.15)" }}>
+               No members yet. Create member accounts to start assigning tasks.
+             </p>
+           )}
+         </div>
+       </div>
 
-      {/* Upcoming events */}
-      {(summary.upcoming || []).length > 0 && (
-        <div>
-          <h2 className="mb-4 text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
-            Upcoming Events
-          </h2>
-          <div className="flex flex-wrap gap-3">
-            {(summary.upcoming || []).map((ev) => {
-              const type = eventTypeMeta(ev.type || "event");
-              return (
-                <div
-                  key={ev.id}
-                  className="flex items-center gap-3 rounded-xl px-4 py-3"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-                >
-                  <span
-                    className="rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest"
-                    style={{ color: "#ffffff", background: type.color, fontFamily: "'JetBrains Mono', monospace" }}
-                  >
-                    {type.label}
-                  </span>
-                  <div>
-                    <p className="text-sm font-bold text-white">{ev.name}</p>
-                    <p className="text-xs" style={{ color: "#94a3b8" }}>
-                      {formatDate(ev.date)}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+{/* Upcoming events */}
+       {(summary.upcoming || []).length > 0 && (
+         <div>
+           <h2 className="mb-4 text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
+             Upcoming Events
+           </h2>
+           <div className="flex flex-wrap gap-3">
+             {(summary.upcoming || []).map((ev) => {
+               const type = eventTypeMeta(ev.type || "event");
+               return (
+                 <div
+                   key={ev.id}
+                   className="flex items-center gap-3 rounded-xl px-4 py-3"
+                   style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)" }}
+                 >
+                   <span
+                     className="rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest"
+                     style={{ color: "#ffffff", background: type.color, fontFamily: "'JetBrains Mono', monospace" }}
+                   >
+                     {type.label}
+                   </span>
+                   <div className="flex-1">
+                     <p className="mt-0.5 text-xs" style={{ color: "#94a3b8" }}>
+                       {ev.date ? formatDate(ev.date) : "No date"} {ev.location ? ` · ${ev.location}` : ""}
+                     </p>
+                   </div>
+                   <div className="flex-1">
+                     <ProgressBar done={ev.progress || 0} total={100} size="sm" className="mt-2" />
+                   </div>
+                 </div>
+               )}
+             )}
+           </div>
+         </div>
+       )}
     </div>
   );
 }
