@@ -38,7 +38,7 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
         e.currentTarget.style.transform = "translateY(0)";
       }}
     >
-      {/* Accent top stripe — gradient based on pct */}
+      {/* Accent top stripe */}
       <div
         className="h-0.5 w-full"
         style={{
@@ -51,20 +51,14 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
 
       {/* Card body */}
       <div className="p-6 flex-1 flex flex-col">
-{/* Top row */}
+        {/* Top row */}
         <div className="flex items-start justify-between gap-3">
           {onSelect ? (
-            <div 
+            <div
               onClick={() => onSelect(event)}
               className="min-w-0 flex-1 cursor-pointer"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "#000000";
-                e.currentTarget.style.textDecoration = "underline";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "#000000";
-                e.currentTarget.style.textDecoration = "none";
-              }}
+              onMouseEnter={(e) => { e.currentTarget.style.textDecoration = "underline"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.textDecoration = "none"; }}
             >
               <span
                 className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest mb-2"
@@ -85,7 +79,7 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
               </h3>
             </div>
           ) : (
-            <Link to={`/event/${event.id}`} className="min-w-0 flex-1">
+            <Link to={`/events/${event.id}`} className="min-w-0 flex-1">
               <span
                 className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest mb-2"
                 style={{
@@ -107,7 +101,8 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
           )}
           <ProgressStamp pct={pct} size="sm" />
         </div>
-{/* Meta */}
+
+        {/* Meta */}
         <div className="mt-3 space-y-1.5">
           <div className="flex items-center gap-1.5 flex-wrap">
             <CalendarDays size={14} style={{ color: "#3b3853" }} />
@@ -219,51 +214,51 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
         </div>
       </div>
 
-{/* CTA */}
-        {onSelect ? (
-          <div 
-            onClick={() => onSelect(event)}
-            className="flex items-center justify-center gap-2 py-3 text-base font-bold transition-all duration-200"
-            style={{
-              borderTop: "1px solid rgba(29,23,51,0.12)",
-              background: "rgba(29,23,51,0.04)",
-              color: "#0f172a",
-              fontFamily: "'Inter', sans-serif",
-              cursor: "pointer"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "linear-gradient(135deg, rgba(225,29,106,0.18), rgba(168,85,247,0.12))";
-              e.currentTarget.style.color = "#9d174d";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(29,23,51,0.04)";
-              e.currentTarget.style.color = "#0f172a";
-            }}
-          >
-            Open checklist <ArrowRight size={14} />
-          </div>
-        ) : (
-          <Link
-            to={`/event/${event.id}`}
-            className="flex items-center justify-center gap-2 py-3 text-base font-bold transition-all duration-200"
-            style={{
-              borderTop: "1px solid rgba(29,23,51,0.12)",
-              background: "rgba(29,23,51,0.04)",
-              color: "#0f172a",
-              fontFamily: "'Inter', sans-serif",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "linear-gradient(135deg, rgba(225,29,106,0.18), rgba(168,85,247,0.12))";
-              e.currentTarget.style.color = "#9d174d";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(29,23,51,0.04)";
-              e.currentTarget.style.color = "#0f172a";
-            }}
-          >
-            Open checklist <ArrowRight size={14} />
-          </Link>
-        )}
+      {/* CTA */}
+      {onSelect ? (
+        <div
+          onClick={() => onSelect(event)}
+          className="flex items-center justify-center gap-2 py-3 text-base font-bold transition-all duration-200"
+          style={{
+            borderTop: "1px solid rgba(29,23,51,0.12)",
+            background: "rgba(29,23,51,0.04)",
+            color: "#0f172a",
+            fontFamily: "'Inter', sans-serif",
+            cursor: "pointer",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "linear-gradient(135deg, rgba(225,29,106,0.18), rgba(168,85,247,0.12))";
+            e.currentTarget.style.color = "#9d174d";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(29,23,51,0.04)";
+            e.currentTarget.style.color = "#0f172a";
+          }}
+        >
+          Open checklist <ArrowRight size={14} />
+        </div>
+      ) : (
+        <Link
+          to={`/events/${event.id}`}
+          className="flex items-center justify-center gap-2 py-3 text-base font-bold transition-all duration-200"
+          style={{
+            borderTop: "1px solid rgba(29,23,51,0.12)",
+            background: "rgba(29,23,51,0.04)",
+            color: "#0f172a",
+            fontFamily: "'Inter', sans-serif",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "linear-gradient(135deg, rgba(225,29,106,0.18), rgba(168,85,247,0.12))";
+            e.currentTarget.style.color = "#9d174d";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(29,23,51,0.04)";
+            e.currentTarget.style.color = "#0f172a";
+          }}
+        >
+          View Details <ArrowRight size={14} />
+        </Link>
+      )}
     </div>
   );
 }

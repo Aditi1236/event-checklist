@@ -303,10 +303,21 @@ async function handleApi(req, res, url) {
       const password = String(body.password ?? "").trim();
       const name = String(body.name || "").trim();
       const role = USER_ROLES.includes(body.role) ? body.role : "member";
+      const securityQuestion = String(body.securityQuestion || "").trim();
+      const securityAnswer = String(body.securityAnswer || "").trim().toLowerCase();
       
-      if (!name || !email || !password) return send(res, 400, { error: "Name, email, and password are required" });
+      if (!name || !email || !password || !securityQuestion || !securityAnswer) {
+        return send(res, 400, { error: "Name, email, password, and security question are required" });
+      }
       if (password.length < 6) return send(res, 400, { error: "Password must be at least 6 characters" });
       
+      if (role === "admin") {
+        const adminCount = await users.countDocuments({ role: "admin" });
+        if (adminCount >= 2) {
+          return send(res, 403, { error: "Maximum of 2 admins allowed." });
+        }
+      }
+
       const dup = await users.findOne({ email });
       if (dup) return send(res, 409, { error: "An account with this email already exists" });
       
@@ -316,6 +327,8 @@ async function handleApi(req, res, url) {
         email,
         passwordHash: hashPassword(password),
         role,
+        securityQuestion,
+        securityAnswer,
         position: "",
         phone: "",
         status: "active",
@@ -324,6 +337,33 @@ async function handleApi(req, res, url) {
       await users.insertOne(newUser);
       broadcastChange();
       return send(res, 201, { token: signToken(newUser), user: publicUser(newUser) });
+    }
+
+    if (parts[2] === "get-security-question" && req.method === "POST") {
+      const body = await readBody(req);
+      const email = String(body.email || "").trim().toLowerCase();
+      if (!email) return send(res, 400, { error: "Email is required" });
+      const user = await users.findOne({ email });
+      if (!user) return send(res, 404, { error: "No account found with this email" });
+      if (!user.securityQuestion) return send(res, 400, { error: "This account does not have a security question set up" });
+      return send(res, 200, { question: user.securityQuestion });
+    }
+
+    if (parts[2] === "reset-password" && req.method === "POST") {
+      const body = await readBody(req);
+      const email = String(body.email || "").trim().toLowerCase();
+      const answer = String(body.answer || "").trim().toLowerCase();
+      const newPassword = String(body.newPassword || "").trim();
+      
+      if (!email || !answer || !newPassword) return send(res, 400, { error: "All fields are required" });
+      if (newPassword.length < 6) return send(res, 400, { error: "Password must be at least 6 characters" });
+      
+      const user = await users.findOne({ email });
+      if (!user) return send(res, 404, { error: "No account found with this email" });
+      if (user.securityAnswer !== answer) return send(res, 401, { error: "Incorrect answer to security question" });
+      
+      await users.updateOne({ id: user.id }, { $set: { passwordHash: hashPassword(newPassword) } });
+      return send(res, 200, { ok: true });
     }
 
     if (parts[2] === "me") {
@@ -495,6 +535,8 @@ async function handleApi(req, res, url) {
         type,
         date: body.date ?? "",
         endDate: body.endDate ?? "",
+        duration: String(body.duration || "").trim(),
+        category: String(body.category || "").trim(),
         description: body.description ?? "",
         location: body.location ?? "",
         mode: body.mode ?? "",
@@ -503,6 +545,14 @@ async function handleApi(req, res, url) {
         budget: Number(body.budget) || 0,
         registrations: Number(body.registrations) || 0,
         teamMembers: body.teamMembers ?? "",
+        speakers: String(body.speakers || "").trim(),
+        collaborators: String(body.collaborators || "").trim(),
+        learningOutcomes: String(body.learningOutcomes || "").trim(),
+        studentBenefits: String(body.studentBenefits || "").trim(),
+        targetAudience: String(body.targetAudience || "").trim(),
+        prerequisites: String(body.prerequisites || "").trim(),
+        registrationLink: String(body.registrationLink || "").trim(),
+        highlights: String(body.highlights || "").trim(),
         tasks: Array.isArray(body.tasks) ? body.tasks : [],
         createdAt: body.createdAt ?? Date.now(),
       };

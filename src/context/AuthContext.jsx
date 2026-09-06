@@ -57,14 +57,14 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function signup(name, email, password, role) {
+  async function signup(name, email, password, role, securityQuestion, securityAnswer) {
     if (!email || !email.includes('@')) {
       throw new Error('Invalid email format');
     }
     const normalizedEmail = email.trim().toLowerCase();
     
     try {
-      const data = await apiClient.signup(name, normalizedEmail, password, role);
+      const data = await apiClient.signup(name, normalizedEmail, password, role, securityQuestion, securityAnswer);
       if (!data || !data.user) {
         throw new Error('Signup failed');
       }

@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Dashboard from "./pages/Dashboard";
 import EventDetail from "./pages/EventDetail";
+import EventInfoPage from "./pages/EventInfoPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import MemberLogin from "./pages/MemberLogin";
@@ -17,6 +18,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/event/:eventId" element={<EventDetail />} />
+          <Route path="/events/:eventId" element={<EventInfoPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/login" element={<MemberLogin />} />
           <Route
