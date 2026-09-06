@@ -369,7 +369,7 @@ return (
                     {sortedEvents.map((event) => (
                       <EventCard
                         key={event.id}
-                        event={event>
+                        event={event}
                         onEdit={() => setEditingEvent(event)}
                         onDelete={() => setDeletingEvent(event)}
                         onSelect={() => setSelectedEvent(event)}
