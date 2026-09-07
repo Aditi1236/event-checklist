@@ -14,7 +14,6 @@ const empty = {
   mode: "offline",
   capacity: "",
   techStack: "",
-  budget: "",
   registrations: "",
   teamMembers: "",
   speakers: "",
@@ -364,30 +363,17 @@ export default function EventForm({ initial, onSubmit, onClose }) {
               </div>
             </div>
           )}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="field-label" htmlFor="event-budget">Budget (₹)</label>
-              <input
-                id="event-budget"
-                type="number"
-                className="field-input"
-                placeholder="0"
-                value={form.budget}
-                onChange={(e) => update("budget", e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="field-label" htmlFor="event-techstack">
-                Tech Stack (comma-separated)
-              </label>
-              <input
-                id="event-techstack"
-                className="field-input"
-                placeholder="React, Node.js, MongoDB"
-                value={form.techStack}
-                onChange={(e) => update("techStack", e.target.value)}
-              />
-            </div>
+          <div>
+            <label className="field-label" htmlFor="event-techstack">
+              Tech Stack (comma-separated)
+            </label>
+            <input
+              id="event-techstack"
+              className="field-input"
+              placeholder="React, Node.js, MongoDB"
+              value={form.techStack}
+              onChange={(e) => update("techStack", e.target.value)}
+            />
           </div>
           <div>
             <label className="field-label" htmlFor="event-highlights">

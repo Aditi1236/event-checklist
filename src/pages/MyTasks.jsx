@@ -127,9 +127,9 @@ export default function MyTasks() {
               {user?.email}
             </p>
           </div>
-          <Link to="/" className="btn-secondary text-sm !px-4 !py-2">
+          <Link to="/admin" className="btn-secondary text-sm !px-4 !py-2">
             <ExternalLink size={15} />
-            Back to Dashboard
+            Back to Events
           </Link>
         </div>
 

@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft, CalendarDays, MapPin, Clock, Tag, Users,
   BookOpen, Star, Mic2, Handshake, Target, CheckCircle2,
-  ExternalLink, Zap, IndianRupee, Monitor, GraduationCap
+  ExternalLink, Zap, Monitor, GraduationCap
 } from "lucide-react";
 import { useEvents } from "../context/EventsContext";
 import { formatDate, eventTypeMeta } from "../utils/helpers";
@@ -257,11 +257,7 @@ export default function EventInfoPage() {
         {/* ── Key Info Grid ── */}
         <div className="grid grid-cols-2 gap-3 mb-8 sm:grid-cols-4">
           <InfoCard icon={<Clock size={12} />} label="Duration" value={event.duration} />
-          <InfoCard
-            icon={<IndianRupee size={12} />}
-            label="Budget"
-            value={event.budget ? `₹${Number(event.budget).toLocaleString("en-IN")}` : null}
-          />
+
           <InfoCard
             icon={<Users size={12} />}
             label="Capacity"

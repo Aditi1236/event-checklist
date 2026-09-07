@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Plus, CalendarRange, LayoutGrid, DollarSign, Ticket, Users, TrendingUp } from "lucide-react";
+import { Plus, CalendarRange, LayoutGrid, Ticket, Users, TrendingUp } from "lucide-react";
 import { useEvents } from "../context/EventsContext";
 import { useAuth } from "../context/AuthContext";
 import EventCard from "../components/EventCard";
@@ -256,9 +256,6 @@ return (
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-base font-semibold" style={{ color: "#64748b" }}>
-                            Budget: ${upcomingEvent.budget || 0}
-                          </span>
-                          <span className="text-base font-semibold" style={{ color: "#64748b" }}>
                             Registrations: {upcomingEvent.registrations || 0}
                           </span>
                           <span className="text-base font-semibold" style={{ color: "#64748b" }}>
@@ -272,7 +269,6 @@ return (
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {[
-                          { icon: <DollarSign size={14} />, label: "Budget", value: `$${upcomingEvent.budget || 0}` },
                           { icon: <Ticket size={14} />, label: "Registrations", value: upcomingEvent.registrations || 0 },
                           { icon: <Users size={14} />, label: "Team", value: upcomingEvent.teamMembers || "Unassigned" },
                         ].map((item) => (

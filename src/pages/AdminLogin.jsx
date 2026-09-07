@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ShieldCheck, Lock, Mail, ArrowLeft, Sparkles, User, HelpCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import Dashboard from "./Dashboard";
 import apiClient from "../utils/api";
 
 const SECURITY_QUESTIONS = [
@@ -32,9 +31,10 @@ export default function AdminLogin() {
 
   if (user) {
     if (user.role === "admin") {
-      return <Dashboard />;
+      navigate("/admin", { replace: true });
+      return null;
     } else {
-      navigate("/", { replace: true });
+      navigate("/login", { replace: true });
       return null;
     }
   }
@@ -94,10 +94,10 @@ export default function AdminLogin() {
         <div className="orb orb-purple" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md animate-fadeIn">
+      <div className="relative z-10 w-full max-w-lg animate-fadeIn">
         <Link
-          to="/"
-          className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
+          to="/admin/login"
+          className="mb-6 inline-flex items-center gap-2 text-base font-bold transition-colors"
           style={{ color: "#64748b" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#f1f5f9")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
@@ -139,7 +139,7 @@ export default function AdminLogin() {
               >
                 {isForgotPassword ? "Reset Password" : isSignUp ? "Admin Sign Up" : "Admin Login"}
               </h1>
-              <p className="mt-2 text-sm font-medium" style={{ color: "#94a3b8" }}>
+              <p className="mt-2 text-base font-semibold" style={{ color: "#94a3b8" }}>
                 {isForgotPassword ? "Answer your security question to reset." : isSignUp ? "Create an admin account for NexaSoul." : "Manage events, tasks, members and progress for NexaSoul."}
               </p>
             </div>
@@ -153,7 +153,7 @@ export default function AdminLogin() {
                     </label>
                     <div className="relative">
                       <Mail
-                        size={16}
+                        size={20}
                         className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
                         style={{ color: "#64748b" }}
                       />
@@ -186,7 +186,7 @@ export default function AdminLogin() {
                       <input
                         id="forgot-answer"
                         type="text"
-                        className="field-input"
+                        className="field-input !py-3 !text-base"
                         placeholder="Your answer"
                         value={securityAnswer}
                         onChange={(e) => setSecurityAnswer(e.target.value)}
@@ -231,7 +231,7 @@ export default function AdminLogin() {
                   </p>
                 )}
 
-                <button type="submit" className="btn-accent w-full !py-3" disabled={busy}>
+                <button type="submit" className="btn-accent w-full !py-4 !text-base font-bold" disabled={busy}>
                   {busy ? "Loading…" : forgotStep === 1 ? "Next" : "Reset Password"}
                 </button>
                 
@@ -412,7 +412,7 @@ export default function AdminLogin() {
             )}
 
             {!isForgotPassword && (
-              <div className="mt-6 text-center text-sm font-medium" style={{ color: "#94a3b8" }}>
+              <div className="mt-6 text-center text-base font-semibold" style={{ color: "#94a3b8" }}>
                 {isSignUp ? "Already have an admin account? " : "Don't have an admin account? "}
                 <button
                   type="button"
@@ -430,7 +430,7 @@ export default function AdminLogin() {
             )}
 
             {!isForgotPassword && (
-              <p className="mt-4 text-center text-xs font-medium" style={{ color: "#64748b" }}>
+              <p className="mt-4 text-center text-sm font-semibold" style={{ color: "#64748b" }}>
                 Are you an executive member?{" "}
                 <Link
                   to="/login"

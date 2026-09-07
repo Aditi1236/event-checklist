@@ -57,9 +57,9 @@ export default function EventDetail() {
           It may have been deleted. Head back to the dashboard to see your
           other events.
         </p>
-        <Link to="/" className="btn-primary inline-flex">
+        <Link to="/admin" className="btn-primary inline-flex">
           <ArrowLeft size={16} />
-          Back to dashboard
+          Back to events
         </Link>
       </div>
     );

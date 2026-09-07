@@ -242,7 +242,7 @@ function OverviewTab({ summary, onManageEvents, onManageTasks, onManageMembers }
          }}
        >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
+          <h2 className="text-xl font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
             Overall Task Progress
           </h2>
           <span
@@ -280,7 +280,7 @@ function OverviewTab({ summary, onManageEvents, onManageTasks, onManageMembers }
 {/* Event progress */}
        <div>
          <div className="mb-4 flex items-center justify-between">
-           <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
+           <h2 className="text-xl font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
              Event Progress
            </h2>
            <button className="btn-ghost !py-1.5 !px-3 text-xs" onClick={onManageEvents}>
@@ -293,7 +293,7 @@ function OverviewTab({ summary, onManageEvents, onManageTasks, onManageMembers }
              return (
                <div
                  key={ep.id}
-                 className="flex flex-col gap-2 rounded-xl px-5 py-4 sm:flex-row sm:items-center"
+                 className="flex flex-col gap-3 rounded-xl px-6 py-5 sm:flex-row sm:items-center"
                  style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)" }}
                >
                  <div className="min-w-0 flex-1">
@@ -306,12 +306,12 @@ function OverviewTab({ summary, onManageEvents, onManageTasks, onManageMembers }
                        {type.label}
                      </span>
                    </div>
-                   <p className="mt-0.5 text-xs" style={{ color: "#94a3b8" }}>
+                   <p className="mt-1 text-sm" style={{ color: "#94a3b8" }}>
                      {ep.date ? formatDate(ep.date) : "No date"} {ep.location ? ` · ${ep.location}` : ""}
                    </p>
                  </div>
                  <div className="flex items-center gap-3 sm:w-64">
-                   <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+                   <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
                      <div
                        className="h-full rounded-full transition-all duration-500"
                        style={{
@@ -321,7 +321,7 @@ function OverviewTab({ summary, onManageEvents, onManageTasks, onManageMembers }
                        }}
                      />
                    </div>
-                   <span className="w-10 text-right text-xs font-bold" style={{ color: "#f1f5f9", fontFamily: "'JetBrains Mono', monospace" }}>
+                   <span className="w-12 text-right text-sm font-bold" style={{ color: "#f1f5f9", fontFamily: "'JetBrains Mono', monospace" }}>
                      {ep.pct}%
                    </span>
                  </div>
@@ -345,15 +345,15 @@ function OverviewTab({ summary, onManageEvents, onManageTasks, onManageMembers }
              Manage members
            </button>
          </div>
-         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
            {(summary.memberLoad || []).filter((m) => m.role !== "admin").map((m) => (
              <div
                key={m.userId}
-               className="rounded-xl px-5 py-4"
+               className="rounded-xl px-6 py-5"
                style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)" }}
              >
                <div className="flex items-center justify-between gap-2">
-                 <p className="text-sm font-bold text-white">{m.name}</p>
+                 <p className="text-base font-bold text-white">{m.name}</p>
                  <span
                    className="rounded-full px-2 py-0.5 text-[10px] font-bold"
                    style={{
@@ -366,7 +366,7 @@ function OverviewTab({ summary, onManageEvents, onManageTasks, onManageMembers }
                    {m.completed}/{m.total} done
                  </span>
                </div>
-               <p className="mt-0.5 text-xs" style={{ color: "#94a3b8" }}>
+               <p className="mt-1 text-sm" style={{ color: "#94a3b8" }}>
                  {m.position || "Member"}
                </p>
                <div className="mt-2 flex gap-3 text-[10px] font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
@@ -399,7 +399,7 @@ function OverviewTab({ summary, onManageEvents, onManageTasks, onManageMembers }
                    style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)" }}
                  >
                    <span
-                     className="rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest"
+                     className="rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest"
                      style={{ color: "#ffffff", background: type.color, fontFamily: "'JetBrains Mono', monospace" }}
                    >
                      {type.label}
@@ -438,7 +438,7 @@ return (
      <div className="animate-fadeIn">
        <div className="mb-6 flex items-center justify-between">
          <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
-           All Events & Bootcamps <span className="ml-1 text-sm font-mono" style={{ color: "#94a3b8" }}>({sorted.length})</span>
+           All Events & Bootcamps <span className="ml-1 text-base font-mono font-bold" style={{ color: "#94a3b8" }}>({sorted.length})</span>
          </h2>
          <button className="btn-accent" onClick={() => setShowCreate(true)}>
            <Plus size={16} /> New Event / Bootcamp
@@ -452,20 +452,20 @@ return (
            return (
              <div
                key={evt.id}
-               className="flex flex-col gap-3 rounded-xl px-5 py-4 sm:flex-row sm:items-center"
+               className="flex flex-col gap-4 rounded-xl px-6 py-5 sm:flex-row sm:items-center"
                style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)" }}
              >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-bold text-white">{evt.name}</p>
+                  <p className="text-base font-bold text-white">{evt.name}</p>
                   <span
-                    className="rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest"
+                    className="rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest"
                     style={{ color: "#ffffff", background: type.color, fontFamily: "'JetBrains Mono', monospace" }}
                   >
                     {type.label}
                   </span>
                   {evt.type === "bootcamp" && evt.mode && (
-                    <span className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider" style={{ color: "#94a3b8", background: "rgba(255,255,255,0.07)", fontFamily: "'JetBrains Mono', monospace" }}>
+                    <span className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider" style={{ color: "#94a3b8", background: "rgba(255,255,255,0.07)", fontFamily: "'JetBrains Mono', monospace" }}>
                       {evt.mode}
                     </span>
                   )}
@@ -477,8 +477,8 @@ return (
                 </p>
               </div>
 
-              <div className="flex items-center gap-4">
-                <div className="hidden items-center gap-2 sm:flex sm:w-40">
+              <div className="flex items-center gap-5">
+                <div className="hidden items-center gap-3 sm:flex sm:w-48">
                   <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
                     <div
                       className="h-full rounded-full transition-all duration-500"
@@ -489,29 +489,29 @@ return (
                     {pct}%
                   </span>
                 </div>
-                <span className="text-xs font-bold" style={{ color: "#94a3b8", fontFamily: "'JetBrains Mono', monospace" }}>
+                <span className="text-sm font-bold" style={{ color: "#94a3b8", fontFamily: "'JetBrains Mono', monospace" }}>
                   {done}/{total}
                 </span>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => setEditing(evt)}
-                    className="rounded-full p-2 transition-all duration-150"
+                    className="rounded-full p-2.5 transition-all duration-150"
                     style={{ color: "#64748b", background: "rgba(255,255,255,0.05)" }}
                     aria-label={`Edit ${evt.name}`}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(168,85,247,0.15)"; e.currentTarget.style.color = "#c084fc"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#64748b"; }}
                   >
-                    <Pencil size={14} />
+                    <Pencil size={16} />
                   </button>
                   <button
                     onClick={() => setDeleting(evt)}
-                    className="rounded-full p-2 transition-all duration-150"
+                    className="rounded-full p-2.5 transition-all duration-150"
                     style={{ color: "#64748b", background: "rgba(255,255,255,0.05)" }}
                     aria-label={`Delete ${evt.name}`}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(225,29,106,0.15)"; e.currentTarget.style.color = "#fb7aaa"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#64748b"; }}
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>
@@ -579,7 +579,7 @@ function TasksTab({ tasks, events, members, memberById, addTask, updateTask, del
     <div className="animate-fadeIn">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
-          All Assigned Tasks <span className="ml-1 text-sm font-mono" style={{ color: "#94a3b8" }}>({filtered.length})</span>
+          All Assigned Tasks <span className="ml-1 text-base font-mono font-bold" style={{ color: "#94a3b8" }}>({filtered.length})</span>
         </h2>
         <button className="btn-accent" onClick={() => setShowAdd(true)}>
           <Plus size={16} /> Add Task
@@ -641,7 +641,7 @@ function TasksTab({ tasks, events, members, memberById, addTask, updateTask, del
              >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className={`text-sm font-bold text-white ${st.key === "completed" ? "line-through" : ""}`}>{t.title}</p>
+                  <p className={`text-base font-bold text-white ${st.key === "completed" ? "line-through" : ""}`}>{t.title}</p>
                   <span
                     className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider"
                     style={{ color: st.color, background: st.bg, border: `1px solid ${st.border}`, fontFamily: "'JetBrains Mono', monospace" }}
@@ -649,15 +649,15 @@ function TasksTab({ tasks, events, members, memberById, addTask, updateTask, del
                     {st.label}
                   </span>
                 </div>
-                <p className="mt-0.5 text-xs truncate" style={{ color: "#94a3b8" }}>
+                <p className="mt-1 text-sm truncate" style={{ color: "#94a3b8" }}>
                   {evt?.name || "Unknown event"}
                   {assignee ? ` · 👤 ${assignee.name}` : ""}
                   {t.dueDate ? ` · 📅 ${formatDate(t.dueDate)}` : ""}
                 </p>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <button
-                  className="rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-150"
+                  className="rounded-full px-4 py-2 text-sm font-bold transition-all duration-150"
                   style={{
                     color: st.key === "completed" ? "#94a3b8" : "#34d399",
                     background: st.key === "completed" ? "rgba(255,255,255,0.05)" : "rgba(16,185,129,0.1)",
@@ -670,13 +670,13 @@ function TasksTab({ tasks, events, members, memberById, addTask, updateTask, del
                 </button>
 <button
                   onClick={() => setEditing(t)}
-                  className="rounded-full p-2 transition-all duration-150"
+                  className="rounded-full p-2.5 transition-all duration-150"
                   style={{ color: "#64748b", background: "rgba(255,255,255,0.05)" }}
                   aria-label={`Edit task ${t.title}`}
                   onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(168,85,247,0.15)"; e.currentTarget.style.color = "#c084fc"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#64748b"; }}
                 >
-                  <Pencil size={14} />
+                  <Pencil size={16} />
                 </button>
                 <button
                   onClick={() => setDeleting(t)}
@@ -686,7 +686,7 @@ function TasksTab({ tasks, events, members, memberById, addTask, updateTask, del
                   onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(225,29,106,0.15)"; e.currentTarget.style.color = "#fb7aaa"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#64748b"; }}
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={16} />
                 </button>
               </div>
             </div>
@@ -800,7 +800,7 @@ function MembersTab({ members, refreshMembers, currentUser }) {
           </span>
         </h2>
         <button className="btn-accent" onClick={() => setShowCreate(true)}>
-          <UserPlus size={16} /> Add Member
+          <UserPlus size={18} /> Add Member
         </button>
       </div>
 
@@ -817,9 +817,9 @@ function MembersTab({ members, refreshMembers, currentUser }) {
 {sorted.map((m) => (
           <div
             key={m.id}
-            className="rounded-xl px-5 py-4"
+            className="rounded-xl px-6 py-5"
             style={{
-              background: "rgba(255,255,255,0.04)",
+              background: "#622569",
               border: "1px solid rgba(255,255,255,0.08)",
               opacity: m.status === "inactive" ? 0.6 : 1,
             }}
@@ -827,9 +827,9 @@ function MembersTab({ members, refreshMembers, currentUser }) {
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-bold text-white">{m.name}</p>
+                  <p className="text-base font-bold text-white">{m.name}</p>
                   <span
-                    className="rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest"
+                    className="rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest"
                     style={{
                       color: m.role === "admin" ? "#fb7aaa" : m.status === "inactive" ? "#94a3b8" : "#34d399",
                       background:
@@ -845,7 +845,7 @@ function MembersTab({ members, refreshMembers, currentUser }) {
                     {m.role === "admin" ? "Admin" : m.status === "inactive" ? "Inactive" : "Member"}
                   </span>
                 </div>
-                <p className="mt-0.5 truncate text-xs" style={{ color: "#94a3b8" }}>
+                <p className="mt-1 truncate text-sm font-semibold" style={{ color: "#94a3b8" }}>
                   {m.email}
                   {m.position ? ` · ${m.position}` : ""}
                 </p>
@@ -854,7 +854,7 @@ function MembersTab({ members, refreshMembers, currentUser }) {
                 </p>
               </div>
               {m.id !== currentUser?.id && (
-                <div className="flex shrink-0 items-center gap-1">
+                <div className="flex shrink-0 items-center gap-2">
                   <button
                     onClick={() => setEditing(m)}
                     className="rounded-full p-2 transition-all duration-150"
@@ -863,7 +863,7 @@ function MembersTab({ members, refreshMembers, currentUser }) {
                     onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(168,85,247,0.15)"; e.currentTarget.style.color = "#c084fc"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#64748b"; }}
                   >
-                    <Pencil size={14} />
+                    <Pencil size={16} />
                   </button>
                   <button
                     onClick={() => setDeleting(m)}
@@ -873,7 +873,7 @@ function MembersTab({ members, refreshMembers, currentUser }) {
                     onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(225,29,106,0.15)"; e.currentTarget.style.color = "#fb7aaa"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#64748b"; }}
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={16} />
                   </button>
                 </div>
               )}

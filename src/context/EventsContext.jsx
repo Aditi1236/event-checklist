@@ -73,7 +73,7 @@ export function EventsProvider({ children }) {
         return events.find((e) => e.id === eventId) ?? null;
       },
 
-      createEvent({ name, date, description, location, budget = 0, registrations = 0, teamMembers = "", type = "event", endDate = "", mode = "", capacity = 0, techStack = "" }) {
+      createEvent({ name, date, description, location, registrations = 0, teamMembers = "", type = "event", endDate = "", mode = "", capacity = 0, techStack = "" }) {
         const newEvent = {
           id: genId("evt"),
           name: name.trim(),
@@ -85,7 +85,6 @@ export function EventsProvider({ children }) {
           mode,
           capacity: Number(capacity) || 0,
           techStack: String(techStack || "").trim(),
-          budget: Number(budget) || 0,
           registrations: Number(registrations) || 0,
           teamMembers: teamMembers,
           tasks: [],
