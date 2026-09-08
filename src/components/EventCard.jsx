@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { CalendarDays, MapPin, Pencil, Trash2, ArrowRight } from "lucide-react";
+import { CalendarDays, MapPin, Pencil, Trash2, ArrowRight, Clock, Users, Monitor, Award, BookOpen, Target, Star, Link as LinkIcon, Zap, GraduationCap, UserCheck, Handshake } from "lucide-react";
 import ProgressStamp from "./ProgressStamp";
-import { formatDateShort, progressOf, daysUntil, eventTypeMeta } from "../utils/helpers";
+import { formatDateShort, formatDate, progressOf, daysUntil, eventTypeMeta } from "../utils/helpers";
 
 function getDayTagStyle(remaining) {
   if (remaining === null) return null;
@@ -11,11 +11,61 @@ function getDayTagStyle(remaining) {
   return { label: "Past", bg: "rgba(100,116,139,0.12)", border: "rgba(100,116,139,0.2)", color: "#64748b" };
 }
 
+function DetailItem({ icon: Icon, label, value, isLink = false }) {
+  if (!value) return null;
+  return (
+    <div className="flex items-start gap-2 text-sm">
+      <Icon size={14} className="shrink-0 mt-0.5" style={{ color: "#64748b" }} />
+      <div className="min-w-0 flex-1">
+        <span className="font-medium" style={{ color: "#64748b" }}>{label}: </span>
+        {isLink ? (
+          <a
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="break-all hover:underline"
+            style={{ color: "#3b82f6" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {value}
+          </a>
+        ) : (
+          <span style={{ color: "#334155" }}>{value}</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TagList({ items, color = "#6366f1" }) {
+  if (!items) return null;
+  const itemList = typeof items === "string" ? items.split(",").map(i => i.trim()).filter(Boolean) : items;
+  if (itemList.length === 0) return null;
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {itemList.map((item, idx) => (
+        <span
+          key={idx}
+          className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold"
+          style={{
+            color: color,
+            background: `${color}15`,
+            border: `1px solid ${color}30`,
+          }}
+        >
+          {item}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export default function EventCard({ event, onEdit, onDelete, onSelect, canManage = true }) {
   const { done, total, pct } = progressOf(event);
   const remaining = daysUntil(event.date);
   const dayTag = getDayTagStyle(remaining);
   const type = eventTypeMeta(event.type || "event");
+  const isBootcamp = event.type === "bootcamp";
 
   return (
     <div
@@ -111,7 +161,17 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
               style={{ color: "#111844", fontFamily: "'JetBrains Mono', monospace" }}
             >
               {formatDateShort(event.date)}
+              {event.endDate && ` - ${formatDateShort(event.endDate)}`}
             </span>
+            {event.duration && (
+              <>
+                <span style={{ color: "#64748b" }}>•</span>
+                <Clock size={14} style={{ color: "#3b3853" }} />
+                <span className="text-sm font-semibold" style={{ color: "#111844" }}>
+                  {event.duration}
+                </span>
+              </>
+            )}
             {dayTag && (
               <span
                 className="rounded-full px-2 py-0.5 text-xs font-bold"
@@ -134,10 +194,10 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
               </span>
             </div>
           )}
-          {event.type === "bootcamp" && (event.mode || event.capacity > 0) && (
+          {event.mode && (
             <div className="flex items-center gap-1.5 flex-wrap text-sm font-semibold" style={{ color: "#4b4660" }}>
-              {event.mode && <span className="uppercase tracking-wider">{event.mode}</span>}
-              {event.capacity > 0 && <span>· seats {event.capacity}</span>}
+              <Monitor size={14} style={{ color: "#3b3853" }} />
+              <span className="uppercase tracking-wider">{event.mode}</span>
             </div>
           )}
         </div>
@@ -147,6 +207,108 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
             {event.description}
           </p>
         )}
+
+        {/* Event Details Section */}
+        <div className="mt-4 space-y-3">
+          {/* Capacity & Registrations for Events */}
+          {!isBootcamp && (event.capacity || event.registrations) && (
+            <div className="flex flex-wrap gap-4">
+              {event.capacity && (
+                <DetailItem icon={Users} label="Capacity" value={`${event.capacity} seats`} />
+              )}
+              {event.registrations && (
+                <DetailItem icon={UserCheck} label="Registrations" value={event.registrations} />
+              )}
+            </div>
+          )}
+
+          {/* Bootcamp specific details */}
+          {isBootcamp && (
+            <div className="space-y-3">
+              {event.duration && (
+                <DetailItem icon={Clock} label="Duration" value={event.duration} />
+              )}
+              {event.targetAudience && (
+                <DetailItem icon={Target} label="Target Audience" value={event.targetAudience} />
+              )}
+              {event.prerequisites && (
+                <DetailItem icon={BookOpen} label="Prerequisites" value={event.prerequisites} />
+              )}
+            </div>
+          )}
+
+          {/* Tech Stack */}
+          {event.techStack && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Zap size={14} style={{ color: "#64748b" }} />
+                <span className="text-xs font-semibold" style={{ color: "#64748b" }}>Tech Stack</span>
+              </div>
+              <TagList items={event.techStack} color="#6366f1" />
+            </div>
+          )}
+
+          {/* Speakers for Bootcamp */}
+          {isBootcamp && event.speakers && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Award size={14} style={{ color: "#64748b" }} />
+                <span className="text-xs font-semibold" style={{ color: "#64748b" }}>Speakers</span>
+              </div>
+              <TagList items={event.speakers} color="#8b5cf6" />
+            </div>
+          )}
+
+          {/* Team Members for Bootcamp */}
+          {isBootcamp && event.teamMembers && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Users size={14} style={{ color: "#64748b" }} />
+                <span className="text-xs font-semibold" style={{ color: "#64748b" }}>Team Members</span>
+              </div>
+              <TagList items={event.teamMembers} color="#ec4899" />
+            </div>
+          )}
+
+          {/* Collaborators for Bootcamp */}
+          {isBootcamp && event.collaborators && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Handshake size={14} style={{ color: "#64748b" }} />
+                <span className="text-xs font-semibold" style={{ color: "#64748b" }}>Collaborators</span>
+              </div>
+              <TagList items={event.collaborators} color="#10b981" />
+            </div>
+          )}
+
+          {/* Learning Outcomes for Bootcamp */}
+          {isBootcamp && event.learningOutcomes && (
+            <DetailItem icon={GraduationCap} label="Learning Outcomes" value={event.learningOutcomes} />
+          )}
+
+          {/* Student Benefits for Bootcamp */}
+          {isBootcamp && event.studentBenefits && (
+            <DetailItem icon={Star} label="Student Benefits" value={event.studentBenefits} />
+          )}
+
+          {/* Highlights */}
+          {event.highlights && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Star size={14} style={{ color: "#64748b" }} />
+                <span className="text-xs font-semibold" style={{ color: "#64748b" }}>Highlights</span>
+              </div>
+              <p className="text-sm whitespace-pre-line" style={{ color: "#334155" }}>
+                {event.highlights}
+              </p>
+            </div>
+          )}
+
+          {/* Registration Link */}
+          {event.registrationLink && (
+            <DetailItem icon={LinkIcon} label="Register" value={event.registrationLink} isLink />
+          )}
+        </div>
 
         {/* Mini progress bar */}
         <div className="mt-4">
