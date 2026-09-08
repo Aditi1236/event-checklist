@@ -7,7 +7,6 @@ export default function Header() {
   const { events } = useEvents();
   const { user, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
-  const checklistPath = events.length > 0 ? `/event/${events[0].id}` : "/";
 
   const navClass = ({ isActive }) =>
     `relative rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-200 sm:px-4 sm:text-sm ${
@@ -53,9 +52,6 @@ export default function Header() {
           </Link>
 
           <nav className="flex items-center gap-1">
-            <NavLink to={checklistPath} className={navClass}>
-              Checklist
-            </NavLink>
             {user && !isAdmin && (
               <NavLink to="/me" className={navClass}>
                 My Tasks

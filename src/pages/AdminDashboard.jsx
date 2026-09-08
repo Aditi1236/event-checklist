@@ -452,25 +452,25 @@ return (
            return (
              <div
                key={evt.id}
-               className="flex flex-col gap-4 rounded-xl px-6 py-5 sm:flex-row sm:items-center"
-               style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)" }}
+               className="flex flex-col gap-4 sm:flex-row sm:items-center"
+                style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)", padding: "3rem 4rem", minHeight: "240px", borderRadius: "32px", marginBottom: "2.5rem" }}
              >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-base font-bold text-white">{evt.name}</p>
+                  <p className="text-2xl font-bold text-white">{evt.name}</p>
                   <span
-                    className="rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest"
+                    className="rounded-full px-2.5 py-1 text-sm font-black uppercase tracking-widest"
                     style={{ color: "#ffffff", background: type.color, fontFamily: "'JetBrains Mono', monospace" }}
                   >
                     {type.label}
                   </span>
                   {evt.type === "bootcamp" && evt.mode && (
-                    <span className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider" style={{ color: "#94a3b8", background: "rgba(255,255,255,0.07)", fontFamily: "'JetBrains Mono', monospace" }}>
+                    <span className="rounded-full px-2.5 py-1 text-sm font-bold uppercase tracking-wider" style={{ color: "#94a3b8", background: "rgba(255,255,255,0.07)", fontFamily: "'JetBrains Mono', monospace" }}>
                       {evt.mode}
                     </span>
                   )}
                 </div>
-                <p className="mt-0.5 text-xs" style={{ color: "#94a3b8" }}>
+                <p className="mt-0.5 text-sm" style={{ color: "#94a3b8" }}>
                   {evt.date ? formatDate(evt.date) : "No date"}
                   {evt.type === "bootcamp" && evt.endDate ? ` → ${formatDate(evt.endDate)}` : ""}
                   {evt.location ? ` · ${evt.location}` : ""}
@@ -485,7 +485,7 @@ return (
                       style={{ width: `${pct}%`, background: "linear-gradient(90deg, #e11d6a, #a855f7, #10b981)" }}
                     />
                   </div>
-                  <span className="w-10 text-right text-xs font-bold" style={{ color: "#f1f5f9", fontFamily: "'JetBrains Mono', monospace" }}>
+                  <span className="w-10 text-right text-sm font-bold" style={{ color: "#f1f5f9", fontFamily: "'JetBrains Mono', monospace" }}>
                     {pct}%
                   </span>
                 </div>
@@ -631,25 +631,29 @@ function TasksTab({ tasks, events, members, memberById, addTask, updateTask, del
            const evt = events.find((e) => e.id === t.eventId);
            return (
              <div
-               key={`${t.eventId}-${t.id}`}
-               className="flex flex-col gap-2 rounded-xl px-5 py-4 sm:flex-row sm:items-center"
-               style={{
-                 background: "#622569",
-                 border: "1px solid rgba(255,255,255,0.08)",
-                 opacity: st.key === "completed" ? 0.7 : 1,
-               }}
-             >
+                key={`${t.eventId}-${t.id}`}
+                className="flex flex-col gap-3 sm:flex-row sm:items-center"
+                style={{
+                  background: "#622569",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  opacity: st.key === "completed" ? 0.7 : 1,
+                  padding: "3rem 4rem",
+                  minHeight: "240px",
+                  borderRadius: "32px",
+                  marginBottom: "2.5rem",
+                }}
+              >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className={`text-base font-bold text-white ${st.key === "completed" ? "line-through" : ""}`}>{t.title}</p>
+                  <p className={`text-2xl font-bold text-white ${st.key === "completed" ? "line-through" : ""}`}>{t.title}</p>
                   <span
-                    className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider"
+                    className="rounded-full px-2 py-0.5 text-sm font-bold uppercase tracking-wider"
                     style={{ color: st.color, background: st.bg, border: `1px solid ${st.border}`, fontFamily: "'JetBrains Mono', monospace" }}
                   >
                     {st.label}
                   </span>
                 </div>
-                <p className="mt-1 text-sm truncate" style={{ color: "#94a3b8" }}>
+                <p className="mt-1 text-base truncate" style={{ color: "#94a3b8" }}>
                   {evt?.name || "Unknown event"}
                   {assignee ? ` · 👤 ${assignee.name}` : ""}
                   {t.dueDate ? ` · 📅 ${formatDate(t.dueDate)}` : ""}
@@ -657,7 +661,7 @@ function TasksTab({ tasks, events, members, memberById, addTask, updateTask, del
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  className="rounded-full px-4 py-2 text-sm font-bold transition-all duration-150"
+                  className="rounded-full px-4 py-2 text-base font-bold transition-all duration-150"
                   style={{
                     color: st.key === "completed" ? "#94a3b8" : "#34d399",
                     background: st.key === "completed" ? "rgba(255,255,255,0.05)" : "rgba(16,185,129,0.1)",
@@ -817,19 +821,15 @@ function MembersTab({ members, refreshMembers, currentUser }) {
 {sorted.map((m) => (
           <div
             key={m.id}
-            className="rounded-xl px-6 py-5"
-            style={{
-              background: "#622569",
-              border: "1px solid rgba(255,255,255,0.08)",
-              opacity: m.status === "inactive" ? 0.6 : 1,
-            }}
+            className=""
+                style={{ background: "#622569", border: "1px solid rgba(255,255,255,0.08)", opacity: m.status === "inactive" ? 0.6 : 1, padding: "3rem 4rem", minHeight: "240px", borderRadius: "32px", marginBottom: "2.5rem" }}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-base font-bold text-white">{m.name}</p>
+                  <p className="text-2xl font-bold text-white">{m.name}</p>
                   <span
-                    className="rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest"
+                    className="rounded-full px-2.5 py-1 text-sm font-black uppercase tracking-widest"
                     style={{
                       color: m.role === "admin" ? "#fb7aaa" : m.status === "inactive" ? "#94a3b8" : "#34d399",
                       background:
@@ -845,11 +845,11 @@ function MembersTab({ members, refreshMembers, currentUser }) {
                     {m.role === "admin" ? "Admin" : m.status === "inactive" ? "Inactive" : "Member"}
                   </span>
                 </div>
-                <p className="mt-1 truncate text-sm font-semibold" style={{ color: "#94a3b8" }}>
+                <p className="mt-1 truncate text-base font-semibold" style={{ color: "#94a3b8" }}>
                   {m.email}
                   {m.position ? ` · ${m.position}` : ""}
                 </p>
-                <p className="mt-0.5 text-[10px]" style={{ color: "#64748b", fontFamily: "'JetBrains Mono', monospace" }}>
+                <p className="mt-0.5 text-sm" style={{ color: "#64748b", fontFamily: "'JetBrains Mono', monospace" }}>
                   {m.id}
                 </p>
               </div>

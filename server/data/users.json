@@ -1,0 +1,37 @@
+[
+  {
+    "id": "usr_admin_ryohb0",
+    "name": "NexaSoul Admin",
+    "email": "admin@nexasoul.com",
+    "passwordHash": "b478b65511c567cc77b4baaadca9f4e3:8146a40dacaab0a9a4e06459809634f749659438b0eab2b902f4f4ae68e6deef1b49d6c385c0f30905a1abde8307168c51348ee30ee81ccacb1d3961d16e948b",
+    "role": "admin",
+    "position": "Administrator",
+    "phone": "",
+    "status": "active",
+    "createdAt": 1788796788756
+  },
+  {
+    "id": "usr_member_y8eqb9",
+    "name": "Demo Member",
+    "email": "member@nexasoul.com",
+    "passwordHash": "1fadadcab525cbb4c5fef529ddef308f:efdf2186f77ba75f8d70ae1e729bdba64245db3d8eec979290aa5ca3809c9cb987184366c7473bf37f5b98b18b4a1cf0c64df294f7d70e43f84845b920adeaae",
+    "role": "member",
+    "position": "Executive Member",
+    "phone": "",
+    "status": "active",
+    "createdAt": 1788796788765
+  },
+  {
+    "id": "usr_mtrfh8xp_iz58b9",
+    "name": "Demo Member",
+    "email": "member@nexasoul.in",
+    "passwordHash": "3f8d319b2a0e2f024934b2c74a4a9352:e70c396dab5a49370564b2245d64624be47ed0d5f1c27109b06e3d635c1c669fefb513d224d9214fe13cf22dc189940321b2c45bc3fc6ab02c68247768ade71b",
+    "role": "member",
+    "securityQuestion": "What was the name of your first pet?",
+    "securityAnswer": "aaa",
+    "position": "",
+    "phone": "",
+    "status": "active",
+    "createdAt": 1788796883598
+  }
+]

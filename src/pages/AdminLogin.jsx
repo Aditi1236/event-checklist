@@ -96,16 +96,14 @@ export default function AdminLogin() {
 
       <div className="relative z-10 w-full max-w-lg animate-fadeIn">
         <Link
-          to="/admin/login"
-          className="mb-6 inline-flex items-center gap-2 text-base font-bold transition-colors"
-          style={{ color: "#64748b" }}
+          to="/"
+          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-200"
+          style={{ color: "#94a3b8" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#f1f5f9")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#94a3b8")}
         >
           <ArrowLeft size={15} />
-          Back to events
         </Link>
-
         <div
            className="rounded-3xl overflow-hidden"
            style={{
