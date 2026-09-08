@@ -8,7 +8,7 @@ const ACCENT_STYLES = {
     glow: "rgba(148,163,184,0.3)",
     label: "rgba(148,163,184,0.12)",
     labelBorder: "rgba(148,163,184,0.22)",
-    labelText: "#94a3b8",
+    labelText: "#64748b",
   },
   amber: {
     rail: "rgba(245,158,11,0.6)",
@@ -16,15 +16,15 @@ const ACCENT_STYLES = {
     glow: "rgba(245,158,11,0.3)",
     label: "rgba(245,158,11,0.1)",
     labelBorder: "rgba(245,158,11,0.22)",
-    labelText: "#fbbf24",
+    labelText: "#b45309",
   },
   plum: {
-    rail: "rgba(168,85,247,0.6)",
-    dot: "#a855f7",
-    glow: "rgba(168,85,247,0.3)",
-    label: "rgba(168,85,247,0.1)",
-    labelBorder: "rgba(168,85,247,0.22)",
-    labelText: "#c084fc",
+    rail: "rgba(124,58,237,0.6)",
+    dot: "#7c3aed",
+    glow: "rgba(124,58,237,0.3)",
+    label: "rgba(124,58,237,0.08)",
+    labelBorder: "rgba(124,58,237,0.2)",
+    labelText: "#6d28d9",
   },
 };
 
@@ -38,15 +38,15 @@ export default function CategorySection({
   const done = tasks.filter((t) => t.completed).length;
   const accent = ACCENT_STYLES[category.accent] || ACCENT_STYLES.slate;
   const isEmpty = tasks.length === 0;
-  const muted = isEmpty ? "#cbd5e1" : "#94a3b8";
-  const pillText = isEmpty ? "#e2e8f0" : accent.labelText;
+  const muted = isEmpty ? "#94a3b8" : "#64748b";
+  const pillText = isEmpty ? "#64748b" : accent.labelText;
 
   return (
     <section
       className="relative p-6 rounded-2xl"
       style={{
-        background: tasks.length === 0 ? "#FF9E20" : "transparent",
-        border: tasks.length === 0 ? "1px solid rgba(255,255,255,0.3)" : "none",
+        background: tasks.length === 0 ? "rgba(15,23,42,0.03)" : "transparent",
+        border: tasks.length === 0 ? "1px solid rgba(15,23,42,0.08)" : "none",
       }}
     >
       {/* Glowing left rail */}
@@ -79,8 +79,8 @@ export default function CategorySection({
           <span
             className="text-lg font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full"
             style={{
-              background: isEmpty ? "rgba(255,255,255,0.12)" : accent.label,
-              border: `1px solid ${isEmpty ? "rgba(255,255,255,0.25)" : accent.labelBorder}`,
+              background: isEmpty ? "rgba(15,23,42,0.05)" : accent.label,
+              border: `1px solid ${isEmpty ? "rgba(15,23,42,0.12)" : accent.labelBorder}`,
               color: pillText,
               fontFamily: "'JetBrains Mono', monospace",
             }}
@@ -104,9 +104,9 @@ export default function CategorySection({
           <div
             className="flex items-center gap-2 rounded-xl border px-4 py-5 text-lg font-bold"
             style={{
-              borderColor: "rgba(255,255,255,0.45)",
+              borderColor: "rgba(15,23,42,0.12)",
               background: "transparent",
-              color: "#ffffff",
+              color: "#64748b",
             }}
           >
           <ClipboardList size={18} />

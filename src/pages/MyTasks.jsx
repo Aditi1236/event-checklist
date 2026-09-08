@@ -16,7 +16,6 @@ import {
   taskStatus,
   priorityMeta,
   categoryMeta,
-  formatDate,
   formatDateShort,
   daysUntil,
   TASK_STATUSES,
@@ -84,9 +83,9 @@ export default function MyTasks() {
         <div
           className="relative z-10 h-10 w-10 animate-spin rounded-full"
           style={{
-            border: "3px solid rgba(255,255,255,0.1)",
-            borderTopColor: "#e11d6a",
-            boxShadow: "0 0 20px rgba(225,29,106,0.25)",
+            border: "3px solid rgba(15,23,42,0.1)",
+            borderTopColor: "#4f46e5",
+            boxShadow: "0 0 20px rgba(79,70,229,0.15)",
           }}
         />
       </div>
@@ -117,7 +116,7 @@ export default function MyTasks() {
               <CheckSquare size={13} /> My Tasks
             </span>
             <h1
-              className="text-3xl font-extrabold text-white sm:text-4xl"
+              className="text-3xl font-extrabold text-slate-900 sm:text-4xl"
               style={{ fontFamily: "'Sora', sans-serif" }}
             >
               Welcome, {user?.name?.split(" ")[0] || "there"}
@@ -143,8 +142,8 @@ export default function MyTasks() {
 
 {/* Status tabs */}
          <div className="mb-6 flex flex-wrap gap-1 rounded-full p-1 border" style={{
-           borderColor: "rgba(255,255,255,0.12)",
-           background: "#0247FE",
+           borderColor: "rgba(15,23,42,0.12)",
+           background: "#ffffff",
          }}>
           {STATUS_TABS.map((t) => {
             const isActive = tab === t.key;
@@ -158,11 +157,12 @@ export default function MyTasks() {
                   isActive
                     ? {
                         color: "#ffffff",
-                        background: "rgba(225,29,106,0.2)",
-                        border: "1px solid rgba(225,29,106,0.4)",
+                        background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
+                        border: "1px solid rgba(79,70,229,0.4)",
+                        boxShadow: "0 2px 10px rgba(79,70,229,0.25)",
                       }
                     : {
-                        color: "#94a3b8",
+                        color: "#64748b",
                         background: "transparent",
                         border: "1px solid transparent",
                       }
@@ -179,12 +179,12 @@ export default function MyTasks() {
            <div
              className="rounded-2xl border border-dashed px-8 py-16 text-center"
              style={{
-               borderColor: "rgba(255,255,255,0.15)",
-               background: "#0247FE",
+               borderColor: "rgba(15,23,42,0.15)",
+               background: "#ffffff",
              }}
            >
              <CheckSquare size={48} style={{ color: "#4b5563", margin: "0 auto 4px" }} />
-             <h3 className="text-xl font-bold text-white mb-2">Nothing here yet</h3>
+             <h3 className="text-xl font-bold text-slate-900 mb-2">Nothing here yet</h3>
              <p style={{ color: "#64748b" }}>
                {tab === "all"
                  ? "No tasks have been assigned to you yet."
@@ -214,8 +214,8 @@ function StatCard({ label, value, icon, color, progress }) {
      <div
        className="rounded-2xl p-4 relative overflow-hidden"
        style={{
-         background: "#0247FE",
-         border: "1px solid rgba(255,255,255,0.08)",
+         background: "#ffffff",
+         border: "1px solid rgba(15,23,42,0.08)",
          backdropFilter: "blur(16px)",
        }}
      >
@@ -230,7 +230,7 @@ function StatCard({ label, value, icon, color, progress }) {
       </div>
       <p
         className="text-2xl font-extrabold"
-        style={{ color: "#f1f5f9", fontFamily: "'Sora', sans-serif" }}
+        style={{ color: "#0f172a", fontFamily: "'Sora', sans-serif" }}
       >
         {value}
       </p>
@@ -268,8 +268,8 @@ return (
      <div
        className="group flex items-start gap-4 rounded-xl p-4 transition-all duration-200"
        style={{
-         background: "#0247FE",
-         border: "1px solid rgba(255,255,255,0.08)",
+         background: "#ffffff",
+         border: "1px solid rgba(15,23,42,0.08)",
          backdropFilter: "blur(8px)",
        }}
      >
@@ -287,7 +287,7 @@ return (
                 color: "white",
               }
             : {
-                borderColor: "rgba(255,255,255,0.2)",
+                borderColor: "rgba(15,23,42,0.25)",
                 background: "transparent",
               }
         }
@@ -299,7 +299,7 @@ return (
         <div className="flex flex-wrap items-center gap-2">
           <p
             className={`text-lg font-bold break-words ${task.completed ? "line-through opacity-60" : ""}`}
-            style={{ color: task.completed ? "rgba(241,245,249,0.45)" : "#f1f5f9" }}
+            style={{ color: task.completed ? "rgba(100,116,139,0.5)" : "#0f172a" }}
           >
             {task.title}
           </p>
@@ -339,7 +339,7 @@ return (
         </div>
 
         {task.description && (
-          <p className="mt-1 text-sm break-words" style={{ color: "#94a3b8" }}>
+          <p className="mt-1 text-sm break-words" style={{ color: "#64748b" }}>
             {task.description}
           </p>
         )}

@@ -25,19 +25,19 @@ export default class ErrorBoundary extends Component {
             justifyContent: "center",
             padding: "24px",
             fontFamily: "monospace",
-            color: "#f1f5f9",
-            background: "#0b0c10",
+            color: "#0f172a",
+            background: "#f4f6fb",
           }}
         >
           <div style={{ maxWidth: 640 }}>
-            <h1 style={{ color: "#fb7aaa", fontSize: 20, marginBottom: 12 }}>
+            <h1 style={{ color: "#dc2626", fontSize: 20, marginBottom: 12 }}>
               Something went wrong
             </h1>
             <pre
               style={{
                 whiteSpace: "pre-wrap",
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(225,29,106,0.3)",
+                background: "#ffffff",
+                border: "1px solid rgba(15,23,42,0.1)",
                 borderRadius: 12,
                 padding: 16,
                 fontSize: 13,

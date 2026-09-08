@@ -1,18 +1,16 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { ClipboardCheck, ShieldCheck, LogOut, UserCheck } from "lucide-react";
-import { useEvents } from "../context/EventsContext";
 import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
-  const { events } = useEvents();
   const { user, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
 
   const navClass = ({ isActive }) =>
     `relative rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-200 sm:px-4 sm:text-sm ${
       isActive
-        ? "text-white bg-white/10 border border-white/15"
-        : "text-ink-soft hover:text-ink hover:bg-white/6"
+        ? "text-indigo-700 bg-indigo-50 border border-indigo-200"
+        : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
     }`;
 
   function handleLogout() {
@@ -24,8 +22,8 @@ export default function Header() {
     <header
       className="relative z-30 border-b"
       style={{
-        borderColor: "rgba(255,255,255,0.07)",
-        background: "rgba(10,12,20,0.75)",
+        borderColor: "rgba(0,0,0,0.06)",
+        background: "rgba(255,255,255,0.85)",
         backdropFilter: "blur(24px)",
         WebkitBackdropFilter: "blur(24px)",
       }}
@@ -37,15 +35,15 @@ export default function Header() {
             <span
               className="flex h-10 w-10 items-center justify-center rounded-xl text-white transition-all duration-300 group-hover:scale-105"
               style={{
-                background: "linear-gradient(135deg, #e11d6a 0%, #a855f7 100%)",
-                boxShadow: "0 0 20px rgba(225,29,106,0.4), inset 0 1px 0 rgba(255,255,255,0.2)",
+                background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+                boxShadow: "0 2px 12px rgba(79,70,229,0.3), inset 0 1px 0 rgba(255,255,255,0.2)",
               }}
             >
               <ClipboardCheck size={20} />
             </span>
             <span
-              className="font-display text-xl font-bold tracking-tight text-white"
-              style={{ fontFamily: "'Sora', sans-serif" }}
+              className="font-display text-xl font-bold tracking-tight"
+              style={{ fontFamily: "'Sora', sans-serif", color: "#1e293b" }}
             >
               Roster
             </span>
@@ -69,13 +67,13 @@ export default function Header() {
         <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
           {user ? (
             <>
-              <div className="flex items-center gap-2 rounded-full border px-3 py-1.5" style={{ borderColor: "rgba(225,29,106,0.3)", background: "rgba(225,29,106,0.08)" }}>
+              <div className="flex items-center gap-2 rounded-full border px-3 py-1.5" style={{ borderColor: "rgba(79,70,229,0.2)", background: "rgba(79,70,229,0.05)" }}>
                 {isAdmin ? (
-                  <ShieldCheck size={14} style={{ color: "#fb7aaa" }} />
+                  <ShieldCheck size={14} style={{ color: "#4f46e5" }} />
                 ) : (
-                  <UserCheck size={14} style={{ color: "#34d399" }} />
+                  <UserCheck size={14} style={{ color: "#10b981" }} />
                 )}
-                <span className="text-xs font-semibold" style={{ color: "#f1f5f9" }}>
+                <span className="text-xs font-semibold" style={{ color: "#334155" }}>
                   {user.name.split(" ")[0]}
                 </span>
               </div>
@@ -84,14 +82,14 @@ export default function Header() {
                 title="Log out"
                 aria-label="Log out"
                 className="flex h-9 w-9 items-center justify-center rounded-full transition-all duration-150"
-                style={{ color: "#64748b", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
+                style={{ color: "#94a3b8", background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.08)" }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(225,29,106,0.15)";
-                  e.currentTarget.style.color = "#fb7aaa";
+                  e.currentTarget.style.background = "rgba(220,38,38,0.08)";
+                  e.currentTarget.style.color = "#dc2626";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-                  e.currentTarget.style.color = "#64748b";
+                  e.currentTarget.style.background = "rgba(0,0,0,0.04)";
+                  e.currentTarget.style.color = "#94a3b8";
                 }}
               >
                 <LogOut size={15} />
@@ -103,12 +101,12 @@ export default function Header() {
                 to="/login"
                 className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-200 sm:px-6 sm:py-3 sm:text-base"
                 style={{
-                  color: "#34d399",
-                  background: "rgba(16,185,129,0.1)",
-                  border: "1px solid rgba(16,185,129,0.3)",
+                  color: "#10b981",
+                  background: "rgba(16,185,129,0.06)",
+                  border: "1px solid rgba(16,185,129,0.2)",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.2)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.1)")}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.12)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(16,185,129,0.06)")}
               >
                 <UserCheck size={18} />
                 Member Login
@@ -117,8 +115,8 @@ export default function Header() {
                 to="/admin/login"
                 className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold text-white transition-all duration-200 sm:px-6 sm:py-3 sm:text-base"
                 style={{
-                  background: "linear-gradient(135deg, #e11d6a 0%, #a855f7 100%)",
-                  boxShadow: "0 4px 14px rgba(225,29,106,0.35)",
+                  background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+                  boxShadow: "0 2px 12px rgba(79,70,229,0.3)",
                 }}
               >
                 <ShieldCheck size={18} />

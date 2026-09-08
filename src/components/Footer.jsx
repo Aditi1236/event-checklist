@@ -3,22 +3,22 @@ export default function Footer() {
     <footer
       className="relative z-20 mt-auto border-t"
       style={{
-        borderColor: "rgba(255,255,255,0.07)",
-        background: "#0a0c14",
+        borderColor: "rgba(15,23,42,0.06)",
+        background: "#ffffff",
       }}
     >
       {/* Gradient top line */}
       <div
         className="h-px w-full"
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(225,29,106,0.4), rgba(168,85,247,0.4), rgba(16,185,129,0.3), transparent)",
+          background: "linear-gradient(90deg, transparent, rgba(79,70,229,0.4), rgba(124,58,237,0.4), rgba(16,185,129,0.3), transparent)",
         }}
       />
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-5 text-center sm:flex-row sm:px-6 sm:text-left">
         <p
           className="text-base font-bold"
           style={{
-            color: "#ffffff",
+            color: "#334155",
             fontFamily: "'JetBrains Mono', monospace",
           }}
         >
@@ -28,7 +28,7 @@ export default function Footer() {
           className="text-sm font-bold"
           style={{
             fontFamily: "'Sora', sans-serif",
-            background: "linear-gradient(90deg, #10b981, #a855f7)",
+            background: "linear-gradient(90deg, #059669, #4f46e5)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",

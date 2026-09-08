@@ -1,17 +1,22 @@
 import { useMemo, useState } from "react";
-import { Plus, CalendarRange, LayoutGrid, Ticket, Users, TrendingUp } from "lucide-react";
+import { Plus, CalendarRange, LayoutGrid, Ticket, Users, TrendingUp, ArrowLeft, CalendarDays, MapPin, Pencil, Trash2 } from "lucide-react";
 import { useEvents } from "../context/EventsContext";
 import { useAuth } from "../context/AuthContext";
 import EventCard from "../components/EventCard";
 import EventForm from "../components/EventForm";
 import ConfirmDialog from "../components/ConfirmDialog";
+import TaskForm from "../components/TaskForm";
+import CategorySection from "../components/CategorySection";
+import EventTimeline from "../components/EventTimeline";
+import ProgressStamp from "../components/ProgressStamp";
 import { progressOf, formatDate } from "../utils/helpers";
+import { CATEGORIES } from "../utils/helpers";
 import { Link } from "react-router-dom";
 import ProgressBar from "../components/ProgressBar";
 import { Search } from "lucide-react";
 
 export default function Dashboard() {
-  const { events, createEvent, updateEvent, deleteEvent, toggleTask } = useEvents();
+  const { events, createEvent, updateEvent, deleteEvent, addTask, updateTask, toggleTask, deleteTask } = useEvents();
   const { user, isAdmin } = useAuth();
   const [showCreate, setShowCreate] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -91,16 +96,16 @@ return (
                 setSelectedEvent(null);
               }}
               onToggleTask={(taskId) => {
-                // We'll implement this in EventDetailView
+                toggleTask(selectedEvent.id, taskId);
               }}
               onAddTask={(taskData) => {
-                // We'll implement this in EventDetailView
+                addTask(selectedEvent.id, taskData);
               }}
               onEditTask={(task) => {
-                // We'll implement this in EventDetailView
+                updateTask(selectedEvent.id, task.id, task);
               }}
               onDeleteTask={(task) => {
-                // We'll implement this in EventDetailView
+                deleteTask(selectedEvent.id, task.id);
               }}
             />
           ) : (
@@ -112,22 +117,22 @@ return (
                   <span
                     className="inline-flex items-center gap-1.5 mb-3 text-[11px] uppercase tracking-widest font-semibold rounded-full px-3 py-1"
                     style={{
-                      color: "#a855f7",
-                      background: "rgba(168,85,247,0.1)",
-                      border: "1px solid rgba(168,85,247,0.2)",
+                      color: "#4f46e5",
+                      background: "rgba(79,70,229,0.06)",
+                      border: "1px solid rgba(79,70,229,0.15)",
                       fontFamily: "'JetBrains Mono', monospace",
                     }}
                   >
                     ✦ Dashboard
                   </span>
                   <h1
-                    className="text-4xl font-extrabold leading-tight text-white sm:text-6xl"
-                    style={{ fontFamily: "'Sora', sans-serif" }}
+                    className="text-4xl font-extrabold leading-tight sm:text-6xl"
+                    style={{ fontFamily: "'Sora', sans-serif", color: "#0f172a" }}
                   >
                     Every event,{" "}
                     <span className="text-shimmer">on one clipboard.</span>
                   </h1>
-                  <p className="mt-4 max-w-xl text-lg font-semibold text-white leading-relaxed">
+                  <p className="mt-4 max-w-xl text-lg font-semibold leading-relaxed" style={{ color: "#475569" }}>
                     Plan the run of show, track who has done what, and never miss a
                     before, during, or after task again.
                   </p>
@@ -147,39 +152,35 @@ return (
                   label="Events"
                   value={stats.totalEvents}
                   icon={<LayoutGrid size={20} />}
-                  color="#e11d6a"
-                  glow="rgba(225,29,106,0.25)"
-                  gradient="linear-gradient(180deg, #a9caff 0%, #b8cbff 16.667%, #d3cbff 33.333%, #f0c8f9 50%, #ffc5f1 66.667%, #ffc0ec 83.333%, #ffbaec 100%)"
-                  ink="#000000"
+                  color="#4f46e5"
+                  glow="rgba(79,70,229,0.15)"
+                  ink="#1e1b4b"
                 />
                 <StatCard
                   label="Upcoming"
                   value={stats.upcoming}
                   icon={<CalendarRange size={20} />}
-                  color="#a855f7"
-                  glow="rgba(168,85,247,0.25)"
-                  gradient="linear-gradient(180deg, #a9caff 0%, #b8cbff 16.667%, #d3cbff 33.333%, #f0c8f9 50%, #ffc5f1 66.667%, #ffc0ec 83.333%, #ffbaec 100%)"
-                  ink="#111844"
+                  color="#7c3aed"
+                  glow="rgba(124,58,237,0.15)"
+                  ink="#2e1065"
                 />
                 <StatCard
                   label="Total Tasks"
                   value={stats.totalTasks}
                   icon={<TrendingUp size={20} />}
                   color="#64748b"
-                  glow="rgba(100,116,139,0.2)"
-                  gradient="linear-gradient(180deg, #a9caff 0%, #b8cbff 16.667%, #d3cbff 33.333%, #f0c8f9 50%, #ffc5f1 66.667%, #ffc0ec 83.333%, #ffbaec 100%)"
-                  ink="#450C3F"
+                  glow="rgba(100,116,139,0.12)"
+                  ink="#334155"
                 />
                 <StatCard
                   label="Completed"
                   value={`${stats.doneTasks}/${stats.totalTasks || 0}`}
                   icon={null}
                   color="#10b981"
-                  glow="rgba(16,185,129,0.25)"
-                  gradient="linear-gradient(180deg, #a9caff 0%, #b8cbff 16.667%, #d3cbff 33.333%, #f0c8f9 50%, #ffc5f1 66.667%, #ffc0ec 83.333%, #ffbaec 100%)"
+                  glow="rgba(16,185,129,0.15)"
                   accent
                   pct={overallPct}
-                  ink="#063B00"
+                  ink="#065f46"
                 />
               </div>
 
@@ -188,17 +189,17 @@ return (
                 <div className="mb-10 animate-fadeIn">
                   <div className="flex items-center gap-3 mb-4">
                     <h2
-                      className="text-xl font-bold text-white"
-                      style={{ fontFamily: "'Sora', sans-serif" }}
+                      className="text-xl font-bold"
+                      style={{ fontFamily: "'Sora', sans-serif", color: "#0f172a" }}
                     >
                       Next Up
                     </h2>
                     <span
                       className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
                       style={{
-                        background: "rgba(225,29,106,0.12)",
-                        border: "1px solid rgba(225,29,106,0.25)",
-                        color: "#fb7aaa",
+                        background: "rgba(79,70,229,0.06)",
+                        border: "1px solid rgba(79,70,229,0.15)",
+                        color: "#4f46e5",
                         fontFamily: "'JetBrains Mono', monospace",
                       }}
                     >
@@ -209,17 +210,16 @@ return (
                   <div
                     className="rounded-2xl overflow-hidden"
                     style={{
-                      background: "#30AFFF",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                      backdropFilter: "blur(20px)",
-                      boxShadow: "0 4px 40px -8px rgba(48,175,255,0.4), 0 1px 3px rgba(0,0,0,0.2)",
+                      background: "#ffffff",
+                      border: "1px solid rgba(15,23,42,0.08)",
+                      boxShadow: "0 4px 32px -8px rgba(79,70,229,0.12), 0 1px 3px rgba(15,23,42,0.06)",
                     }}
                   >
-                    {/* Rose accent top line */}
+                    {/* Accent top line */}
                     <div
                       className="h-px"
                       style={{
-                        background: "linear-gradient(90deg, transparent, rgba(225,29,106,0.7), rgba(168,85,247,0.5), transparent)",
+                        background: "linear-gradient(90deg, transparent, rgba(79,70,229,0.5), rgba(124,58,237,0.35), transparent)",
                       }}
                     />
 
@@ -227,24 +227,24 @@ return (
                       <div className="flex-1">
                         <div className="flex flex-wrap items-center gap-3 mb-3">
                           <h3
-                            className="text-2xl font-bold text-white"
-                            style={{ fontFamily: "'Sora', sans-serif" }}
+                            className="text-2xl font-bold"
+                            style={{ fontFamily: "'Sora', sans-serif", color: "#0f172a" }}
                           >
                             {upcomingEvent.name}
                           </h3>
                           <span
                             className="text-xs font-semibold px-3 py-1 rounded-full"
                             style={{
-                              background: "rgba(245,158,11,0.12)",
-                              border: "1px solid rgba(245,158,11,0.25)",
-                              color: "#fbbf24",
+                              background: "rgba(245,158,11,0.08)",
+                              border: "1px solid rgba(245,158,11,0.2)",
+                              color: "#b45309",
                               fontFamily: "'JetBrains Mono', monospace",
                             }}
                           >
                             📅 {formatDate(upcomingEvent.date)}
                           </span>
                         </div>
-                        <p className="text-base font-medium text-ink mb-6 max-w-lg leading-relaxed" style={{ color: "#cbd5e1" }}>
+                        <p className="text-base font-medium mb-6 max-w-lg leading-relaxed" style={{ color: "#475569" }}>
                           {upcomingEvent.description || "No description provided."}
                         </p>
                         <div className="mb-6">
@@ -276,21 +276,21 @@ return (
                             key={item.label}
                             className="rounded-xl p-5"
                             style={{
-                              background: "linear-gradient(180deg, #a9caff 0%, #b8cbff 16.667%, #d3cbff 33.333%, #f0c8f9 50%, #ffc5f1 66.667%, #ffc0ec 83.333%, #ffbaec 100%)",
-                              border: "1px solid rgba(255,255,255,0.12)",
-                              boxShadow: "0 4px 24px -4px rgba(255,255,255,0.25), inset 0 1px 0 rgba(255,255,255,0.4)",
+                              background: "rgba(79,70,229,0.04)",
+                              border: "1px solid rgba(79,70,229,0.1)",
+                              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.8)",
                             }}
                           >
                             <div
                               className="flex items-center gap-1.5 mb-2 text-xs uppercase tracking-wider font-semibold"
                               style={{
-                                color: "rgba(20,18,40,0.7)",
+                                color: "#64748b",
                                 fontFamily: "'JetBrains Mono', monospace",
                               }}
                             >
                               {item.icon} {item.label}
                             </div>
-                            <div className="text-2xl font-bold" style={{ fontFamily: "'Sora', sans-serif", color: "#1d1733" }}>
+                            <div className="text-2xl font-bold" style={{ fontFamily: "'Sora', sans-serif", color: "#1e1b4b" }}>
                               {item.value}
                             </div>
                           </div>
@@ -305,8 +305,8 @@ return (
               <div>
                 <div className="mb-6">
                   <h2
-                    className="text-xl font-bold text-white mb-4"
-                    style={{ fontFamily: "'Sora', sans-serif" }}
+                    className="text-xl font-bold mb-4"
+                    style={{ fontFamily: "'Sora', sans-serif", color: "#0f172a" }}
                   >
                     All Events
                   </h2>
@@ -329,13 +329,13 @@ return (
                         onClick={() => setSearchQuery("")}
                         aria-label="Clear search"
                         className="absolute right-3 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full transition-all duration-150"
-                        style={{ color: "#94a3b8", background: "rgba(255,255,255,0.08)" }}
+                        style={{ color: "#94a3b8", background: "rgba(0,0,0,0.05)" }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "rgba(225,29,106,0.15)";
-                          e.currentTarget.style.color = "#fb7aaa";
+                          e.currentTarget.style.background = "rgba(79,70,229,0.1)";
+                          e.currentTarget.style.color = "#4f46e5";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                          e.currentTarget.style.background = "rgba(0,0,0,0.05)";
                           e.currentTarget.style.color = "#94a3b8";
                         }}
                       >
@@ -351,8 +351,8 @@ return (
                       className="text-center py-12 rounded-2xl border"
                       style={{
                         color: "#64748b",
-                        borderColor: "rgba(255,255,255,0.07)",
-                        background: "rgba(255,255,255,0.02)",
+                        borderColor: "rgba(15,23,42,0.08)",
+                        background: "#ffffff",
                       }}
                     >
                       No events matching &ldquo;{searchQuery}&rdquo;
@@ -417,22 +417,22 @@ return (
             <span
               className="inline-flex items-center gap-1.5 mb-3 text-[11px] uppercase tracking-widest font-semibold rounded-full px-3 py-1"
               style={{
-                color: "#a855f7",
-                background: "rgba(168,85,247,0.1)",
-                border: "1px solid rgba(168,85,247,0.2)",
+                color: "#4f46e5",
+                background: "rgba(79,70,229,0.06)",
+                border: "1px solid rgba(79,70,229,0.15)",
                 fontFamily: "'JetBrains Mono', monospace",
               }}
             >
               ✦ Welcome
             </span>
             <h1
-              className="text-4xl font-extrabold leading-tight text-white sm:text-6xl"
-              style={{ fontFamily: "'Sora', sans-serif" }}
+              className="text-4xl font-extrabold leading-tight sm:text-6xl"
+              style={{ fontFamily: "'Sora', sans-serif", color: "#0f172a" }}
             >
               Every event,{" "}
               <span className="text-shimmer">on one clipboard.</span>
             </h1>
-            <p className="mt-4 max-w-xl text-lg font-semibold text-white leading-relaxed">
+            <p className="mt-4 max-w-xl text-lg font-semibold leading-relaxed mx-auto" style={{ color: "#475569" }}>
               Plan the run of show, track who has done what, and never miss a
               before, during, or after task again.
             </p>
@@ -441,7 +441,7 @@ return (
           {!user ? (
             // Not logged in
             <div className="space-y-6">
-              <p className="text-xl text-white-soft max-w-xl">
+              <p className="text-xl max-w-xl mx-auto" style={{ color: "#64748b" }}>
                 Please log in to access event management features.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -462,7 +462,7 @@ return (
           ) : (
             // Logged in member
             <div className="space-y-6">
-              <p className="text-xl text-white-soft max-w-xl">
+              <p className="text-xl max-w-xl mx-auto" style={{ color: "#64748b" }}>
                 Welcome back, {user?.name?.split(' ')[0] || 'team member'}! 
                 Access your assigned tasks from the member portal.
               </p>
@@ -481,32 +481,29 @@ return (
 }
 
 /* ── StatCard ─────────────────────────────────────── */
-function StatCard({ label, value, icon, color, glow, accent, pct, gradient, ink }) {
+function StatCard({ label, value, icon, color, glow, accent, pct, ink }) {
   return (
     <div
       className="rounded-2xl p-6 relative overflow-hidden"
       style={{
-        background: gradient || "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        backdropFilter: "blur(16px)",
+        background: "#ffffff",
+        border: "1px solid rgba(15,23,42,0.08)",
         minHeight: 130,
-        boxShadow: `0 4px 24px -4px ${glow || "rgba(0,0,0,0.3)"}, inset 0 1px 0 rgba(255,255,255,0.06)`,
+        boxShadow: `0 4px 24px -4px ${glow || "rgba(15,23,42,0.05)"}, inset 0 1px 0 rgba(255,255,255,0.9)`,
       }}
     >
       {/* Background glow spot */}
-      {!gradient && (
-        <div
-          className="absolute -top-6 -right-6 w-20 h-20 rounded-full pointer-events-none"
-          style={{
-            background: `radial-gradient(circle, ${glow || "rgba(255,255,255,0.05)"} 0%, transparent 70%)`,
-          }}
-        />
-      )}
+      <div
+        className="absolute -top-6 -right-6 w-24 h-24 rounded-full pointer-events-none"
+        style={{
+          background: `radial-gradient(circle, ${glow || "rgba(79,70,229,0.1)"} 0%, transparent 70%)`,
+        }}
+      />
       <div className="relative">
         <div
           className="flex items-center gap-2 mb-3 text-sm uppercase tracking-widest font-semibold"
           style={{
-            color: gradient ? (ink || "rgba(20,18,40,0.75)") : color || "#64748b",
+            color: color || "#64748b",
             fontFamily: "'JetBrains Mono', monospace",
           }}
         >
@@ -517,8 +514,7 @@ function StatCard({ label, value, icon, color, glow, accent, pct, gradient, ink 
           className="text-3xl font-bold leading-none sm:text-4xl"
           style={{
             fontFamily: "'Sora', sans-serif",
-            color: gradient ? (ink || "#1d1733") : accent ? color : "#f1f5f9",
-            textShadow: gradient ? "none" : accent ? `0 0 20px ${glow}` : "none",
+            color: ink || "#0f172a",
           }}
         >
           {value}
@@ -526,7 +522,7 @@ function StatCard({ label, value, icon, color, glow, accent, pct, gradient, ink 
         {accent && pct !== undefined && (
           <div
             className="mt-2 h-1 rounded-full overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.07)" }}
+            style={{ background: "rgba(15,23,42,0.06)" }}
           >
             <div
               className="h-full rounded-full transition-all duration-700"
@@ -548,26 +544,25 @@ function EmptyState({ onCreate }) {
   return (
     <div
       className="flex flex-col items-center gap-5 border border-dashed rounded-2xl px-6 py-20 text-center"
-      style={{ borderColor: "rgba(255,255,255,0.35)", background: "#3A86FF" }}
+      style={{ borderColor: "rgba(79,70,229,0.2)", background: "#ffffff" }}
     >
       <div
         className="flex h-16 w-16 items-center justify-center rounded-2xl"
         style={{
-          background: "rgba(225,29,106,0.18)",
-          border: "1px solid rgba(225,29,106,0.35)",
-          boxShadow: "0 0 24px rgba(225,29,106,0.3)",
+          background: "rgba(79,70,229,0.08)",
+          border: "1px solid rgba(79,70,229,0.15)",
         }}
       >
-        <CalendarRange size={28} style={{ color: "#fb7aaa" }} />
+        <CalendarRange size={28} style={{ color: "#4f46e5" }} />
       </div>
       <div>
         <h3
-          className="text-3xl font-extrabold text-white mb-3"
-          style={{ fontFamily: "'Sora', sans-serif" }}
+          className="text-3xl font-extrabold mb-3"
+          style={{ fontFamily: "'Sora', sans-serif", color: "#0f172a" }}
         >
           No events yet
         </h3>
-        <p className="max-w-sm text-base font-medium leading-relaxed" style={{ color: "#cbd5e1" }}>
+        <p className="max-w-sm text-base font-medium leading-relaxed" style={{ color: "#64748b" }}>
           Create your first event to start organizing tasks and tracking progress.
         </p>
       </div>
@@ -575,6 +570,227 @@ function EmptyState({ onCreate }) {
         <Plus size={18} />
         Create your first event
       </button>
+    </div>
+  );
+}
+
+/* ── EventDetailView ───────────────────────────── */
+function EventDetailView({
+  event,
+  onBack,
+  onEdit,
+  onDelete,
+  onToggleTask,
+  onAddTask,
+  onEditTask,
+  onDeleteTask,
+}) {
+  const [showAddTask, setShowAddTask] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
+  const [deletingTask, setDeletingTask] = useState(null);
+
+  const { done, total, pct } = progressOf(event);
+
+  const grouped = useMemo(() => {
+    const g = {};
+    CATEGORIES.forEach((c) => (g[c.key] = []));
+    (event.tasks || []).forEach((t) => {
+      if (!g[t.category]) g[t.category] = [];
+      g[t.category].push(t);
+    });
+    return g;
+  }, [event]);
+
+  return (
+    <div className="animate-fadeIn">
+      {/* Back link */}
+      <button
+        onClick={onBack}
+        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-200"
+        style={{ color: "#64748b", background: "transparent" }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "#4f46e5")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
+      >
+        <ArrowLeft size={15} />
+        All events
+      </button>
+
+      {/* ── Event hero card ─────────────────────── */}
+      <div
+        className="rounded-2xl overflow-hidden mb-8"
+        style={{
+          background: "linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%)",
+          border: "1px solid rgba(79,70,229,0.15)",
+          minHeight: 260,
+          boxShadow: "0 4px 32px -8px rgba(79,70,229,0.12), 0 1px 3px rgba(15,23,42,0.06)",
+        }}
+      >
+        <div
+          className="h-px"
+          style={{
+            background: "linear-gradient(90deg, transparent, rgba(79,70,229,0.5), rgba(124,58,237,0.35), transparent)",
+          }}
+        />
+
+        <div className="p-8 sm:p-10">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1
+                className="text-4xl font-extrabold sm:text-5xl leading-tight mb-4"
+                style={{ fontFamily: "'Sora', sans-serif", color: "#1e1b4b" }}
+              >
+                {event.name}
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span
+                  className="inline-flex items-center gap-1.5 text-base font-bold px-4 py-2 rounded-full"
+                  style={{
+                    background: "#ffffff",
+                    border: "1px solid rgba(79,70,229,0.2)",
+                    color: "#4338ca",
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }}
+                >
+                  <CalendarDays size={14} />
+                  {formatDate(event.date)}
+                </span>
+                {event.location && (
+                  <span
+                    className="inline-flex items-center gap-1.5 text-base font-bold px-4 py-2 rounded-full"
+                    style={{
+                      background: "#ffffff",
+                      border: "1px solid rgba(79,70,229,0.2)",
+                      color: "#4338ca",
+                      fontFamily: "'JetBrains Mono', monospace",
+                    }}
+                  >
+                    <MapPin size={11} />
+                    {event.location}
+                  </span>
+                )}
+              </div>
+
+              {event.description && (
+                <p className="text-base font-medium max-w-xl leading-relaxed" style={{ color: "#475569" }}>
+                  {event.description}
+                </p>
+              )}
+            </div>
+
+            <div className="flex shrink-0 items-center gap-4 self-start">
+              <ProgressStamp pct={pct} size="xl" />
+              <div className="flex flex-col gap-2">
+                <button
+                  className="!px-4 !py-2 text-sm font-semibold rounded-full transition-all duration-200"
+                  onClick={() => onEdit(event)}
+                  style={{
+                    color: "#4338ca",
+                    background: "#ffffff",
+                    border: "1px solid rgba(79,70,229,0.25)",
+                    boxShadow: "0 1px 3px rgba(15,23,42,0.06)",
+                  }}
+                >
+                  <Pencil size={14} />
+                  Edit
+                </button>
+                <button
+                  className="!px-4 !py-2 text-sm font-semibold rounded-full transition-all duration-200"
+                  onClick={() => onDelete(event)}
+                  style={{
+                    color: "#dc2626",
+                    background: "rgba(220,38,38,0.08)",
+                    border: "1px solid rgba(220,38,38,0.25)",
+                  }}
+                >
+                  <Trash2 size={12} />
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <ProgressBar done={done} total={total} className="mt-6" light size="lg" />
+        </div>
+      </div>
+
+      {/* ── Timeline ───────────────────────────── */}
+      <div className="mb-8">
+        <EventTimeline tasks={event.tasks} onToggle={onToggleTask} />
+      </div>
+
+      {/* ── Checklist header ───────────────────── */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <h2
+            className="text-xl font-bold text-slate-900"
+            style={{ fontFamily: "'Sora', sans-serif" }}
+          >
+            Checklist
+          </h2>
+          <span
+            className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
+            style={{
+              background: "rgba(16,185,129,0.08)",
+              border: "1px solid rgba(16,185,129,0.16)",
+              color: "#059669",
+              fontFamily: "'JetBrains Mono', monospace",
+            }}
+          >
+            {done}/{total} done
+          </span>
+        </div>
+        <button className="btn-accent" onClick={() => setShowAddTask(true)}>
+          <Plus size={15} />
+          Add task
+        </button>
+      </div>
+
+      {/* ── Category sections ──────────────────── */}
+      <div className="space-y-8">
+        {CATEGORIES.map((category) => (
+          <CategorySection
+            key={category.key}
+            category={category}
+            tasks={grouped[category.key] ?? []}
+            onToggle={onToggleTask}
+            onEdit={(task) => setEditingTask(task)}
+            onDelete={(task) => setDeletingTask(task)}
+          />
+        ))}
+      </div>
+
+      {/* ── Task modals ────────────────────────── */}
+      {showAddTask && (
+        <TaskForm
+          onClose={() => setShowAddTask(false)}
+          onSubmit={(data) => {
+            onAddTask(data);
+            setShowAddTask(false);
+          }}
+        />
+      )}
+      {editingTask && (
+        <TaskForm
+          initial={editingTask}
+          onClose={() => setEditingTask(null)}
+          onSubmit={(data) => {
+            onEditTask({ ...editingTask, ...data });
+            setEditingTask(null);
+          }}
+        />
+      )}
+      {deletingTask && (
+        <ConfirmDialog
+          title="Delete task?"
+          message={`"${deletingTask.title}" will be removed from this checklist for good.`}
+          onCancel={() => setDeletingTask(null)}
+          onConfirm={() => {
+            onDeleteTask(deletingTask);
+            setDeletingTask(null);
+          }}
+        />
+      )}
     </div>
   );
 }

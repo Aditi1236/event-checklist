@@ -14,9 +14,8 @@ export default function ProtectedRoute({ children, adminOnly = true }) {
         <div
           className="h-10 w-10 animate-spin rounded-full"
           style={{
-            border: "3px solid rgba(255,255,255,0.1)",
-            borderTopColor: "#e11d6a",
-            boxShadow: "0 0 20px rgba(225,29,106,0.25)",
+            border: "3px solid rgba(15,23,42,0.1)",
+            borderTopColor: "#4f46e5",
           }}
         />
       </div>

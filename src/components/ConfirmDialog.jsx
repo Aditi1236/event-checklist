@@ -11,7 +11,7 @@ export default function ConfirmDialog({
   return (
     <Modal title={title} onClose={onCancel} maxWidth="max-w-sm">
       <div className="flex gap-3 mb-6">
-        <div className="shrink-0 w-9 h-9 rounded-full bg-rust/10 text-rust flex items-center justify-center">
+        <div className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "rgba(220,38,38,0.08)", color: "#dc2626" }}>
           <AlertTriangle size={18} />
         </div>
         <p className="text-sm text-ink-soft leading-relaxed pt-1">{message}</p>

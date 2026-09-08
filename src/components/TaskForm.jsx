@@ -77,7 +77,7 @@ export default function TaskForm({ initial, members = [], events = [], onSubmit,
             onChange={(e) => update("title", e.target.value)}
             autoFocus
           />
-          {error && <p className="mt-1 text-xs text-rust">{error}</p>}
+          {error && <p className="mt-1 text-xs" style={{ color: "#dc2626" }}>{error}</p>}
         </div>
 
         <div>
@@ -160,7 +160,7 @@ export default function TaskForm({ initial, members = [], events = [], onSubmit,
                   style={
                     isActive
                       ? { color: s.color, background: s.bg, borderColor: s.border }
-                      : { color: "#94a3b8", borderColor: "rgba(255,255,255,0.12)" }
+                      : { color: "#475569", borderColor: "rgba(15,23,42,0.15)" }
                   }
                 >
                   {s.label}

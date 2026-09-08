@@ -1,10 +1,10 @@
 function progressColor(pct) {
-  if (pct === 100) return { from: "#10b981", mid: "#34d399", shadow: "rgba(16,185,129,0.5)" };
-  if (pct >= 60) return { from: "#a855f7", mid: "#e11d6a", shadow: "rgba(168,85,247,0.45)" };
-  return { from: "#e11d6a", mid: "#a855f7", shadow: "rgba(225,29,106,0.45)" };
+  if (pct === 100) return { from: "#10b981", mid: "#34d399", shadow: "rgba(16,185,129,0.4)" };
+  if (pct >= 60) return { from: "#7c3aed", mid: "#4f46e5", shadow: "rgba(124,58,237,0.35)" };
+  return { from: "#4f46e5", mid: "#7c3aed", shadow: "rgba(79,70,229,0.35)" };
 }
 
-export default function ProgressBar({ done, total, className = "", light = false, size = "sm" }) {
+export default function ProgressBar({ done, total, className = "", light: _light = false, size = "sm" }) {
   const pct = total === 0 ? 0 : Math.round((done / total) * 100);
   const colors = progressColor(pct);
   const track = size === "lg" ? "h-5" : "h-2.5";
@@ -16,7 +16,7 @@ export default function ProgressBar({ done, total, className = "", light = false
       <div className="flex items-center justify-between mb-2">
         <span
           className={`${label} uppercase tracking-widest font-bold`}
-          style={{ color: light ? "#4b4660" : "#f1f5f9", fontFamily: "'JetBrains Mono', monospace" }}
+          style={{ color: "#64748b", fontFamily: "'JetBrains Mono', monospace" }}
         >
           Progress
         </span>
@@ -37,8 +37,8 @@ export default function ProgressBar({ done, total, className = "", light = false
       <div
         className={`${track} w-full rounded-full overflow-hidden`}
           style={{
-            background: light ? "rgba(29,23,51,0.1)" : "rgba(255,255,255,0.07)",
-            border: `1px solid ${light ? "rgba(29,23,51,0.1)" : "rgba(255,255,255,0.06)"}`,
+            background: "rgba(15,23,42,0.08)",
+            border: "1px solid rgba(15,23,42,0.06)",
           }}
       >
         {/* Fill */}

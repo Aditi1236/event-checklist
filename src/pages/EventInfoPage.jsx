@@ -15,14 +15,14 @@ function toLines(str = "") {
     .filter(Boolean);
 }
 
-function Badge({ children, color = "#a855f7", bg }) {
+function Badge({ children, color = "#4f46e5", bg }) {
   return (
     <span
       className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest"
       style={{
         color,
-        background: bg || `${color}18`,
-        border: `1px solid ${color}33`,
+        background: bg || `${color}12`,
+        border: `1px solid ${color}28`,
         fontFamily: "'JetBrains Mono', monospace",
       }}
     >
@@ -37,17 +37,18 @@ function InfoCard({ icon, label, value }) {
     <div
       className="flex flex-col gap-2 rounded-xl p-4"
       style={{
-        background: "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        background: "#ffffff",
+        border: "1px solid rgba(15,23,42,0.08)",
+        boxShadow: "0 1px 3px rgba(15,23,42,0.04)",
       }}
     >
       <div
         className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-semibold"
-        style={{ color: "#94a3b8", fontFamily: "'JetBrains Mono', monospace" }}
+        style={{ color: "#64748b", fontFamily: "'JetBrains Mono', monospace" }}
       >
         {icon} {label}
       </div>
-      <p className="text-sm font-bold text-white">{value}</p>
+      <p className="text-sm font-bold text-slate-900">{value}</p>
     </div>
   );
 }
@@ -58,9 +59,9 @@ function BulletPanel({ icon, title, color, items }) {
     <div
       className="rounded-2xl p-6"
       style={{
-        background: "rgba(255,255,255,0.03)",
-        border: `1px solid ${color}25`,
-        boxShadow: `0 0 40px -20px ${color}30`,
+        background: "#ffffff",
+        border: `1px solid ${color}20`,
+        boxShadow: `0 0 40px -20px ${color}25`,
       }}
     >
       <h3
@@ -73,7 +74,7 @@ function BulletPanel({ icon, title, color, items }) {
         {items.map((item, i) => (
           <li key={i} className="flex items-start gap-3">
             <CheckCircle2 size={15} className="shrink-0 mt-0.5" style={{ color }} />
-            <span className="text-sm font-medium leading-relaxed" style={{ color: "#cbd5e1" }}>
+            <span className="text-sm font-medium leading-relaxed" style={{ color: "#475569" }}>
               {item}
             </span>
           </li>
@@ -91,7 +92,7 @@ function PersonChips({ label, icon, raw, color }) {
     <div>
       <h4
         className="flex items-center gap-2 text-sm font-bold mb-3"
-        style={{ color: "#94a3b8", fontFamily: "'JetBrains Mono', monospace" }}
+        style={{ color: "#475569", fontFamily: "'JetBrains Mono', monospace" }}
       >
         {icon} {label}
       </h4>
@@ -101,9 +102,9 @@ function PersonChips({ label, icon, raw, color }) {
             key={i}
             className="rounded-full px-3 py-1.5 text-sm font-semibold"
             style={{
-              background: `${color}15`,
-              border: `1px solid ${color}30`,
-              color: "#f1f5f9",
+              background: `${color}10`,
+              border: `1px solid ${color}25`,
+              color: "#334155",
             }}
           >
             {p}
@@ -124,14 +125,14 @@ export default function EventInfoPage() {
       <div className="mx-auto max-w-2xl px-4 py-24 text-center">
         <div
           className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl"
-          style={{ background: "rgba(225,29,106,0.15)", border: "1px solid rgba(225,29,106,0.3)" }}
+          style={{ background: "rgba(79,70,229,0.08)", border: "1px solid rgba(79,70,229,0.15)" }}
         >
-          <CalendarDays size={28} style={{ color: "#fb7aaa" }} />
+          <CalendarDays size={28} style={{ color: "#4f46e5" }} />
         </div>
-        <h1 className="text-2xl font-bold text-white mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>
+        <h1 className="text-2xl font-bold text-slate-900 mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>
           Event not found
         </h1>
-        <p className="text-sm mb-8" style={{ color: "#94a3b8" }}>
+        <p className="text-sm mb-8" style={{ color: "#64748b" }}>
           This event may have been removed or the link is incorrect.
         </p>
         <Link to="/" className="btn-primary inline-flex">
@@ -153,8 +154,8 @@ export default function EventInfoPage() {
     <div className="relative">
       {/* Ambient orbs */}
       <div className="ambient-bg" style={{ opacity: 0.5 }}>
-        <div className="orb orb-rose" style={{ width: 500, height: 500, opacity: 0.1 }} />
-        <div className="orb orb-purple" style={{ width: 400, height: 400, opacity: 0.08 }} />
+        <div className="orb orb-rose" style={{ width: 500, height: 500, opacity: 0.12 }} />
+        <div className="orb orb-purple" style={{ width: 400, height: 400, opacity: 0.1 }} />
       </div>
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 pb-28 pt-8 sm:px-6">
@@ -163,7 +164,7 @@ export default function EventInfoPage() {
           to="/"
           className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-200"
           style={{ color: "#64748b" }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#f1f5f9")}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#4f46e5")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
         >
           <ArrowLeft size={15} /> All Events
@@ -173,10 +174,9 @@ export default function EventInfoPage() {
         <div
           className="rounded-3xl overflow-hidden mb-8 animate-fadeIn"
           style={{
-            background: "linear-gradient(135deg, #1e0a2e 0%, #0f172a 40%, #0a1628 100%)",
-            border: "1px solid rgba(255,255,255,0.12)",
-            backdropFilter: "blur(24px)",
-            boxShadow: `0 8px 60px -12px ${type.color}50, 0 2px 4px rgba(0,0,0,0.4)`,
+            background: "linear-gradient(135deg, #eef2ff 0%, #fdf4ff 100%)",
+            border: "1px solid rgba(79,70,229,0.15)",
+            boxShadow: `0 8px 60px -12px ${type.color}30, 0 2px 4px rgba(15,23,42,0.06)`,
           }}
         >
           {/* Top accent stripe */}
@@ -191,16 +191,16 @@ export default function EventInfoPage() {
             {/* Type + category badges */}
             <div className="flex flex-wrap items-center gap-2 mb-5">
               <Badge color={type.color}>{type.label}</Badge>
-              {event.category && <Badge color="#f59e0b">{event.category}</Badge>}
+              {event.category && <Badge color="#b45309">{event.category}</Badge>}
               {event.mode && isBootcamp && (
-                <Badge color="#22d3ee">{event.mode}</Badge>
+                <Badge color="#0ea5e9">{event.mode}</Badge>
               )}
             </div>
 
             {/* Title */}
             <h1
               className="text-3xl font-black leading-tight mb-6 sm:text-5xl"
-              style={{ fontFamily: "'Sora', sans-serif", color: "#ffffff" }}
+              style={{ fontFamily: "'Sora', sans-serif", color: "#1e1b4b" }}
             >
               {event.name}
             </h1>
@@ -208,21 +208,21 @@ export default function EventInfoPage() {
             {/* Meta row */}
             <div className="flex flex-wrap gap-4 mb-6">
               {event.date && (
-                <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "#94a3b8" }}>
+                <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "#475569" }}>
                   <CalendarDays size={15} style={{ color: type.color }} />
                   {formatDate(event.date)}
                   {event.endDate ? ` → ${formatDate(event.endDate)}` : ""}
                 </div>
               )}
               {event.location && (
-                <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "#94a3b8" }}>
-                  <MapPin size={15} style={{ color: "#fb7aaa" }} />
+                <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "#475569" }}>
+                  <MapPin size={15} style={{ color: "#4f46e5" }} />
                   {event.location}
                 </div>
               )}
               {event.duration && (
-                <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "#94a3b8" }}>
-                  <Clock size={15} style={{ color: "#34d399" }} />
+                <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "#475569" }}>
+                  <Clock size={15} style={{ color: "#059669" }} />
                   {event.duration}
                 </div>
               )}
@@ -232,7 +232,7 @@ export default function EventInfoPage() {
             {event.description && (
               <p
                 className="text-base font-medium leading-relaxed max-w-2xl"
-                style={{ color: "#cbd5e1" }}
+                style={{ color: "#475569" }}
               >
                 {event.description}
               </p>
@@ -279,13 +279,13 @@ export default function EventInfoPage() {
               <BulletPanel
                 icon={<GraduationCap size={16} />}
                 title="Learning Outcomes"
-                color="#a855f7"
+                color="#7c3aed"
                 items={outcomeLines}
               />
               <BulletPanel
                 icon={<Star size={16} />}
                 title="Student Benefits"
-                color="#f59e0b"
+                color="#b45309"
                 items={benefitLines}
               />
             </div>
@@ -296,7 +296,7 @@ export default function EventInfoPage() {
             <BulletPanel
               icon={<Zap size={16} />}
               title="Event Highlights"
-              color="#10b981"
+              color="#059669"
               items={highlightLines}
             />
           )}
@@ -306,19 +306,19 @@ export default function EventInfoPage() {
             <div
               className="rounded-2xl p-6 grid grid-cols-1 gap-5 sm:grid-cols-2"
               style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: "#ffffff",
+                border: "1px solid rgba(15,23,42,0.08)",
               }}
             >
               {event.targetAudience && (
                 <div>
                   <h3
                     className="flex items-center gap-2 text-sm font-bold mb-2"
-                    style={{ color: "#34d399", fontFamily: "'Sora', sans-serif" }}
+                    style={{ color: "#059669", fontFamily: "'Sora', sans-serif" }}
                   >
                     <Target size={15} /> Target Audience
                   </h3>
-                  <p className="text-sm font-medium" style={{ color: "#cbd5e1" }}>
+                  <p className="text-sm font-medium" style={{ color: "#475569" }}>
                     {event.targetAudience}
                   </p>
                 </div>
@@ -327,11 +327,11 @@ export default function EventInfoPage() {
                 <div>
                   <h3
                     className="flex items-center gap-2 text-sm font-bold mb-2"
-                    style={{ color: "#fb7aaa", fontFamily: "'Sora', sans-serif" }}
+                    style={{ color: "#e11d6a", fontFamily: "'Sora', sans-serif" }}
                   >
                     <BookOpen size={15} /> Prerequisites
                   </h3>
-                  <p className="text-sm font-medium" style={{ color: "#cbd5e1" }}>
+                  <p className="text-sm font-medium" style={{ color: "#475569" }}>
                     {event.prerequisites}
                   </p>
                 </div>
@@ -344,13 +344,13 @@ export default function EventInfoPage() {
             <div
               className="rounded-2xl p-6"
               style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: "#ffffff",
+                border: "1px solid rgba(15,23,42,0.08)",
               }}
             >
               <h3
                 className="flex items-center gap-2 text-sm font-bold mb-4"
-                style={{ color: "#38bdf8", fontFamily: "'Sora', sans-serif" }}
+                style={{ color: "#6366f1", fontFamily: "'Sora', sans-serif" }}
               >
                 <Tag size={15} /> Tech Stack
               </h3>
@@ -360,9 +360,9 @@ export default function EventInfoPage() {
                     key={i}
                     className="rounded-lg px-3 py-1.5 text-xs font-bold"
                     style={{
-                      background: "rgba(56,189,248,0.1)",
-                      border: "1px solid rgba(56,189,248,0.25)",
-                      color: "#38bdf8",
+                      background: "rgba(99,102,241,0.08)",
+                      border: "1px solid rgba(99,102,241,0.2)",
+                      color: "#4f46e5",
                       fontFamily: "'JetBrains Mono', monospace",
                     }}
                   >
@@ -378,12 +378,12 @@ export default function EventInfoPage() {
             <div
               className="rounded-2xl p-6 space-y-6"
               style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: "#ffffff",
+                border: "1px solid rgba(15,23,42,0.08)",
               }}
             >
               <h2
-                className="text-base font-bold text-white"
+                className="text-base font-bold text-slate-900"
                 style={{ fontFamily: "'Sora', sans-serif" }}
               >
                 People
@@ -392,41 +392,64 @@ export default function EventInfoPage() {
                 label="Speakers / Instructors"
                 icon={<Mic2 size={13} />}
                 raw={event.speakers}
-                color="#a855f7"
+                color="#7c3aed"
               />
               <PersonChips
                 label="Collaborators / Partners"
                 icon={<Handshake size={13} />}
                 raw={event.collaborators}
-                color="#f59e0b"
+                color="#b45309"
               />
               <PersonChips
                 label="Organizing Team"
                 icon={<Users size={13} />}
                 raw={event.teamMembers}
-                color="#34d399"
+                color="#059669"
               />
             </div>
           )}
 
-          {/* Extra: registrations count */}
-          {!isBootcamp && event.registrations > 0 && (
-            <div
-              className="rounded-2xl px-6 py-4 flex items-center gap-4"
-              style={{
-                background: "rgba(225,29,106,0.06)",
-                border: "1px solid rgba(225,29,106,0.15)",
-              }}
-            >
-              <Users size={20} style={{ color: "#fb7aaa" }} />
-              <div>
-                <p className="text-xs uppercase tracking-widest font-bold" style={{ color: "#fb7aaa", fontFamily: "'JetBrains Mono', monospace" }}>
-                  Registrations
-                </p>
-                <p className="text-2xl font-black text-white" style={{ fontFamily: "'Sora', sans-serif" }}>
-                  {event.registrations}
-                </p>
-              </div>
+          {/* Extra: budget & registrations count */}
+          {(event.budget > 0 || (!isBootcamp && event.registrations > 0)) && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {event.budget > 0 && (
+                <div
+                  className="rounded-2xl px-6 py-4 flex items-center gap-4"
+                  style={{
+                    background: "rgba(79,70,229,0.05)",
+                    border: "1px solid rgba(79,70,229,0.15)",
+                  }}
+                >
+                  <Tag size={20} style={{ color: "#4f46e5" }} />
+                  <div>
+                    <p className="text-xs uppercase tracking-widest font-bold" style={{ color: "#4f46e5", fontFamily: "'JetBrains Mono', monospace" }}>
+                      Budget
+                    </p>
+                    <p className="text-2xl font-black text-slate-900" style={{ fontFamily: "'Sora', sans-serif" }}>
+                      ₹{Number(event.budget).toLocaleString("en-IN")}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {!isBootcamp && event.registrations > 0 && (
+                <div
+                  className="rounded-2xl px-6 py-4 flex items-center gap-4"
+                  style={{
+                    background: "rgba(225,29,106,0.05)",
+                    border: "1px solid rgba(225,29,106,0.15)",
+                  }}
+                >
+                  <Users size={20} style={{ color: "#e11d6a" }} />
+                  <div>
+                    <p className="text-xs uppercase tracking-widest font-bold" style={{ color: "#e11d6a", fontFamily: "'JetBrains Mono', monospace" }}>
+                      Registrations
+                    </p>
+                    <p className="text-2xl font-black text-slate-900" style={{ fontFamily: "'Sora', sans-serif" }}>
+                      {event.registrations}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -436,14 +459,14 @@ export default function EventInfoPage() {
           <div
             className="mt-10 rounded-2xl p-8 text-center"
             style={{
-              background: `linear-gradient(135deg, ${type.color}18, transparent)`,
-              border: `1px solid ${type.color}30`,
+              background: `linear-gradient(135deg, ${type.color}10, transparent)`,
+              border: `1px solid ${type.color}25`,
             }}
           >
-            <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: "'Sora', sans-serif" }}>
+            <h3 className="text-xl font-bold text-slate-900 mb-2" style={{ fontFamily: "'Sora', sans-serif" }}>
               Ready to join?
             </h3>
-            <p className="text-sm mb-6" style={{ color: "#94a3b8" }}>
+            <p className="text-sm mb-6" style={{ color: "#64748b" }}>
               Secure your spot — registrations are limited.
             </p>
             <a

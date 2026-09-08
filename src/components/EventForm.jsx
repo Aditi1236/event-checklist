@@ -32,23 +32,23 @@ function Section({ title, children, defaultOpen = true }) {
   return (
     <div
       className="rounded-xl overflow-hidden"
-      style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+      style={{ border: "1px solid rgba(15,23,42,0.1)" }}
     >
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between px-4 py-3 text-sm font-bold text-left transition-colors"
         style={{
-          background: "rgba(255,255,255,0.05)",
-          color: "#e2e8f0",
+          background: "rgba(15,23,42,0.03)",
+          color: "#0f172a",
           fontFamily: "'Sora', sans-serif",
         }}
       >
         {title}
-        {open ? <ChevronUp size={15} style={{ color: "#94a3b8" }} /> : <ChevronDown size={15} style={{ color: "#94a3b8" }} />}
+        {open ? <ChevronUp size={15} style={{ color: "#64748b" }} /> : <ChevronDown size={15} style={{ color: "#64748b" }} />}
       </button>
       {open && (
-        <div className="px-4 pb-4 pt-3 space-y-4" style={{ background: "rgba(0,0,0,0.15)" }}>
+        <div className="px-4 pb-4 pt-3 space-y-4" style={{ background: "rgba(15,23,42,0.02)" }}>
           {children}
         </div>
       )}
@@ -99,7 +99,7 @@ export default function EventForm({ initial, onSubmit, onClose }) {
                   style={
                     isActive
                       ? { color: "#ffffff", background: t.color, borderColor: t.color }
-                      : { color: "#94a3b8", borderColor: "rgba(255,255,255,0.12)" }
+                      : { color: "#475569", borderColor: "rgba(15,23,42,0.15)" }
                   }
                 >
                   {t.label}
@@ -124,7 +124,7 @@ export default function EventForm({ initial, onSubmit, onClose }) {
               onChange={(e) => update("name", e.target.value)}
               autoFocus
             />
-            {errors.name && <p className="mt-1 text-xs text-rust">{errors.name}</p>}
+            {errors.name && <p className="mt-1 text-xs" style={{ color: "#dc2626" }}>{errors.name}</p>}
           </div>
 
           {/* Dates */}
@@ -140,7 +140,7 @@ export default function EventForm({ initial, onSubmit, onClose }) {
                 value={form.date}
                 onChange={(e) => update("date", e.target.value)}
               />
-              {errors.date && <p className="mt-1 text-xs text-rust">{errors.date}</p>}
+              {errors.date && <p className="mt-1 text-xs" style={{ color: "#dc2626" }}>{errors.date}</p>}
             </div>
             <div>
               <label className="field-label" htmlFor="event-enddate">

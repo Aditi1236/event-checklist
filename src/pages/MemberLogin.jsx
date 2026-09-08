@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { UserCheck, Lock, Mail, ArrowLeft, Sparkles, User, HelpCircle } from "lucide-react";
+import { UserCheck, Lock, Mail, ArrowLeft, User, HelpCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../utils/api";
 
@@ -100,25 +100,24 @@ export default function MemberLogin() {
         <Link
           to="/"
           className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-200"
-          style={{ color: "#94a3b8" }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#f1f5f9")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#94a3b8")}
+          style={{ color: "#64748b" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#059669")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
         >
           <ArrowLeft size={15} />
         </Link>
         <div
            className="rounded-3xl overflow-hidden"
            style={{
-             background: "#622569",
-             border: "1px solid rgba(255,255,255,0.1)",
-             backdropFilter: "blur(24px)",
-             boxShadow: "0 32px 80px -16px rgba(0,0,0,0.8), 0 0 80px -20px rgba(16,185,129,0.2)",
+             background: "#ffffff",
+             border: "1px solid rgba(15,23,42,0.08)",
+             boxShadow: "0 24px 60px -16px rgba(15,23,42,0.18)",
            }}
          >
           <div
             className="h-px w-full"
             style={{
-              background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.7), rgba(168,85,247,0.5), transparent)",
+              background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.55), rgba(124,58,237,0.4), transparent)",
             }}
           />
 
@@ -127,19 +126,19 @@ export default function MemberLogin() {
               <div
                 className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl"
                 style={{
-                  background: "linear-gradient(135deg, #10b981 0%, #34d399 100%)",
-                  boxShadow: "0 0 30px rgba(16,185,129,0.45), inset 0 1px 0 rgba(255,255,255,0.2)",
+                  background: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
+                  boxShadow: "0 4px 16px rgba(5,150,105,0.35)",
                 }}
               >
                 <UserCheck size={28} className="text-white" />
               </div>
               <h1
-                className="text-3xl font-extrabold text-white"
+                className="text-3xl font-extrabold text-slate-900"
                 style={{ fontFamily: "'Sora', sans-serif" }}
               >
                 {isForgotPassword ? "Reset Password" : isSignUp ? "Member Sign Up" : "Member Login"}
               </h1>
-              <p className="mt-2 text-sm font-medium" style={{ color: "#94a3b8" }}>
+              <p className="mt-2 text-sm font-medium" style={{ color: "#64748b" }}>
                 {isForgotPassword ? "Answer your security question to reset." : isSignUp ? "Create your executive portal account." : "Executive portal — view and update your assigned tasks."}
               </p>
             </div>
@@ -172,7 +171,7 @@ export default function MemberLogin() {
                 ) : (
                   <>
                     <div>
-                      <label className="field-label" style={{ color: "#e2e8f0" }}>
+                      <label className="field-label" style={{ color: "#64748b" }}>
                         Security Question
                       </label>
                       <p className="text-sm font-medium italic mb-2" style={{ color: "#94a3b8" }}>
@@ -222,9 +221,9 @@ export default function MemberLogin() {
                   <p
                     className="rounded-xl px-4 py-3 text-sm font-semibold"
                     style={{
-                      color: "#fda4af",
-                      background: "rgba(225,29,106,0.12)",
-                      border: "1px solid rgba(225,29,106,0.3)",
+                      color: "#b91c1c",
+                      background: "rgba(220,38,38,0.06)",
+                      border: "1px solid rgba(220,38,38,0.15)",
                     }}
                   >
                     {error}
@@ -243,8 +242,8 @@ export default function MemberLogin() {
                       setForgotStep(1);
                       setError("");
                     }}
-                    style={{ color: "#94a3b8" }}
-                    className="hover:text-white transition-colors hover:underline"
+                    style={{ color: "#64748b" }}
+                    className="hover:text-slate-900 transition-colors hover:underline"
                   >
                     Back to Login
                   </button>
@@ -329,7 +328,7 @@ export default function MemberLogin() {
                           setSuccessMsg("");
                         }}
                         className="text-xs font-semibold hover:underline"
-                        style={{ color: "#34d399" }}
+                        style={{ color: "#059669" }}
                       >
                         Forgot Password?
                       </button>
@@ -383,9 +382,9 @@ export default function MemberLogin() {
                   <p
                     className="rounded-xl px-4 py-3 text-sm font-semibold"
                     style={{
-                      color: "#fda4af",
-                      background: "rgba(225,29,106,0.12)",
-                      border: "1px solid rgba(225,29,106,0.3)",
+                      color: "#b91c1c",
+                      background: "rgba(220,38,38,0.06)",
+                      border: "1px solid rgba(220,38,38,0.15)",
                     }}
                   >
                     {error}
@@ -396,9 +395,9 @@ export default function MemberLogin() {
                   <p
                     className="rounded-xl px-4 py-3 text-sm font-semibold"
                     style={{
-                      color: "#6ee7b7",
-                      background: "rgba(16,185,129,0.12)",
-                      border: "1px solid rgba(16,185,129,0.3)",
+                      color: "#059669",
+                      background: "rgba(16,185,129,0.08)",
+                      border: "1px solid rgba(16,185,129,0.2)",
                     }}
                   >
                     {successMsg}
@@ -412,7 +411,7 @@ export default function MemberLogin() {
             )}
 
             {!isForgotPassword && (
-              <div className="mt-6 text-center text-sm font-medium" style={{ color: "#94a3b8" }}>
+              <div className="mt-6 text-center text-sm font-medium" style={{ color: "#64748b" }}>
                 {isSignUp ? "Already have a member account? " : "Don't have a member account? "}
                 <button
                   type="button"
@@ -422,7 +421,7 @@ export default function MemberLogin() {
                     setSuccessMsg("");
                   }}
                   className="font-bold transition-colors hover:underline"
-                  style={{ color: "#34d399" }}
+                  style={{ color: "#059669" }}
                 >
                   {isSignUp ? "Sign In" : "Sign Up"}
                 </button>
@@ -435,9 +434,9 @@ export default function MemberLogin() {
                 <Link
                   to="/admin/login"
                   className="font-bold transition-colors hover:underline"
-                  style={{ color: "#fb7aaa" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#fda4af")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "#fb7aaa")}
+                  style={{ color: "#4f46e5" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#6366f1")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#4f46e5")}
                 >
                   Go to Admin Login →
                 </Link>

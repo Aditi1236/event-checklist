@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
-import confetti from "canvas-confetti";
 import { useEvents } from "../context/EventsContext";
 import { useAuth } from "../context/AuthContext";
 import ProgressStamp from "../components/ProgressStamp";
@@ -20,6 +19,7 @@ import {
 export default function EventDetail() {
   const { eventId } = useParams();
   const navigate = useNavigate();
+  const { user, isAdmin } = useAuth();
   const {
     getEvent,
     updateEvent,
@@ -30,25 +30,33 @@ export default function EventDetail() {
     deleteTask,
   } = useEvents();
 
+  const [showEditEvent, setShowEditEvent] = useState(false);
+  const [showAddTask, setShowAddTask] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
+  const [deletingTask, setDeletingTask] = useState(null);
+  const [deletingEvent, setDeletingEvent] = useState(false);
+
   const event = getEvent(eventId);
 
-  // If user is not admin, redirect to appropriate page
-  if (!isAdmin && event) {
-    // If user is logged in member, redirect to their tasks
-    if (user) {
-      navigate("/me", { replace: true });
-      return null;
-    }
-    // If not logged in, redirect to login
-    navigate("/login", { replace: true });
-    return null;
-  }
+  const grouped = useMemo(() => {
+    const g = {};
+    CATEGORIES.forEach((c) => (g[c.key] = []));
+    (event?.tasks || []).forEach((t) => {
+      if (!g[t.category]) g[t.category] = [];
+      g[t.category].push(t);
+    });
+    return g;
+  }, [event]);
+
+  const handleToggleTask = (taskId) => {
+    if (isAdmin && event) toggleTask(event.id, taskId);
+  };
 
   if (!event) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-24 text-center">
         <h1
-          className="text-2xl font-bold text-white mb-3"
+          className="text-2xl font-bold text-slate-900 mb-3"
           style={{ fontFamily: "'Sora', sans-serif" }}
         >
           Event not found
@@ -67,6 +75,12 @@ export default function EventDetail() {
 
   const { done, total, pct } = progressOf(event);
 
+  // Non-admins get bounced to their own portal.
+  if (!isAdmin) {
+    navigate(user ? "/me" : "/login", { replace: true });
+    return null;
+  }
+
   return (
     <div className="relative">
       {/* Ambient orbs (subtle, smaller than dashboard) */}
@@ -80,8 +94,8 @@ export default function EventDetail() {
         <Link
           to="/"
           className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-200"
-          style={{ color: "#64748b" }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#f1f5f9")}
+style={{ color: "#64748b" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#4f46e5")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
         >
           <ArrowLeft size={15} />
@@ -92,18 +106,17 @@ export default function EventDetail() {
         <div
           className="rounded-2xl overflow-hidden mb-8 animate-fadeIn"
           style={{
-            background: "#30AFFF",
-            border: "1px solid rgba(255,255,255,0.2)",
-            backdropFilter: "blur(24px)",
+            background: "linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%)",
+            border: "1px solid rgba(79,70,229,0.15)",
             minHeight: 300,
-            boxShadow: "0 4px 40px -8px rgba(48,175,255,0.4), 0 1px 3px rgba(0,0,0,0.2)",
+            boxShadow: "0 4px 32px -8px rgba(79,70,229,0.12), 0 1px 3px rgba(15,23,42,0.06)",
           }}
         >
           {/* Gradient top accent */}
           <div
             className="h-px"
             style={{
-              background: "linear-gradient(90deg, transparent, rgba(225,29,106,0.7), rgba(168,85,247,0.5), transparent)",
+              background: "linear-gradient(90deg, transparent, rgba(79,70,229,0.5), rgba(124,58,237,0.35), transparent)",
             }}
           />
 
@@ -113,7 +126,7 @@ export default function EventDetail() {
                 {/* Event name */}
                 <h1
                   className="text-5xl font-extrabold sm:text-6xl leading-tight mb-4"
-                  style={{ fontFamily: "'Sora', sans-serif", color: "#ffffff" }}
+                  style={{ fontFamily: "'Sora', sans-serif", color: "#1e1b4b" }}
                 >
                   {event.name}
                 </h1>
@@ -123,9 +136,9 @@ export default function EventDetail() {
                   <span
                     className="inline-flex items-center gap-1.5 text-base font-bold px-4 py-2 rounded-full"
                     style={{
-                      background: "rgba(255,255,255,0.22)",
-                      border: "1px solid rgba(255,255,255,0.4)",
-                      color: "#ffffff",
+                      background: "#ffffff",
+                      border: "1px solid rgba(79,70,229,0.2)",
+                      color: "#4338ca",
                       fontFamily: "'JetBrains Mono', monospace",
                     }}
                   >
@@ -136,9 +149,9 @@ export default function EventDetail() {
                     <span
                       className="inline-flex items-center gap-1.5 text-base font-bold px-4 py-2 rounded-full"
                       style={{
-                        background: "rgba(255,255,255,0.22)",
-                        border: "1px solid rgba(255,255,255,0.4)",
-                        color: "#ffffff",
+                        background: "#ffffff",
+                        border: "1px solid rgba(79,70,229,0.2)",
+                        color: "#4338ca",
                         fontFamily: "'JetBrains Mono', monospace",
                       }}
                     >
@@ -149,7 +162,7 @@ export default function EventDetail() {
                 </div>
 
                 {event.description && (
-                  <p className="text-base font-bold max-w-xl leading-relaxed" style={{ color: "#0D47A1" }}>
+                  <p className="text-base font-medium max-w-xl leading-relaxed" style={{ color: "#475569" }}>
                     {event.description}
                   </p>
                 )}
@@ -165,9 +178,10 @@ export default function EventDetail() {
                       className="!px-4 !py-2 text-sm font-semibold rounded-full transition-all duration-200"
                       onClick={() => setShowEditEvent(true)}
                       style={{
-                        color: "#ffffff",
-                        background: "rgba(255,255,255,0.18)",
-                        border: "1px solid rgba(255,255,255,0.3)",
+                        color: "#4338ca",
+                        background: "#ffffff",
+                        border: "1px solid rgba(79,70,229,0.25)",
+                        boxShadow: "0 1px 3px rgba(15,23,42,0.06)",
                       }}
                     >
                       <Pencil size={14} />
@@ -177,9 +191,9 @@ export default function EventDetail() {
                       className="!px-4 !py-2 text-sm font-semibold rounded-full transition-all duration-200"
                       onClick={() => setDeletingEvent(true)}
                       style={{
-                        color: "#ffd6e7",
-                        background: "rgba(225,29,106,0.3)",
-                        border: "1px solid rgba(225,29,106,0.5)",
+                        color: "#dc2626",
+                        background: "rgba(220,38,38,0.08)",
+                        border: "1px solid rgba(220,38,38,0.25)",
                       }}
                     >
                       <Trash2 size={12} />
@@ -205,7 +219,7 @@ export default function EventDetail() {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <h2
-              className="text-xl font-bold text-white"
+              className="text-xl font-bold text-slate-900"
               style={{ fontFamily: "'Sora', sans-serif" }}
             >
               Checklist
@@ -213,9 +227,9 @@ export default function EventDetail() {
             <span
               className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
               style={{
-                background: "rgba(16,185,129,0.1)",
-                border: "1px solid rgba(16,185,129,0.22)",
-                color: "#34d399",
+                background: "rgba(16,185,129,0.08)",
+                border: "1px solid rgba(16,185,129,0.16)",
+                color: "#059669",
                 fontFamily: "'JetBrains Mono', monospace",
               }}
             >
