@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   CalendarDays,
   Flag,
-  ExternalLink,
   TrendingUp,
 } from "lucide-react";
 import { useEvents } from "../context/EventsContext";
@@ -126,10 +125,6 @@ export default function MyTasks() {
               {user?.email}
             </p>
           </div>
-          <Link to="/admin" className="btn-secondary text-sm !px-4 !py-2">
-            <ExternalLink size={15} />
-            Back to Events
-          </Link>
         </div>
 
         {/* Stats */}

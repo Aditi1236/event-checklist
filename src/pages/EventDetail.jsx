@@ -91,16 +91,16 @@ export default function EventDetail() {
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 pb-24 pt-8 sm:px-6">
         {/* Back link */}
-        <Link
-          to="/"
+        <button
+          onClick={() => (window.history.length > 1 ? navigate(-1) : navigate("/admin"))}
           className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-200"
-style={{ color: "#64748b" }}
+          style={{ color: "#64748b", background: "transparent" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#4f46e5")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
         >
           <ArrowLeft size={15} />
-          All events
-        </Link>
+          Back
+        </button>
 
         {/* ── Event hero card ─────────────────────── */}
         <div

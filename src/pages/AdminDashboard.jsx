@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   CalendarRange,
@@ -15,12 +16,13 @@ import {
 import { useEvents } from "../context/EventsContext";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../utils/api";
+import EventCard from "../components/EventCard";
 import EventForm from "../components/EventForm";
 import TaskForm from "../components/TaskForm";
 import ConfirmDialog from "../components/ConfirmDialog";
 import Modal from "../components/Modal";
 import ProgressBar from "../components/ProgressBar";
-import { statusMeta, taskStatus, eventTypeMeta, formatDate, progressOf } from "../utils/helpers";
+import { statusMeta, taskStatus, eventTypeMeta, formatDate } from "../utils/helpers";
 
 const TABS = [
   { key: "overview", label: "Overview", icon: LayoutDashboard },
@@ -424,6 +426,7 @@ color: m.total === 0 ? "#94a3b8" : "#4f46e5",
 
 /* ═════════─────── Events tab ───────═════════ */
 function EventsTab({ events, createEvent, updateEvent, deleteEvent }) {
+  const navigate = useNavigate();
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -445,80 +448,18 @@ return (
          </button>
        </div>
 
-       <div className="space-y-3">
-         {sorted.map((evt) => {
-           const { done, total, pct } = progressOf(evt);
-           const type = eventTypeMeta(evt.type || "event");
-           return (
-             <div
-               key={evt.id}
-               className="flex flex-col gap-4 sm:flex-row sm:items-center"
-style={{ background: "#ffffff", border: "1px solid rgba(15,23,42,0.08)", padding: "1.5rem 2rem", borderRadius: "20px", marginBottom: "1.5rem", boxShadow: "0 1px 3px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.05)" }}
-              >
-               <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-2xl font-bold text-slate-900">{evt.name}</p>
-                  <span
-                    className="rounded-full px-2.5 py-1 text-sm font-black uppercase tracking-widest"
-                    style={{ color: "#ffffff", background: type.color, fontFamily: "'JetBrains Mono', monospace" }}
-                  >
-                    {type.label}
-                  </span>
-                  {evt.type === "bootcamp" && evt.mode && (
-                    <span className="rounded-full px-2.5 py-1 text-sm font-bold uppercase tracking-wider" style={{ color: "#64748b", background: "rgba(15,23,42,0.04)", fontFamily: "'JetBrains Mono', monospace" }}>
-                      {evt.mode}
-                    </span>
-                  )}
-                </div>
-                <p className="mt-0.5 text-sm" style={{ color: "#94a3b8" }}>
-                  {evt.date ? formatDate(evt.date) : "No date"}
-                  {evt.type === "bootcamp" && evt.endDate ? ` → ${formatDate(evt.endDate)}` : ""}
-                  {evt.location ? ` · ${evt.location}` : ""}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-5">
-                <div className="hidden items-center gap-3 sm:flex sm:w-48">
-                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(15,23,42,0.08)" }}>
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{ width: `${pct}%`, background: "linear-gradient(90deg, #4f46e5, #7c3aed, #10b981)" }}
-                    />
-                  </div>
-                  <span className="w-10 text-right text-sm font-bold" style={{ color: "#0f172a", fontFamily: "'JetBrains Mono', monospace" }}>
-                    {pct}%
-                  </span>
-                </div>
-                <span className="text-sm font-bold" style={{ color: "#94a3b8", fontFamily: "'JetBrains Mono', monospace" }}>
-                  {done}/{total}
-                </span>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setEditing(evt)}
-                    className="rounded-full p-2.5 transition-all duration-150"
-                    style={{ color: "#64748b", background: "rgba(15,23,42,0.04)" }}
-                    aria-label={`Edit ${evt.name}`}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(79,70,229,0.12)"; e.currentTarget.style.color = "#4f46e5"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(15,23,42,0.04)"; e.currentTarget.style.color = "#64748b"; }}
-                  >
-                    <Pencil size={16} />
-                  </button>
-                  <button
-                    onClick={() => setDeleting(evt)}
-                    className="rounded-full p-2.5 transition-all duration-150"
-                    style={{ color: "#64748b", background: "rgba(15,23,42,0.04)" }}
-                    aria-label={`Delete ${evt.name}`}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(220,38,38,0.08)"; e.currentTarget.style.color = "#dc2626"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(15,23,42,0.04)"; e.currentTarget.style.color = "#64748b"; }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-        {sorted.length === 0 && (
+<div className="space-y-5">
+          {sorted.map((evt) => (
+            <EventCard
+              key={evt.id}
+              event={evt}
+              variant="wide"
+              onEdit={() => setEditing(evt)}
+              onDelete={() => setDeleting(evt)}
+              onSelect={() => navigate(`/event/${evt.id}`)}
+            />
+          ))}
+          {sorted.length === 0 && (
           <p className="rounded-xl border border-dashed px-6 py-12 text-center text-sm" style={{ color: "#64748b", borderColor: "rgba(15,23,42,0.15)" }}>
             No events or bootcamps yet. Create the first one.
           </p>

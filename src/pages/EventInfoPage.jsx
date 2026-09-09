@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   ArrowLeft, CalendarDays, MapPin, Clock, Tag, Users,
   BookOpen, Star, Mic2, Handshake, Target, CheckCircle2,
@@ -117,6 +117,7 @@ function PersonChips({ label, icon, raw, color }) {
 
 export default function EventInfoPage() {
   const { eventId } = useParams();
+  const navigate = useNavigate();
   const { getEvent } = useEvents();
   const event = getEvent(eventId);
 
@@ -160,15 +161,15 @@ export default function EventInfoPage() {
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 pb-28 pt-8 sm:px-6">
         {/* Back link */}
-        <Link
-          to="/"
+        <button
+          onClick={() => (window.history.length > 1 ? navigate(-1) : navigate("/"))}
           className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-200"
-          style={{ color: "#64748b" }}
+          style={{ color: "#64748b", background: "transparent" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#4f46e5")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#64748b")}
         >
-          <ArrowLeft size={15} /> All Events
-        </Link>
+          <ArrowLeft size={15} /> Back
+        </button>
 
         {/* ── Hero Card ── */}
         <div
@@ -255,14 +256,9 @@ export default function EventInfoPage() {
         </div>
 
         {/* ── Key Info Grid ── */}
-        <div className="grid grid-cols-2 gap-3 mb-8 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 mb-8">
           <InfoCard icon={<Clock size={12} />} label="Duration" value={event.duration} />
 
-          <InfoCard
-            icon={<Users size={12} />}
-            label="Capacity"
-            value={event.capacity ? `${event.capacity} seats` : null}
-          />
           <InfoCard
             icon={<Monitor size={12} />}
             label="Mode"
@@ -409,47 +405,24 @@ export default function EventInfoPage() {
             </div>
           )}
 
-          {/* Extra: budget & registrations count */}
-          {(event.budget > 0 || (!isBootcamp && event.registrations > 0)) && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {event.budget > 0 && (
-                <div
-                  className="rounded-2xl px-6 py-4 flex items-center gap-4"
-                  style={{
-                    background: "rgba(79,70,229,0.05)",
-                    border: "1px solid rgba(79,70,229,0.15)",
-                  }}
-                >
-                  <Tag size={20} style={{ color: "#4f46e5" }} />
-                  <div>
-                    <p className="text-xs uppercase tracking-widest font-bold" style={{ color: "#4f46e5", fontFamily: "'JetBrains Mono', monospace" }}>
-                      Budget
-                    </p>
-                    <p className="text-2xl font-black text-slate-900" style={{ fontFamily: "'Sora', sans-serif" }}>
-                      ₹{Number(event.budget).toLocaleString("en-IN")}
-                    </p>
-                  </div>
-                </div>
-              )}
-              {!isBootcamp && event.registrations > 0 && (
-                <div
-                  className="rounded-2xl px-6 py-4 flex items-center gap-4"
-                  style={{
-                    background: "rgba(225,29,106,0.05)",
-                    border: "1px solid rgba(225,29,106,0.15)",
-                  }}
-                >
-                  <Users size={20} style={{ color: "#e11d6a" }} />
-                  <div>
-                    <p className="text-xs uppercase tracking-widest font-bold" style={{ color: "#e11d6a", fontFamily: "'JetBrains Mono', monospace" }}>
-                      Registrations
-                    </p>
-                    <p className="text-2xl font-black text-slate-900" style={{ fontFamily: "'Sora', sans-serif" }}>
-                      {event.registrations}
-                    </p>
-                  </div>
-                </div>
-              )}
+          {/* Extra: registrations count */}
+          {!isBootcamp && event.registrations > 0 && (
+            <div
+              className="rounded-2xl px-6 py-4 flex items-center gap-4"
+              style={{
+                background: "rgba(225,29,106,0.05)",
+                border: "1px solid rgba(225,29,106,0.15)",
+              }}
+            >
+              <Users size={20} style={{ color: "#e11d6a" }} />
+              <div>
+                <p className="text-xs uppercase tracking-widest font-bold" style={{ color: "#e11d6a", fontFamily: "'JetBrains Mono', monospace" }}>
+                  Registrations
+                </p>
+                <p className="text-2xl font-black text-slate-900" style={{ fontFamily: "'Sora', sans-serif" }}>
+                  {event.registrations}
+                </p>
+              </div>
             </div>
           )}
         </div>

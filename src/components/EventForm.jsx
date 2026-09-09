@@ -12,7 +12,6 @@ const empty = {
   description: "",
   location: "",
   mode: "offline",
-  capacity: "",
   techStack: "",
   registrations: "",
   teamMembers: "",
@@ -310,8 +309,7 @@ export default function EventForm({ initial, onSubmit, onClose }) {
         {/* ── Logistics ── */}
         <Section title="⚙️ Logistics & Details" defaultOpen={false}>
           {isBootcamp && (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
+            <div>
                 <label className="field-label" htmlFor="event-mode">Mode</label>
                 <select
                   id="event-mode"
@@ -323,34 +321,10 @@ export default function EventForm({ initial, onSubmit, onClose }) {
                   <option value="offline">Offline</option>
                   <option value="hybrid">Hybrid</option>
                 </select>
-              </div>
-              <div>
-                <label className="field-label" htmlFor="event-capacity">Capacity (seats)</label>
-                <input
-                  id="event-capacity"
-                  type="number"
-                  className="field-input"
-                  placeholder="0"
-                  value={form.capacity}
-                  onChange={(e) => update("capacity", e.target.value)}
-                />
-              </div>
             </div>
           )}
           {!isBootcamp && (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="field-label" htmlFor="event-capacity-ev">Capacity</label>
-                <input
-                  id="event-capacity-ev"
-                  type="number"
-                  className="field-input"
-                  placeholder="0"
-                  value={form.capacity}
-                  onChange={(e) => update("capacity", e.target.value)}
-                />
-              </div>
-              <div>
+            <div>
                 <label className="field-label" htmlFor="event-registrations">Registrations</label>
                 <input
                   id="event-registrations"
@@ -360,7 +334,6 @@ export default function EventForm({ initial, onSubmit, onClose }) {
                   value={form.registrations}
                   onChange={(e) => update("registrations", e.target.value)}
                 />
-              </div>
             </div>
           )}
           <div>

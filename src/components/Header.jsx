@@ -81,18 +81,25 @@ export default function Header() {
                 onClick={handleLogout}
                 title="Log out"
                 aria-label="Log out"
-                className="flex h-9 w-9 items-center justify-center rounded-full transition-all duration-150"
-                style={{ color: "#94a3b8", background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.08)" }}
+                className="flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-bold transition-all duration-150"
+                style={{
+                  color: "#64748b",
+                  background: "rgba(0,0,0,0.04)",
+                  border: "1px solid rgba(0,0,0,0.08)",
+                }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "rgba(220,38,38,0.08)";
                   e.currentTarget.style.color = "#dc2626";
+                  e.currentTarget.style.borderColor = "rgba(220,38,38,0.25)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = "rgba(0,0,0,0.04)";
-                  e.currentTarget.style.color = "#94a3b8";
+                  e.currentTarget.style.color = "#64748b";
+                  e.currentTarget.style.borderColor = "rgba(0,0,0,0.08)";
                 }}
               >
                 <LogOut size={15} />
+                Logout
               </button>
             </>
           ) : (
