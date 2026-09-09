@@ -187,12 +187,16 @@ export function verifyPassword(password, stored = "") {
 
 /* ── Default accounts ─────────────────────────────────
    Seeded on first boot (works for MongoDB AND the
-   JSON-file fallback), so both logins always work:
-     • Admin:    ayushnegi.zero@gmail.com  / admin123
-     • Admin:    sumanshujindal76@gmail.com / admin123
+   JSON-file fallback):
      • Member:   member@nexasoul.com / member123
+   Admin accounts are NOT auto-seeded — they must be created
+   through the Admin Sign Up page using authorized emails:
+     • ayushnegi.zero@gmail.com
+     • sumanshujindal76@gmail.com
    Members created later by the Admin use their own
    credentials from the Admin Dashboard → Members tab. */
+
+// Authorized admin emails (must match the list in server/index.js)
 const AUTHORIZED_ADMIN_EMAILS = [
   "ayushnegi.zero@gmail.com",
   "sumanshujindal76@gmail.com",
@@ -201,32 +205,11 @@ const AUTHORIZED_ADMIN_EMAILS = [
 export async function ensureDefaultAdmin() {
   const users = getUsersCollection();
   
-  // Seed the two authorized admin accounts
-  for (const email of AUTHORIZED_ADMIN_EMAILS) {
-    let admin = await users.findOne({ email });
-    if (!admin) {
-      admin = {
-        id: `usr_admin_${Math.random().toString(36).slice(2, 8)}`,
-        name: email === "ayushnegi.zero@gmail.com" ? "Ayush Negi" : "Suman Sujindal",
-        email: email,
-        passwordHash: hashPassword("admin123"),
-        role: "admin",
-        position: "Administrator",
-        phone: "",
-        status: "active",
-        createdAt: Date.now(),
-      };
-      try {
-        await users.insertOne(admin);
-        console.log(`🔐 Seeded authorized admin —  ${email} / admin123`);
-      } catch (err) {
-        if (err.code !== 11000) throw err; // ignore duplicate-key (another boot seeded it)
-      }
-    }
-    return admin; // Return the last admin for compatibility
-  }
-
-  // Demo executive member so the Member portal can be tried instantly.
+  // Note: Admin accounts are NOT auto-seeded.
+  // They must be created through the Admin Sign Up page.
+  // This ensures the admins set up their own passwords.
+  
+  // Seed demo executive member so the Member portal can be tried instantly.
   const demoMember = await users.findOne({ email: "member@nexasoul.com" });
   if (!demoMember) {
     try {
@@ -247,7 +230,7 @@ export async function ensureDefaultAdmin() {
     }
   }
 
-  return admin;
+  return null;
 }
 
 export function publicUser(user) {

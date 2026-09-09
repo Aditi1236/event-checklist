@@ -18,16 +18,19 @@ const SECURITY_QUESTIONS = [
 ];
 
 export default function AdminLogin() {
-  const { login, logout, user } = useAuth();
+  const { login, signup, logout, user } = useAuth();
   const navigate = useNavigate();
+  const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [forgotStep, setForgotStep] = useState(1); // 1: Email, 2: Answer & New Pass
-  
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [securityQuestion, setSecurityQuestion] = useState(SECURITY_QUESTIONS[0]);
   const [securityAnswer, setSecurityAnswer] = useState("");
   const [fetchedQuestion, setFetchedQuestion] = useState("");
-  
+
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [busy, setBusy] = useState(false);
@@ -79,22 +82,26 @@ export default function AdminLogin() {
     setBusy(true);
     try {
       const trimmedEmail = email.trim().toLowerCase();
-      
-      // Validate that only authorized admin emails can sign in
+
+      // Validate that only authorized admin emails can sign in/up
       if (!isAuthorizedAdminEmail(trimmedEmail)) {
         setError("Access denied. This portal is restricted to authorized administrators only.");
         setBusy(false);
         return;
       }
-      
-      const u = await login(trimmedEmail, password);
-      if (u.role !== "admin") {
-        await logout();
-        setError("This portal is for Admins only. Please use the Member Login.");
-        return;
+
+      if (isSignUp) {
+        await signup(name.trim(), trimmedEmail, password, "admin", securityQuestion, securityAnswer);
+      } else {
+        const u = await login(trimmedEmail, password);
+        if (u.role !== "admin") {
+          await logout();
+          setError("This portal is for Admins only. Please use the Member Login.");
+          return;
+        }
       }
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError(err.message || (isSignUp ? "Sign up failed" : "Login failed"));
     } finally {
       setBusy(false);
     }
@@ -124,7 +131,7 @@ export default function AdminLogin() {
              border: "1px solid rgba(15,23,42,0.08)",
              boxShadow: "0 24px 60px -16px rgba(15,23,42,0.18)",
            }}
-         >
+        >
           <div
             className="h-px w-full"
             style={{
@@ -147,10 +154,10 @@ export default function AdminLogin() {
                 className="text-3xl font-extrabold text-slate-900"
                 style={{ fontFamily: "'Sora', sans-serif" }}
               >
-                {isForgotPassword ? "Reset Password" : "Admin Login"}
+                {isForgotPassword ? "Reset Password" : isSignUp ? "Admin Sign Up" : "Admin Login"}
               </h1>
               <p className="mt-2 text-base font-semibold" style={{ color: "#64748b" }}>
-                {isForgotPassword ? "Answer your security question to reset." : "Authorized administrators only. Manage events, tasks, members and progress for NexaSoul."}
+                {isForgotPassword ? "Answer your security question to reset." : isSignUp ? "Create your authorized admin account." : "Authorized administrators only. Manage events, tasks, members and progress for NexaSoul."}
               </p>
             </div>
 
@@ -158,20 +165,20 @@ export default function AdminLogin() {
               <form onSubmit={handleForgotSubmit} className="space-y-4" noValidate>
                 {forgotStep === 1 ? (
                   <div>
-                    <label className="field-label" htmlFor="forgot-email">
-                      Email
+                    <label className="field-label" htmlFor="admin-forgot-email">
+                      Admin Email
                     </label>
                     <div className="relative">
                       <Mail
-                        size={20}
+                        size={16}
                         className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
                         style={{ color: "#64748b" }}
                       />
                       <input
-                        id="forgot-email"
+                        id="admin-forgot-email"
                         type="email"
                         className="field-input pl-11"
-                        placeholder="admin@nexasoul.com"
+                        placeholder="ayushnegi.zero@gmail.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         autoFocus
@@ -181,31 +188,26 @@ export default function AdminLogin() {
                   </div>
                 ) : (
                   <>
-                    <div>
-                      <label className="field-label" style={{ color: "#64748b" }}>
-                        Security Question
-                      </label>
-                      <p className="text-sm font-medium italic mb-2" style={{ color: "#94a3b8" }}>
-                        {fetchedQuestion}
-                      </p>
+                    <div className="rounded-xl bg-slate-50 p-3 text-sm">
+                      <span className="font-semibold">Security Question:</span> {fetchedQuestion}
                     </div>
                     <div>
-                      <label className="field-label" htmlFor="forgot-answer">
-                        Answer
+                      <label className="field-label" htmlFor="admin-forgot-answer">
+                        Your Answer
                       </label>
                       <input
-                        id="forgot-answer"
+                        id="admin-forgot-answer"
                         type="text"
-                        className="field-input !py-3 !text-base"
-                        placeholder="Your answer"
+                        className="field-input"
+                        placeholder="Enter your answer"
                         value={securityAnswer}
                         onChange={(e) => setSecurityAnswer(e.target.value)}
-                        required
                         autoFocus
+                        required
                       />
                     </div>
                     <div>
-                      <label className="field-label" htmlFor="forgot-password">
+                      <label className="field-label" htmlFor="admin-forgot-password">
                         New Password
                       </label>
                       <div className="relative">
@@ -215,111 +217,19 @@ export default function AdminLogin() {
                           style={{ color: "#64748b" }}
                         />
                         <input
-                          id="forgot-password"
+                          id="admin-forgot-password"
                           type="password"
                           className="field-input pl-11"
-                          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                          placeholder="Min 6 characters"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
+                          minLength={6}
                           required
                         />
                       </div>
                     </div>
                   </>
                 )}
-
-                {error && (
-                  <p
-                    className="rounded-xl px-4 py-3 text-sm font-semibold"
-                    style={{
-                      color: "#b91c1c",
-                      background: "rgba(220,38,38,0.06)",
-                      border: "1px solid rgba(220,38,38,0.15)",
-                    }}
-                  >
-                    {error}
-                  </p>
-                )}
-
-                <button type="submit" className="btn-accent w-full !py-4 !text-base font-bold" disabled={busy}>
-                  {busy ? "Loadingâ€¦" : forgotStep === 1 ? "Next" : "Reset Password"}
-                </button>
-                
-                <div className="mt-4 text-center text-sm font-medium">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsForgotPassword(false);
-                      setForgotStep(1);
-                      setError("");
-                    }}
-                    style={{ color: "#64748b" }}
-                    className="hover:text-slate-900 transition-colors"
-                  >
-                    Back to Login
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-                <div>
-                  <label className="field-label" htmlFor="admin-email">
-                    Email
-                  </label>
-                  <div className="relative">
-                    <Mail
-                      size={16}
-                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
-                      style={{ color: "#64748b" }}
-                    />
-                    <input
-                      id="admin-email"
-                      type="email"
-                      className="field-input pl-11"
-                      placeholder="admin@nexasoul.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      autoFocus
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="field-label" htmlFor="admin-password">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock
-                      size={16}
-                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
-                      style={{ color: "#64748b" }}
-                    />
-                    <input
-                      id="admin-password"
-                      type="password"
-                      className="field-input pl-11"
-                      placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="mt-2 text-right">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsForgotPassword(true);
-                        setError("");
-                        setSuccessMsg("");
-                      }}
-                      className="text-xs font-semibold hover:underline"
-                      style={{ color: "#4f46e5" }}
-                    >
-                      Forgot Password?
-                    </button>
-                  </div>
-                </div>
 
                 {error && (
                   <p
@@ -348,17 +258,187 @@ export default function AdminLogin() {
                 )}
 
                 <button type="submit" className="btn-accent w-full !py-3" disabled={busy}>
-                  {busy ? "Signing inâ€¦" : "Sign in as Admin"}
+                  {busy ? "Checking…" : forgotStep === 1 ? "Continue" : "Reset Password"}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+                {isSignUp && (
+                  <div>
+                    <label className="field-label" htmlFor="admin-name">
+                      Full Name
+                    </label>
+                    <div className="relative">
+                      <User
+                        size={16}
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
+                        style={{ color: "#64748b" }}
+                      />
+                      <input
+                        id="admin-name"
+                        type="text"
+                        className="field-input pl-11"
+                        placeholder="Ayush Negi"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        autoFocus
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="field-label" htmlFor="admin-email">
+                    Email
+                  </label>
+                  <div className="relative">
+                    <Mail
+                      size={16}
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
+                      style={{ color: "#64748b" }}
+                    />
+                    <input
+                      id="admin-email"
+                      type="email"
+                      className="field-input pl-11"
+                      placeholder="ayushnegi.zero@gmail.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoFocus={!isSignUp}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="field-label" htmlFor="admin-password">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock
+                      size={16}
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
+                      style={{ color: "#64748b" }}
+                    />
+                    <input
+                      id="admin-password"
+                      type="password"
+                      className="field-input pl-11"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      minLength={6}
+                      required
+                    />
+                  </div>
+                  {!isSignUp && (
+                    <div className="mt-2 text-right">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsForgotPassword(true);
+                          setError("");
+                          setSuccessMsg("");
+                        }}
+                        className="text-xs font-semibold hover:underline"
+                        style={{ color: "#4f46e5" }}
+                      >
+                        Forgot Password?
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {isSignUp && (
+                  <>
+                    <div>
+                      <label className="field-label" htmlFor="admin-sec-question">
+                        Security Question
+                      </label>
+                      <div className="relative">
+                        <HelpCircle
+                          size={16}
+                          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
+                          style={{ color: "#64748b" }}
+                        />
+                        <select
+                          id="admin-sec-question"
+                          className="field-input pl-11 appearance-none"
+                          value={securityQuestion}
+                          onChange={(e) => setSecurityQuestion(e.target.value)}
+                          required
+                        >
+                          {SECURITY_QUESTIONS.map(q => (
+                            <option key={q} value={q}>{q}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="field-label" htmlFor="admin-sec-answer">
+                        Security Answer
+                      </label>
+                      <input
+                        id="admin-sec-answer"
+                        type="text"
+                        className="field-input"
+                        placeholder="Your answer"
+                        value={securityAnswer}
+                        onChange={(e) => setSecurityAnswer(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </>
+                )}
+
+                {error && (
+                  <p
+                    className="rounded-xl px-4 py-3 text-sm font-semibold"
+                    style={{
+                      color: "#b91c1c",
+                      background: "rgba(220,38,38,0.06)",
+                      border: "1px solid rgba(220,38,38,0.15)",
+                    }}
+                  >
+                    {error}
+                  </p>
+                )}
+                
+                {successMsg && (
+                  <p
+                    className="rounded-xl px-4 py-3 text-sm font-semibold"
+                    style={{
+                      color: "#059669",
+                      background: "rgba(16,185,129,0.08)",
+                      border: "1px solid rgba(16,185,129,0.2)",
+                    }}
+                  >
+                    {successMsg}
+                  </p>
+                )}
+
+                <button type="submit" className="btn-accent w-full !py-3" disabled={busy}>
+                  {busy ? (isSignUp ? "Signing up…" : "Signing in…") : (isSignUp ? "Sign Up as Admin" : "Sign in as Admin")}
                 </button>
               </form>
             )}
 
             {!isForgotPassword && (
-              <div className="mt-6 text-center text-sm font-semibold" style={{ color: "#64748b" }}>
-                <span className="inline-flex items-center gap-1.5">
-                  <Lock size={14} />
-                  Restricted to authorized administrators only
-                </span>
+              <div className="mt-6 text-center text-base font-semibold" style={{ color: "#64748b" }}>
+                {isSignUp ? "Already have an admin account? " : "Need to create an admin account? "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSignUp(!isSignUp);
+                    setError("");
+                    setSuccessMsg("");
+                  }}
+                  className="font-bold transition-colors hover:underline"
+                  style={{ color: "#4f46e5" }}
+                >
+                  {isSignUp ? "Sign In" : "Sign Up"}
+                </button>
               </div>
             )}
 
@@ -372,7 +452,7 @@ export default function AdminLogin() {
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#10b981")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "#059669")}
                 >
-                  Go to Member Login â†’
+                  Go to Member Login ?
                 </Link>
               </p>
             )}

@@ -716,9 +716,10 @@ const server = http.createServer(async (req, res) => {
 
 connectDB()
   .then(() => ensureDefaultAdmin())
-  .then((admin) => {
-    console.log(`👤 Current admin: ${admin.email} (${admin.id})`);
-    console.log(`🔑 Logins  →  Admin: admin@nexasoul.com / admin123   |   Member: member@nexasoul.com / member123`);
+  .then(() => {
+    console.log(`👤 Authorized admin emails: ayushnegi.zero@gmail.com, sumanshujindal76@gmail.com`);
+    console.log(`🔑 Admin accounts must be created via Admin Sign Up page`);
+    console.log(`🔑 Member login →  member@nexasoul.com / member123`);
     server.listen(PORT, () => {
       console.log(`✅ Backend running at http://localhost:${PORT}`);
       console.log(`   API:      http://localhost:${PORT}/api/events`);

@@ -873,6 +873,12 @@ function MemberForm({ initial, onClose, onSave, saving }) {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
+  // Only these emails are authorized for admin access
+  const AUTHORIZED_ADMIN_EMAILS = [
+    "ayushnegi.zero@gmail.com",
+    "sumanshujindal76@gmail.com",
+  ];
+
   function handleSubmit(e) {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim()) {
@@ -885,6 +891,11 @@ function MemberForm({ initial, onClose, onSave, saving }) {
     }
     if (isEdit && form.password && form.password.length < 6) {
       setError("New password must be at least 6 characters.");
+      return;
+    }
+    // Validate admin email restriction
+    if (form.role === "admin" && !AUTHORIZED_ADMIN_EMAILS.includes(form.email.trim().toLowerCase())) {
+      setError("Only authorized email addresses can be used for admin accounts. Admin access is restricted.");
       return;
     }
     const payload = {

@@ -1,16 +1,5 @@
 [
   {
-    "id": "usr_admin_ryohb0",
-    "name": "NexaSoul Admin",
-    "email": "admin@nexasoul.com",
-    "passwordHash": "b478b65511c567cc77b4baaadca9f4e3:8146a40dacaab0a9a4e06459809634f749659438b0eab2b902f4f4ae68e6deef1b49d6c385c0f30905a1abde8307168c51348ee30ee81ccacb1d3961d16e948b",
-    "role": "admin",
-    "position": "Administrator",
-    "phone": "",
-    "status": "active",
-    "createdAt": 1788796788756
-  },
-  {
     "id": "usr_member_y8eqb9",
     "name": "Demo Member",
     "email": "member@nexasoul.com",
