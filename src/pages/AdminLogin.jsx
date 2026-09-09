@@ -1,4 +1,4 @@
-import { useState } from "react";
+ï»¿import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ShieldCheck, Lock, Mail, ArrowLeft, User, HelpCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -258,7 +258,7 @@ export default function AdminLogin() {
                 )}
 
                 <button type="submit" className="btn-accent w-full !py-3" disabled={busy}>
-                  {busy ? "Checking…" : forgotStep === 1 ? "Continue" : "Reset Password"}
+                  {busy ? "Checkingï¿½" : forgotStep === 1 ? "Continue" : "Reset Password"}
                 </button>
               </form>
             ) : (
@@ -325,7 +325,7 @@ export default function AdminLogin() {
                       id="admin-password"
                       type="password"
                       className="field-input pl-11"
-                      placeholder="••••••••"
+                      placeholder="********"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       minLength={6}
@@ -419,7 +419,7 @@ export default function AdminLogin() {
                 )}
 
                 <button type="submit" className="btn-accent w-full !py-3" disabled={busy}>
-                  {busy ? (isSignUp ? "Signing up…" : "Signing in…") : (isSignUp ? "Sign Up as Admin" : "Sign in as Admin")}
+                  {busy ? (isSignUp ? "Signing upï¿½" : "Signing inï¿½") : (isSignUp ? "Sign Up as Admin" : "Sign in as Admin")}
                 </button>
               </form>
             )}

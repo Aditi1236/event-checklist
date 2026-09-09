@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -982,7 +982,7 @@ function MemberForm({ initial, onClose, onSave, saving }) {
             id="member-password"
             type="password"
             className="field-input"
-            placeholder="••••••••"
+            placeholder="********"
             value={form.password}
             onChange={(e) => update("password", e.target.value)}
           />

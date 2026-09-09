@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { UserCheck, Lock, Mail, ArrowLeft, User, HelpCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -207,7 +207,7 @@ export default function MemberLogin() {
                           id="forgot-password"
                           type="password"
                           className="field-input pl-11"
-                          placeholder="••••••••"
+                          placeholder="********"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
@@ -312,7 +312,7 @@ export default function MemberLogin() {
                       id="member-password"
                       type="password"
                       className="field-input pl-11"
-                      placeholder="••••••••"
+                      placeholder="********"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
