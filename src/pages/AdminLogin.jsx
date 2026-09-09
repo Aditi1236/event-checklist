@@ -4,6 +4,12 @@ import { ShieldCheck, Lock, Mail, ArrowLeft, User, HelpCircle } from "lucide-rea
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../utils/api";
 
+// ONLY these two email addresses are authorized to access the Admin Portal
+const AUTHORIZED_ADMIN_EMAILS = [
+  "ayushnegi.zero@gmail.com",
+  "sumanshujindal76@gmail.com",
+];
+
 const SECURITY_QUESTIONS = [
   "What was the name of your first pet?",
   "What is your mother's maiden name?",
@@ -12,22 +18,24 @@ const SECURITY_QUESTIONS = [
 ];
 
 export default function AdminLogin() {
-  const { login, signup, logout, user } = useAuth();
+  const { login, logout, user } = useAuth();
   const navigate = useNavigate();
-  const [isSignUp, setIsSignUp] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [forgotStep, setForgotStep] = useState(1); // 1: Email, 2: Answer & New Pass
   
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("admin@nexasoul.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [securityQuestion, setSecurityQuestion] = useState(SECURITY_QUESTIONS[0]);
   const [securityAnswer, setSecurityAnswer] = useState("");
   const [fetchedQuestion, setFetchedQuestion] = useState("");
   
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [busy, setBusy] = useState(false);
+
+  // Check if an email is authorized for admin access
+  function isAuthorizedAdminEmail(email) {
+    return AUTHORIZED_ADMIN_EMAILS.includes(email.trim().toLowerCase());
+  }
 
   if (user) {
     if (user.role === "admin") {
@@ -70,18 +78,23 @@ export default function AdminLogin() {
     setSuccessMsg("");
     setBusy(true);
     try {
-      if (isSignUp) {
-        await signup(name.trim(), email.trim(), password, "admin", securityQuestion, securityAnswer);
-      } else {
-        const u = await login(email.trim(), password);
-        if (u.role !== "admin") {
-          await logout();
-          setError("This portal is for Admins only. Please use the Member Login.");
-          return;
-        }
+      const trimmedEmail = email.trim().toLowerCase();
+      
+      // Validate that only authorized admin emails can sign in
+      if (!isAuthorizedAdminEmail(trimmedEmail)) {
+        setError("Access denied. This portal is restricted to authorized administrators only.");
+        setBusy(false);
+        return;
+      }
+      
+      const u = await login(trimmedEmail, password);
+      if (u.role !== "admin") {
+        await logout();
+        setError("This portal is for Admins only. Please use the Member Login.");
+        return;
       }
     } catch (err) {
-      setError(err.message || (isSignUp ? "Sign up failed" : "Login failed"));
+      setError(err.message || "Login failed");
     } finally {
       setBusy(false);
     }
@@ -134,10 +147,10 @@ export default function AdminLogin() {
                 className="text-3xl font-extrabold text-slate-900"
                 style={{ fontFamily: "'Sora', sans-serif" }}
               >
-                {isForgotPassword ? "Reset Password" : isSignUp ? "Admin Sign Up" : "Admin Login"}
+                {isForgotPassword ? "Reset Password" : "Admin Login"}
               </h1>
               <p className="mt-2 text-base font-semibold" style={{ color: "#64748b" }}>
-                {isForgotPassword ? "Answer your security question to reset." : isSignUp ? "Create an admin account for NexaSoul." : "Manage events, tasks, members and progress for NexaSoul."}
+                {isForgotPassword ? "Answer your security question to reset." : "Authorized administrators only. Manage events, tasks, members and progress for NexaSoul."}
               </p>
             </div>
 
@@ -249,30 +262,6 @@ export default function AdminLogin() {
               </form>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-                {isSignUp && (
-                  <div>
-                    <label className="field-label" htmlFor="admin-name">
-                      Name
-                    </label>
-                    <div className="relative">
-                      <User
-                        size={16}
-                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
-                        style={{ color: "#64748b" }}
-                      />
-                      <input
-                        id="admin-name"
-                        type="text"
-                        className="field-input pl-11"
-                        placeholder="Jane Doe"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        autoFocus
-                        required
-                      />
-                    </div>
-                  </div>
-                )}
                 <div>
                   <label className="field-label" htmlFor="admin-email">
                     Email
@@ -290,7 +279,7 @@ export default function AdminLogin() {
                       placeholder="admin@nexasoul.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      autoFocus={!isSignUp}
+                      autoFocus
                       required
                     />
                   </div>
@@ -316,65 +305,21 @@ export default function AdminLogin() {
                       required
                     />
                   </div>
-                  {!isSignUp && (
-                    <div className="mt-2 text-right">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsForgotPassword(true);
-                          setError("");
-                          setSuccessMsg("");
-                        }}
-                        className="text-xs font-semibold hover:underline"
-                        style={{ color: "#4f46e5" }}
-                      >
-                        Forgot Password?
-                      </button>
-                    </div>
-                  )}
+                  <div className="mt-2 text-right">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsForgotPassword(true);
+                        setError("");
+                        setSuccessMsg("");
+                      }}
+                      className="text-xs font-semibold hover:underline"
+                      style={{ color: "#4f46e5" }}
+                    >
+                      Forgot Password?
+                    </button>
+                  </div>
                 </div>
-
-                {isSignUp && (
-                  <>
-                    <div>
-                      <label className="field-label" htmlFor="admin-sec-question">
-                        Security Question
-                      </label>
-                      <div className="relative">
-                        <HelpCircle
-                          size={16}
-                          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2"
-                          style={{ color: "#64748b" }}
-                        />
-                        <select
-                          id="admin-sec-question"
-                          className="field-input pl-11 appearance-none"
-                          value={securityQuestion}
-                          onChange={(e) => setSecurityQuestion(e.target.value)}
-                          required
-                        >
-                          {SECURITY_QUESTIONS.map(q => (
-                            <option key={q} value={q}>{q}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="field-label" htmlFor="admin-sec-answer">
-                        Security Answer
-                      </label>
-                      <input
-                        id="admin-sec-answer"
-                        type="text"
-                        className="field-input"
-                        placeholder="Your answer"
-                        value={securityAnswer}
-                        onChange={(e) => setSecurityAnswer(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </>
-                )}
 
                 {error && (
                   <p
@@ -403,26 +348,17 @@ export default function AdminLogin() {
                 )}
 
                 <button type="submit" className="btn-accent w-full !py-3" disabled={busy}>
-                  {busy ? (isSignUp ? "Signing up…" : "Signing in…") : (isSignUp ? "Sign Up as Admin" : "Sign in as Admin")}
+                  {busy ? "Signing in…" : "Sign in as Admin"}
                 </button>
               </form>
             )}
 
             {!isForgotPassword && (
-              <div className="mt-6 text-center text-base font-semibold" style={{ color: "#64748b" }}>
-                {isSignUp ? "Already have an admin account? " : "Don't have an admin account? "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSignUp(!isSignUp);
-                    setError("");
-                    setSuccessMsg("");
-                  }}
-                  className="font-bold transition-colors hover:underline"
-                  style={{ color: "#4f46e5" }}
-                >
-                  {isSignUp ? "Sign In" : "Sign Up"}
-                </button>
+              <div className="mt-6 text-center text-sm font-semibold" style={{ color: "#64748b" }}>
+                <span className="inline-flex items-center gap-1.5">
+                  <Lock size={14} />
+                  Restricted to authorized administrators only
+                </span>
               </div>
             )}
 

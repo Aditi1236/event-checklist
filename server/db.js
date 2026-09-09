@@ -188,31 +188,42 @@ export function verifyPassword(password, stored = "") {
 /* ── Default accounts ─────────────────────────────────
    Seeded on first boot (works for MongoDB AND the
    JSON-file fallback), so both logins always work:
-     • Admin:    admin@nexasoul.com  / admin123
+     • Admin:    ayushnegi.zero@gmail.com  / admin123
+     • Admin:    sumanshujindal76@gmail.com / admin123
      • Member:   member@nexasoul.com / member123
    Members created later by the Admin use their own
    credentials from the Admin Dashboard → Members tab. */
+const AUTHORIZED_ADMIN_EMAILS = [
+  "ayushnegi.zero@gmail.com",
+  "sumanshujindal76@gmail.com",
+];
+
 export async function ensureDefaultAdmin() {
   const users = getUsersCollection();
-  let admin = await users.findOne({ email: "admin@nexasoul.com" });
-  if (!admin) {
-    admin = {
-      id: `usr_admin_${Math.random().toString(36).slice(2, 8)}`,
-      name: "NexaSoul Admin",
-      email: "admin@nexasoul.com",
-      passwordHash: hashPassword("admin123"),
-      role: "admin",
-      position: "Administrator",
-      phone: "",
-      status: "active",
-      createdAt: Date.now(),
-    };
-    try {
-      await users.insertOne(admin);
-      console.log(`🔐 Seeded default admin —  admin@nexasoul.com / admin123`);
-    } catch (err) {
-      if (err.code !== 11000) throw err; // ignore duplicate-key (another boot seeded it)
+  
+  // Seed the two authorized admin accounts
+  for (const email of AUTHORIZED_ADMIN_EMAILS) {
+    let admin = await users.findOne({ email });
+    if (!admin) {
+      admin = {
+        id: `usr_admin_${Math.random().toString(36).slice(2, 8)}`,
+        name: email === "ayushnegi.zero@gmail.com" ? "Ayush Negi" : "Suman Sujindal",
+        email: email,
+        passwordHash: hashPassword("admin123"),
+        role: "admin",
+        position: "Administrator",
+        phone: "",
+        status: "active",
+        createdAt: Date.now(),
+      };
+      try {
+        await users.insertOne(admin);
+        console.log(`🔐 Seeded authorized admin —  ${email} / admin123`);
+      } catch (err) {
+        if (err.code !== 11000) throw err; // ignore duplicate-key (another boot seeded it)
+      }
     }
+    return admin; // Return the last admin for compatibility
   }
 
   // Demo executive member so the Member portal can be tried instantly.

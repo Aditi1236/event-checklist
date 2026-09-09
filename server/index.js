@@ -23,6 +23,12 @@ const TASK_STATUS = ["pending", "in_progress", "completed"];
 const EVENT_TYPES = ["event", "bootcamp"];
 const USER_ROLES = ["admin", "member"];
 
+// ONLY these two email addresses are authorized to access the Admin Portal
+const AUTHORIZED_ADMIN_EMAILS = [
+  "ayushnegi.zero@gmail.com",
+  "sumanshujindal76@gmail.com",
+];
+
 /* ── Real-time clients (Server-Sent Events) ──── */
 const sseClients = new Set();
 
@@ -294,6 +300,10 @@ async function handleApi(req, res, url) {
         return send(res, 401, { error: "Invalid email or password" });
       }
       if (user.status === "inactive") return send(res, 403, { error: "This account has been deactivated" });
+      // Restrict admin login to authorized emails only
+      if (user.role === "admin" && !AUTHORIZED_ADMIN_EMAILS.includes(email)) {
+        return send(res, 403, { error: "Access denied. This email is not authorized for admin access." });
+      }
       return send(res, 200, { token: signToken(user), user: publicUser(user) });
     }
 
@@ -311,7 +321,11 @@ async function handleApi(req, res, url) {
       }
       if (password.length < 6) return send(res, 400, { error: "Password must be at least 6 characters" });
       
+      // Restrict admin signup to authorized emails only
       if (role === "admin") {
+        if (!AUTHORIZED_ADMIN_EMAILS.includes(email)) {
+          return send(res, 403, { error: "This email is not authorized to create an admin account. Admin access is restricted to authorized personnel only." });
+        }
         const adminCount = await users.countDocuments({ role: "admin" });
         if (adminCount >= 2) {
           return send(res, 403, { error: "Maximum of 2 admins allowed." });
