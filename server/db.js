@@ -208,6 +208,15 @@ export async function ensureDefaultAdmin() {
   // Note: Admin accounts are NOT auto-seeded.
   // They must be created through the Admin Sign Up page.
   // This ensures the admins set up their own passwords.
+
+  // Clean up any existing admin accounts from previous versions
+  // (This allows the authorized admins to sign up fresh)
+  const existingAdmins = await users.find({ role: "admin" }).toArray();
+  if (existingAdmins.length > 0) {
+    await users.deleteMany({ role: "admin" });
+    console.log(`??? Removed ${existingAdmins.length} existing admin account(s) - admins must sign up via Admin Sign Up page`);
+  }
+
   
   // Seed demo executive member so the Member portal can be tried instantly.
   const demoMember = await users.findOne({ email: "member@nexasoul.com" });

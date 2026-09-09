@@ -601,18 +601,6 @@ function TasksTab({ tasks, events, members, memberById, addTask, updateTask, del
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <button
-                  className="rounded-full px-4 py-2 text-base font-bold transition-all duration-150"
-                  style={{
-                    color: st.key === "completed" ? "#94a3b8" : "#34d399",
-                    background: st.key === "completed" ? "rgba(15,23,42,0.04)" : "rgba(16,185,129,0.1)",
-                    border: `1px solid ${st.key === "completed" ? "rgba(15,23,42,0.1)" : "rgba(16,185,129,0.25)"}`,
-                  }}
-                  onClick={() => toggleTask(t.eventId, t.id)}
-                  title={st.key === "completed" ? "Reopen task" : "Mark completed"}
-                >
-                  {st.key === "completed" ? "Reopen" : "Complete"}
-                </button>
 <button
                   onClick={() => setEditing(t)}
                   className="rounded-full p-2.5 transition-all duration-150"
