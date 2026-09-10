@@ -5,7 +5,6 @@ import {
   requireAuth,
   addTaskDefaults,
   normalizeTaskPatch,
-  TASK_STATUS,
 } from "../../_lib/events.js";
 import { handleOptions } from "../../_lib/auth.js";
 
@@ -18,25 +17,18 @@ export default async function handler(req, params) {
     const events = await getEventsCollection();
 
     // Handle /api/events/:id/tasks
-    // pathParts: ['api', 'events', ':id', 'tasks', ':taskId?']
-
     if (pathParts[3] === "tasks") {
-      if (pathParts.length === 4) {
-        // POST /api/events/:id/tasks
-        if (req.method === "POST") {
-          const admin = await requireAdmin(req);
-          if (!admin) return jsonRes(403, { error: "Admin access required" });
-          const body = await req.json();
-          const task = addTaskDefaults(body);
-          const result = await events.updateOne({ id: eventId }, { $push: { tasks: task } });
-          if (result.matchedCount === 0) return jsonRes(404, { error: "Event not found" });
-          return jsonRes(201, task);
-        }
-        return jsonRes(405, { error: "Method not allowed" });
+      if (pathParts.length === 4 && req.method === "POST") {
+        const admin = await requireAdmin(req);
+        if (!admin) return jsonRes(403, { error: "Admin access required" });
+        const body = await req.json();
+        const task = addTaskDefaults(body);
+        const result = await events.updateOne({ id: eventId }, { $push: { tasks: task } });
+        if (result.matchedCount === 0) return jsonRes(404, { error: "Event not found" });
+        return jsonRes(201, task);
       }
 
       if (pathParts.length === 5) {
-        // PUT/DELETE /api/events/:id/tasks/:taskId
         const taskId = decodeURIComponent(pathParts[4]);
         const event = await events.findOne({ id: eventId });
         if (!event) return jsonRes(404, { error: "Event not found" });
@@ -47,23 +39,17 @@ export default async function handler(req, params) {
           const user = await requireAuth(req);
           if (!user) return jsonRes(401, { error: "Authentication required" });
           const body = await req.json();
-
           let patch;
           if (user.role === "admin") {
             patch = normalizeTaskPatch(body, task);
           } else {
-            if (task.assigneeId !== user.id) {
-              return jsonRes(403, { error: "You can only update tasks assigned to you" });
-            }
+            if (task.assigneeId !== user.id) return jsonRes(403, { error: "You can only update tasks assigned to you" });
             const allowed = {};
             if (body.status !== undefined) allowed.status = body.status;
             if (body.completed !== undefined) allowed.completed = body.completed;
-            if (Object.keys(allowed).length === 0) {
-              return jsonRes(403, { error: "Members can only update the status of their tasks" });
-            }
+            if (Object.keys(allowed).length === 0) return jsonRes(403, { error: "Members can only update the status of their tasks" });
             patch = normalizeTaskPatch(allowed, task);
           }
-
           const updated = { ...task, ...patch, updatedAt: Date.now() };
           await events.updateOne({ id: eventId, "tasks.id": taskId }, { $set: { "tasks.$": updated } });
           return jsonRes(200, updated);
@@ -75,17 +61,15 @@ export default async function handler(req, params) {
           await events.updateOne({ id: eventId }, { $pull: { tasks: { id: taskId } } });
           return jsonRes(200, { ok: true });
         }
-        return jsonRes(405, { error: "Method not allowed" });
       }
+      return jsonRes(405, { error: "Method not allowed" });
     }
 
     // Handle /api/events/:id
     const event = await events.findOne({ id: eventId });
     if (!event) return jsonRes(404, { error: "Event not found" });
 
-    if (req.method === "GET") {
-      return jsonRes(200, event);
-    }
+    if (req.method === "GET") return jsonRes(200, event);
 
     if (req.method === "PUT") {
       const admin = await requireAdmin(req);
