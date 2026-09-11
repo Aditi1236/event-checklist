@@ -10,7 +10,7 @@ import {
   requireAuth,
   genId,
   handleOptions,
-} from "../../_lib/auth.js";
+} from "../_lib/auth.js";
 
 const AUTHORIZED_ADMIN_EMAILS = ["ayushnegi.zero@gmail.com", "sumanshujindal76@gmail.com"];
 const USER_ROLES = ["admin", "member"];

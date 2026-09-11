@@ -5,8 +5,8 @@ import {
   requireAuth,
   addTaskDefaults,
   normalizeTaskPatch,
-} from "../../_lib/events.js";
-import { handleOptions } from "../../_lib/auth.js";
+} from "../_lib/events.js";
+import { handleOptions } from "../_lib/auth.js";
 
 export default async function handler(req, params) {
   if (req.method === "OPTIONS") return handleOptions();
