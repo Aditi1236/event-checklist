@@ -17,4 +17,4 @@ services:
       - key: AUTH_SECRET
         generateValue: true
       - key: MONGODB_URI
-        value: mongodb+srv://eventchecklist:123@cluster0.cqm38pu.mongodb.net/?appName=Cluster0
+        sync: false
