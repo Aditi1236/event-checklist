@@ -20,9 +20,15 @@ async function request(method, url, body, { auth = true } = {}) {
     body: body ? JSON.stringify(body) : undefined,
   });
   const text = await res.text();
-  const data = text ? JSON.parse(text) : null;
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = null;
+  }
   if (!res.ok) {
-    const err = new Error((data && data.error) || `API ${method} ${url} failed (${res.status})`);
+    const message = (data && data.error) || (text ? text.trim() : "");
+    const err = new Error(message || `API ${method} ${url} failed (${res.status})`);
     err.status = res.status;
     throw err;
   }
