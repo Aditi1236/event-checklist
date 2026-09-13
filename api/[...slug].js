@@ -1,25 +1,30 @@
 import {
   getUsersCollection,
-  getEventsCollection,
   jsonRes,
   requireAuth,
   requireAdmin,
   publicUser,
   handleOptions,
+  getDb,
 } from "./_lib/auth.js";
+import { getEventsCollection } from "./_lib/events.js";
 
 export default async function handler(req, params) {
   if (req.method === "OPTIONS") return handleOptions();
 
   const slug = params?.slug;
-  const parts = Array.isArray(slug) ? slug : [slug];
+  const parts = Array.isArray(slug)
+    ? slug
+    : typeof slug === "string"
+      ? [slug]
+      : new URL(req.url, "http://local").pathname.split("/").filter(Boolean).slice(1);
 
   try {
     /* ── /api/tasks (admin) ── */
     if (parts[0] === "tasks" && parts.length === 1 && req.method === "GET") {
       const admin = await requireAdmin(req);
       if (!admin) return jsonRes(403, { error: "Admin access required" });
-      const url = new URL(req.url);
+      const url = new URL(req.url, "http://local");
       const status = url.searchParams.get("status") || "";
       const assignee = url.searchParams.get("assignee") || "";
       const eventId = url.searchParams.get("eventId") || "";
@@ -92,5 +97,3 @@ export default async function handler(req, params) {
   }
 }
 
-// Helper to get DB
-import { getDb } from "./_lib/auth.js";

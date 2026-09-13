@@ -1,6 +1,5 @@
 import {
   getUsersCollection,
-  getEventsCollection,
   hashPassword,
   verifyPassword,
   signToken,
@@ -18,9 +17,11 @@ const USER_ROLES = ["admin", "member"];
 export default async function handler(req, params) {
   if (req.method === "OPTIONS") return handleOptions();
 
-  // Extract the auth action from the catch-all param
+  // Extract the auth action from the catch-all param (fallback: derive from URL)
   const slug = params?.slug;
-  const action = Array.isArray(slug) ? slug[0] : slug;
+  const action =
+    (Array.isArray(slug) ? slug[0] : slug) ||
+    new URL(req.url, "http://local").pathname.split("/").filter(Boolean).pop();
 
   try {
     /* ── /api/auth/login ── */

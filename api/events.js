@@ -1,5 +1,5 @@
-import { getEventsCollection, jsonRes, requireAdmin, genId, EVENT_TYPES } from "./_lib/events.js";
-import { handleOptions } from "./_lib/auth.js";
+import { getEventsCollection, genId, EVENT_TYPES } from "./_lib/events.js";
+import { jsonRes, requireAdmin, handleOptions } from "./_lib/auth.js";
 
 export default async function handler(req) {
   if (req.method === "OPTIONS") return handleOptions();

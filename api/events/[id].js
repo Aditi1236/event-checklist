@@ -1,17 +1,10 @@
-import {
-  getEventsCollection,
-  jsonRes,
-  requireAdmin,
-  requireAuth,
-  addTaskDefaults,
-  normalizeTaskPatch,
-} from "../_lib/events.js";
-import { handleOptions } from "../_lib/auth.js";
+import { getEventsCollection, addTaskDefaults, normalizeTaskPatch } from "../_lib/events.js";
+import { jsonRes, requireAdmin, requireAuth, handleOptions } from "../_lib/auth.js";
 
 export default async function handler(req, params) {
   if (req.method === "OPTIONS") return handleOptions();
   try {
-    const url = new URL(req.url);
+    const url = new URL(req.url, "http://local");
     const pathParts = url.pathname.split("/").filter(Boolean);
     const eventId = params?.id || decodeURIComponent(pathParts[2] || "");
     const events = await getEventsCollection();

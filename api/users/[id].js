@@ -15,7 +15,7 @@ export default async function handler(req, params) {
     const adminUser = await requireAdmin(req);
     if (!adminUser) return jsonRes(403, { error: "Admin access required" });
 
-    const url = new URL(req.url);
+    const url = new URL(req.url, "http://local");
     const pathParts = url.pathname.split("/").filter(Boolean);
     const userId = params?.id || decodeURIComponent(pathParts[2] || "");
     const users = await getUsersCollection();
