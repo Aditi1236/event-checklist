@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: event-checklist
+    runtime: node
+    repo: https://github.com/Aditi1236/event-checklist
+    branch: main
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: node server/index.js
+    healthCheckPath: /api/events
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_NAME
+        value: eventchecklist
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
