@@ -48,6 +48,7 @@ async function seed() {
     console.log(`  ${i + 1}. ${e.name} [${e.type} - ${e.category}]`);
   });
   console.log(`Total events in store: ${existing.length + newEvents.length}`);
+  process.exit(0);
 }
 
 seed().catch((err) => {

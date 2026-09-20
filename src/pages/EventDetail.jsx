@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays, MapPin, Pencil, Plus, Trash2 } from "lucide-react";
 import { useEvents } from "../context/EventsContext";
@@ -19,7 +19,7 @@ import {
 export default function EventDetail() {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const { user, isAdmin, members } = useAuth();
+  const { user, isAdmin, members, refreshMembers } = useAuth();
   const {
     getEvent,
     updateEvent,
@@ -29,6 +29,10 @@ export default function EventDetail() {
     toggleTask,
     deleteTask,
   } = useEvents();
+
+  useEffect(() => {
+    refreshMembers();
+  }, [refreshMembers]);
 
   const [showEditEvent, setShowEditEvent] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
