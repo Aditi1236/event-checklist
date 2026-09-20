@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { CalendarDays, MapPin, Pencil, Trash2, ArrowRight, Clock, Users, Monitor, Award, BookOpen, Target, Star, Link as LinkIcon, Zap, GraduationCap, UserCheck, Handshake, Tag } from "lucide-react";
+import { CalendarDays, MapPin, Pencil, Trash2, ArrowRight, Clock, Users, Tag } from "lucide-react";
 import ProgressStamp from "./ProgressStamp";
 import { formatDateShort, progressOf, daysUntil, eventTypeMeta } from "../utils/helpers";
 
@@ -9,48 +9,6 @@ function getDayTagStyle(remaining) {
   if (remaining > 0 && remaining <= 7) return { label: `In ${remaining}d`, bg: "rgba(79,70,229,0.08)", border: "rgba(79,70,229,0.2)", color: "#4f46e5" };
   if (remaining > 0) return { label: `In ${remaining}d`, bg: "rgba(16,185,129,0.08)", border: "rgba(16,185,129,0.2)", color: "#059669" };
   return { label: "Past", bg: "rgba(100,116,139,0.08)", border: "rgba(100,116,139,0.18)", color: "#64748b" };
-}
-
-function DetailItem({ icon: Icon, label, value, isLink = false, color = "#64748b" }) {
-  if (value === undefined || value === null || value === "") return null;
-  return (
-    <div className="flex items-start gap-2 text-sm">
-      <Icon size={14} className="shrink-0 mt-0.5" style={{ color }} />
-      <div className="min-w-0 flex-1">
-        <span className="font-semibold" style={{ color: "#64748b" }}>{label}: </span>
-        {isLink ? (
-          <a
-            href={value}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="break-all hover:underline"
-            style={{ color: "#4f46e5" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {value}
-          </a>
-        ) : (
-          <span style={{ color: "#334155" }}>{value}</span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function MultiLines({ value }) {
-  if (!value) return null;
-  const lines = String(value).split(/\n|•/).map((s) => s.trim()).filter(Boolean);
-  if (lines.length === 0) return null;
-  return (
-    <ul className="space-y-1.5">
-      {lines.map((line, i) => (
-        <li key={i} className="flex items-start gap-2 text-sm">
-          <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full" style={{ background: "#94a3b8" }} />
-          <span style={{ color: "#334155" }}>{line}</span>
-        </li>
-      ))}
-    </ul>
-  );
 }
 
 function Section({ icon: Icon, title, color = "#64748b", children }) {
@@ -195,40 +153,14 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
           </span>
         </div>
       )}
-      <div className="flex items-center gap-1.5 flex-wrap text-sm font-semibold" style={{ color: "#475569" }}>
-        <Monitor size={14} style={{ color: "#64748b" }} />
-        <span className="uppercase tracking-wider">{event.mode || "offline"}</span>
-      </div>
     </div>
   );
 
   const detailsNode = (
     <>
-      {!isBootcamp && event.registrations && (
-        <DetailItem icon={UserCheck} label="Registrations" value={event.registrations} />
-      )}
-
-      {event.techStack && (
-        <Section icon={Zap} title="Tech Stack" color="#6366f1">
-          <TagList items={event.techStack} color="#6366f1" />
-        </Section>
-      )}
-
-      {event.speakers && (
-        <Section icon={Award} title="Speakers / Instructors" color="#8b5cf6">
-          <TagList items={event.speakers} color="#8b5cf6" />
-        </Section>
-      )}
-
       {event.teamMembers && (
         <Section icon={Users} title="Team Members" color="#ec4899">
           <TagList items={event.teamMembers} color="#ec4899" />
-        </Section>
-      )}
-
-      {event.collaborators && (
-        <Section icon={Handshake} title="Collaborators" color="#10b981">
-          <TagList items={event.collaborators} color="#10b981" />
         </Section>
       )}
 
@@ -237,53 +169,10 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
           <p className="text-sm" style={{ color: "#334155" }}>{event.duration}</p>
         </Section>
       )}
-
-      {event.targetAudience && (
-        <Section icon={Target} title="Target Audience" color="#f59e0b">
-          <p className="text-sm" style={{ color: "#334155" }}>{event.targetAudience}</p>
-        </Section>
-      )}
-
-      {event.prerequisites && (
-        <Section icon={BookOpen} title="Prerequisites" color="#e11d6a">
-          <p className="text-sm" style={{ color: "#334155" }}>{event.prerequisites}</p>
-        </Section>
-      )}
-
-      {event.learningOutcomes && (
-        <Section icon={GraduationCap} title="Learning Outcomes" color="#8b5cf6">
-          <MultiLines value={event.learningOutcomes} />
-        </Section>
-      )}
-
-      {event.studentBenefits && (
-        <Section icon={Star} title="Student Benefits" color="#f59e0b">
-          <MultiLines value={event.studentBenefits} />
-        </Section>
-      )}
-
-      {event.highlights && (
-        <Section icon={Zap} title="Highlights" color="#10b981">
-          <MultiLines value={event.highlights} />
-        </Section>
-      )}
-
-      {event.registrationLink && (
-        <Section icon={LinkIcon} title="Registration" color="#4f46e5">
-          <a
-            href={event.registrationLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="break-all text-sm font-semibold hover:underline"
-            style={{ color: "#4f46e5" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {event.registrationLink}
-          </a>
-        </Section>
-      )}
     </>
   );
+
+  const hasDetails = Boolean(event.teamMembers) || (isBootcamp && Boolean(event.duration));
 
   const progressNode = (
     <div className="mt-4">
@@ -429,7 +318,7 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
 
         <div className="flex flex-col xl:flex-row">
           {/* Left summary */}
-          <div className="flex-1 p-5 sm:p-6 xl:w-[42%]">
+          <div className={`flex-1 p-5 sm:p-6 ${hasDetails ? "xl:w-[58%]" : "xl:w-full"}`}>
             {badgeRow}
             {nameNode}
             {metaNode}
@@ -443,14 +332,16 @@ export default function EventCard({ event, onEdit, onDelete, onSelect, canManage
           </div>
 
           {/* Right details */}
-          <div
-            className="p-5 pt-4 sm:p-6 xl:w-[58%] xl:border-l"
-            style={{ borderTop: "1px solid rgba(15,23,42,0.07)", borderColor: "rgba(15,23,42,0.07)" }}
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-              {detailsNode}
+          {hasDetails && (
+            <div
+              className="p-5 pt-4 sm:p-6 xl:w-[42%] xl:border-l"
+              style={{ borderTop: "1px solid rgba(15,23,42,0.07)", borderColor: "rgba(15,23,42,0.07)" }}
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                {detailsNode}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {ctaNode}

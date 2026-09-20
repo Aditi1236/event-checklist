@@ -19,7 +19,7 @@ import {
 export default function EventDetail() {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, members } = useAuth();
   const {
     getEvent,
     updateEvent,
@@ -275,6 +275,7 @@ export default function EventDetail() {
           )}
           {isAdmin && showAddTask && (
             <TaskForm
+              members={members}
               onClose={() => setShowAddTask(false)}
               onSubmit={(data) => {
                 addTask(event.id, data);
@@ -285,6 +286,7 @@ export default function EventDetail() {
           {isAdmin && editingTask && (
             <TaskForm
               initial={editingTask}
+              members={members}
               onClose={() => setEditingTask(null)}
               onSubmit={(data) => {
                 updateTask(event.id, editingTask.id, data);

@@ -11,18 +11,7 @@ const empty = {
   category: "",
   description: "",
   location: "",
-  mode: "offline",
-  techStack: "",
-  registrations: "",
   teamMembers: "",
-  speakers: "",
-  collaborators: "",
-  learningOutcomes: "",
-  studentBenefits: "",
-  targetAudience: "",
-  prerequisites: "",
-  registrationLink: "",
-  highlights: "",
   type: "event",
 };
 
@@ -127,7 +116,7 @@ export default function EventForm({ initial, onSubmit, onClose }) {
           </div>
 
           {/* Dates */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="field-label" htmlFor="event-date">
                 {isBootcamp ? "Start Date" : "Event Date"} *
@@ -156,7 +145,7 @@ export default function EventForm({ initial, onSubmit, onClose }) {
           </div>
 
           {/* Duration & Category */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="field-label" htmlFor="event-duration">
                 Duration
@@ -197,101 +186,7 @@ export default function EventForm({ initial, onSubmit, onClose }) {
             />
           </div>
 
-          {/* Description */}
-          <div>
-            <label className="field-label" htmlFor="event-description">
-              Short Description
-            </label>
-            <textarea
-              id="event-description"
-              className="field-input min-h-[80px] resize-y"
-              placeholder="A brief overview shown on the event listing card…"
-              value={form.description}
-              onChange={(e) => update("description", e.target.value)}
-            />
-          </div>
-        </Section>
-
-        {/* ── Learning & Benefits ── */}
-        <Section title="🎓 Learning & Student Benefits" defaultOpen>
-          <div>
-            <label className="field-label" htmlFor="event-outcomes">
-              Learning Outcomes
-            </label>
-            <textarea
-              id="event-outcomes"
-              className="field-input min-h-[90px] resize-y"
-              placeholder={"• Understand core frontend concepts\n• Build production-ready projects\n• Apply modern development workflows"}
-              value={form.learningOutcomes}
-              onChange={(e) => update("learningOutcomes", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="field-label" htmlFor="event-benefits">
-              Student Benefits
-            </label>
-            <textarea
-              id="event-benefits"
-              className="field-input min-h-[90px] resize-y"
-              placeholder={"• Certificate of participation\n• Industry mentorship\n• Portfolio-ready project experience"}
-              value={form.studentBenefits}
-              onChange={(e) => update("studentBenefits", e.target.value)}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="field-label" htmlFor="event-audience">
-                Target Audience
-              </label>
-              <input
-                id="event-audience"
-                className="field-input"
-                placeholder="1st & 2nd year students"
-                value={form.targetAudience}
-                onChange={(e) => update("targetAudience", e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="field-label" htmlFor="event-prereqs">
-                Prerequisites
-              </label>
-              <input
-                id="event-prereqs"
-                className="field-input"
-                placeholder="Basic HTML & CSS knowledge"
-                value={form.prerequisites}
-                onChange={(e) => update("prerequisites", e.target.value)}
-              />
-            </div>
-          </div>
-        </Section>
-
-        {/* ── People ── */}
-        <Section title="👥 Speakers & Collaborators" defaultOpen={false}>
-          <div>
-            <label className="field-label" htmlFor="event-speakers">
-              Speakers / Instructors (comma-separated)
-            </label>
-            <input
-              id="event-speakers"
-              className="field-input"
-              placeholder="Jane Doe (Google), John Smith (Meta)"
-              value={form.speakers}
-              onChange={(e) => update("speakers", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="field-label" htmlFor="event-collaborators">
-              Collaborators / Partners (comma-separated)
-            </label>
-            <input
-              id="event-collaborators"
-              className="field-input"
-              placeholder="IEEE, ACM, GDG Campus"
-              value={form.collaborators}
-              onChange={(e) => update("collaborators", e.target.value)}
-            />
-          </div>
+          {/* Organizing Team */}
           <div>
             <label className="field-label" htmlFor="event-team">
               Organizing Team Members (comma-separated)
@@ -304,73 +199,18 @@ export default function EventForm({ initial, onSubmit, onClose }) {
               onChange={(e) => update("teamMembers", e.target.value)}
             />
           </div>
-        </Section>
 
-        {/* ── Logistics ── */}
-        <Section title="⚙️ Logistics & Details" defaultOpen={false}>
-          {isBootcamp && (
-            <div>
-                <label className="field-label" htmlFor="event-mode">Mode</label>
-                <select
-                  id="event-mode"
-                  className="field-input"
-                  value={form.mode}
-                  onChange={(e) => update("mode", e.target.value)}
-                >
-                  <option value="online">Online</option>
-                  <option value="offline">Offline</option>
-                  <option value="hybrid">Hybrid</option>
-                </select>
-            </div>
-          )}
-          {!isBootcamp && (
-            <div>
-                <label className="field-label" htmlFor="event-registrations">Registrations</label>
-                <input
-                  id="event-registrations"
-                  type="number"
-                  className="field-input"
-                  placeholder="0"
-                  value={form.registrations}
-                  onChange={(e) => update("registrations", e.target.value)}
-                />
-            </div>
-          )}
+          {/* Description */}
           <div>
-            <label className="field-label" htmlFor="event-techstack">
-              Tech Stack (comma-separated)
-            </label>
-            <input
-              id="event-techstack"
-              className="field-input"
-              placeholder="React, Node.js, MongoDB"
-              value={form.techStack}
-              onChange={(e) => update("techStack", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="field-label" htmlFor="event-highlights">
-              Event Highlights / Key Points
+            <label className="field-label" htmlFor="event-description">
+              Short Description
             </label>
             <textarea
-              id="event-highlights"
+              id="event-description"
               className="field-input min-h-[80px] resize-y"
-              placeholder={"• Live coding sessions\n• Q&A with industry experts\n• Networking opportunities"}
-              value={form.highlights}
-              onChange={(e) => update("highlights", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="field-label" htmlFor="event-reglink">
-              Registration Link (URL)
-            </label>
-            <input
-              id="event-reglink"
-              type="url"
-              className="field-input"
-              placeholder="https://forms.gle/..."
-              value={form.registrationLink}
-              onChange={(e) => update("registrationLink", e.target.value)}
+              placeholder="A brief overview shown on the event listing card…"
+              value={form.description}
+              onChange={(e) => update("description", e.target.value)}
             />
           </div>
         </Section>
