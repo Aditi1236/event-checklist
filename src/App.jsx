@@ -1,8 +1,9 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import EventDetail from "./pages/EventDetail";
 import EventInfoPage from "./pages/EventInfoPage";
+import Landing from "./pages/Landing";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import MemberLogin from "./pages/MemberLogin";
@@ -15,7 +16,7 @@ export default function App() {
       <Header />
       <main className="flex-1">
         <Routes>
-          <Route path="/" element={<Navigate to="/admin/login" replace />} />
+          <Route path="/" element={<Landing />} />
           <Route path="/event/:eventId" element={<EventDetail />} />
           <Route path="/events/:eventId" element={<EventInfoPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />

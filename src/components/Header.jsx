@@ -15,7 +15,7 @@ export default function Header() {
 
   function handleLogout() {
     logout();
-    navigate("/admin/login");
+    navigate("/");
   }
 
   return (
@@ -31,7 +31,7 @@ export default function Header() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:px-6 sm:flex-nowrap">
         {/* Logo */}
         <div className="flex min-w-0 items-center gap-4 sm:gap-6">
-          <Link to="/admin/login" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group">
             <span
               className="flex h-10 w-10 items-center justify-center rounded-xl text-white transition-all duration-300 group-hover:scale-105"
               style={{
